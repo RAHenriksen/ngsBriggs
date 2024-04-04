@@ -21,11 +21,9 @@ cd NGSNGS; make
 
 
 ## GENERAL
-Next Generation Simulator for Next Generator Sequencing Data version 0.9.2.1 
+ngsBriggs - inferring damage patterns and decontaminating ancient samples - 0.0.1 
 
 ~~~~bash
-Next Generation Simulator for Next Generator Sequencing Data version 0.9.2.1
-
 Usage
 ./ngsBriggs -bam -tab -ref -bed -len -chr -ibam -iref -ibed -ichr -obam -otab -oinf -olen -model -eps -isrecal -olik -nthreads
 	-> -bam: The bam file for inference;
