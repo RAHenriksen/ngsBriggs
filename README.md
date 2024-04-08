@@ -49,6 +49,7 @@ Usage
 Example
 
 Inference of Briggs parameters
+./ngsbriggs -bam Chr22_024_36_68_0097.sorted.MD.bam -ref chr22.fa -model nb
 
 Inference of Briggs parameters with epsilon
 ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.bam -ref chr22.fa -eps 0.1 -model nb
