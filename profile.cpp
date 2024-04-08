@@ -58,11 +58,6 @@ void wrapper(const bam1_t *b,const char * reconstructedReference,const std::vect
     }
 }
 
-int usage(FILE *fp,int val){
-  fprintf(stderr,"./metadamage pmd [options]\n");
-  return 0;
-}
-
 float **getmatrix(size_t x,size_t y){
   float **ret = new float*[x];
   for(int i=0;i<x;i++){

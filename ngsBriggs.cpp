@@ -193,11 +193,11 @@ int main(int argc, char **argv){
     
     fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
     fprintf(stderr,"Dir.\tPos.\tFreqCT\tFreqGA\n");
-    for (int i=0; i<MAXLENGTH;i++){
+    for (int i=0; i<5;i++){
         fprintf(stderr,"5'\t%d\t",i+1);
         fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
     }
-    for (int i=0; i<MAXLENGTH;i++){
+    for (int i=0; i<5;i++){
         fprintf(stderr,"3'\t%d\t",i+1);
         fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
     }

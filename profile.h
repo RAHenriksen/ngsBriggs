@@ -67,7 +67,6 @@ typedef struct{
 }mydata2;
 
 void wrapper(const bam1_t *b,const char * reconstructedReference,const std::vector<int> &  reconstructedReferencePos,const int & minQualBase, int MAXLENGTH,float **mm5p,float **mm3p,float incval,char myread[512],char myref[512]);
-int usage(FILE *fp,int val);
 std::map<int, mydataD> load_bdamage_full(const char* fname,int &printlength);
 std::map<int, mydata2> load_lcastat(const char* fname);
 void  reconstructRefWithPosHTS(const bam1_t   * b,std::pair< kstring_t *, std::vector<int> > &pp,char *reconstructedTemp);

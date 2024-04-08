@@ -9,13 +9,13 @@ git clone https://github.com/RAHenriksen/ngsBriggs.git
 
 git clone https://github.com/samtools/htslib.git
 
-cd htslib; make; cd ../NGSNGS; make HTSSRC=../htslib
+cd htslib; make; cd ../ngsBriggs; make HTSSRC=../htslib
 
 * Use systemwide installation of htslib
 
 git clone https://github.com/RAHenriksen/ngsBriggs.git
 
-cd NGSNGS; make
+cd ngsBriggs; make
 
 **NOTE:** Newer version of htslib which includes bam_set1 is required
 
@@ -47,6 +47,13 @@ Usage
 	-> -nthreads: Choose the number of threads to speed up the recalibration process.
 
 Example
-./ngsbriggs -bam /projects/korneliussen/people/wql443/NGSNGS/HgSimTest1.bam -ref /projects/korneliussen/people/wql443/NGSNGS/Test_Examples/Mycobacterium_leprae.fa.gz -model b
+
+Inference of Briggs parameters
+
+Inference of Briggs parameters with epsilon
+./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.bam -ref chr22.fa -eps 0.1 -model nb
+
+Decontamination with epsilon
+./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam -isrecal 1 -ibed chr22.bed -chr chr22 -nthread 1
 
 ~~~~
