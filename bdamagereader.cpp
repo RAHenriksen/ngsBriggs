@@ -79,26 +79,15 @@ std::map<int, mydataD> load_bdamage_fulltmp(const char* fname, int& printlength)
 
 void parse_bdamage_Data(mydataD &md,double **dat,int howmany) {
     
-    /*for(int i=0;i<howmany;i++){
-        dat[0][i+2] =i;//plug in position
-        std::cout << " za  f " <<dat[0][i+2] << std::endl;
-    }*/
     for (int i = 0; i < 15; i++) {
         // Populate dat with counts for forward direction
         for (int j = 0; j < 16; j++) {
             dat[i][j] = md.fwD[i *  16 + j]; // Assuming dat contains counts for each nucleotide
-            //fprintf(stderr,"fwd position i %d and j %d and value %f\n",i,j,dat[i][j + 2]);
         }
-        //std::cout << " lol "<< md.fwD[0+i] << std::endl;
 
         // Populate dat with counts for backward direction
         for (int j = 0; j < 16; j++) {
             dat[i+15][j] = md.bwD[i * 16 + j]; // Assuming dat contains counts for each nucleotide
-            //std::cout << md.bwD[i * 16 + j] << std::endl;
-            /*std::cout << " lol 1 "<< md.bwD[i * howmany + j] << std::endl;
-            std::cout << " lol 2 "<< md.bwD[1 * howmany + j] << std::endl;
-            std::cout << " lol 3 "<< md.bwD[2 * howmany + j] << std::endl;*/
-            //fprintf(stderr,"fwd position i %d \t value %f \t bwd position i %d \t value %f for column j %d \n",i,dat[i][j + 2],i,dat[i][howmany+j + 2],j);
         }
     }
 }
@@ -159,8 +148,6 @@ int main(){
         }  
 
         parse_bdamage_Data(md, Table, howmany);
-
-        //fprintf(stderr,"outside parse_bdamage_Data\n");
         
         for (int i=0; i<MAXLENGTH; i++){
             for (int j=0; j<MAXLENGTH;j++){
@@ -170,8 +157,7 @@ int main(){
         }
         
         
-        //fprintf(stderr,"after mm5p outside parse_bdamage_Data\n");
-        
+       
         //freqCT, freqGA, scaleCT, scaleGA
         double max5=0;
         double max3=0;
@@ -192,11 +178,6 @@ int main(){
             
             max5 = std::max(max5,std::max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
             max3 = std::max(max3,std::max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
-            //std::cout << freqGA[i] << std::endl;
-            //fprintf(stderr,"position %d \t C>T %f \t %f \n",i,freqCT[i],freqGA[i]);
-
-            //for (int j=7; j<8;j++){fprintf(stderr,"position %d and column %d with C>T value %f \n",i,j,mm5p[i][j]/(mm5p[i][4]+mm5p[i][5]+mm5p[i][6]+mm5p[i][7]));}
-            //for (int j=7; j<8;j++){fprintf(stderr,"position %d and column %d with C>T value %f \n",i,j,mm3p[i][j]/(mm3p[i][4]+mm3p[i][5]+mm3p[i][6]+mm3p[i][7]));}
 
             // Overall sequencing errors are position specific, estimated by 1 - [N(AA)+N(TT)]/[N(AA)+N(AC)+N(AG)+N(AT)+N(TA)+N(TC)+N(TG)+N(TT)]
             seqError[i] = 1 - (mm5p[i][0]+mm5p[i][15])/(mm5p[i][0]+mm5p[i][1]+mm5p[i][2]+mm5p[i][3]+mm5p[i][12]+mm5p[i][13]+mm5p[i][14]+mm5p[i][15]);
@@ -208,7 +189,6 @@ int main(){
             scaleGA[i] = scaleGA[i]/maxall;
             scaleCT[2*MAXLENGTH-1-i] = scaleCT[2*MAXLENGTH-1-i]/maxall;
             scaleGA[2*MAXLENGTH-1-i] = scaleGA[2*MAXLENGTH-1-i]/maxall;
-            //cout<<scaleCT[i]<<" "<<scaleGA[i]<<"\n";
         }
 
         fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
@@ -222,51 +202,6 @@ int main(){
             fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
         }
     }
-
-    // TEST FOR NGSBRIGGS 
-    /*double max5=0;
-    double max3=0;
-    double maxall=0;
-    for (int i=0; i<MAXLENGTH;i++){
-        scaleGA[i] = mm3p[i][8]+mm3p[i][9]+mm3p[i][10]+mm3p[i][11];
-        // scaleGA[2*MAXLENGTH-1-i] = mm5p[i][8]+mm5p[i][10];
-        scaleGA[2*MAXLENGTH-1-i] = mm5p[i][8]+mm5p[i][9]+mm5p[i][10]+mm5p[i][11];
-        
-        // Overall sequencing errors are position specific, estimated by 1 - [N(AA)+N(TT)]/[N(AA)+N(AC)+N(AG)+N(AT)+N(TA)+N(TC)+N(TG)+N(TT)]
-        seqError[i] = 1 - (mm5p[i][0]+mm5p[i][15])/(mm5p[i][0]+mm5p[i][1]+mm5p[i][2]+mm5p[i][3]+mm5p[i][12]+mm5p[i][13]+mm5p[i][14]+mm5p[i][15]);
-        seqError[2*MAXLENGTH-1-i] = 1 - (mm3p[i][0]+mm3p[i][15])/(mm3p[i][0]+mm3p[i][1]+mm3p[i][2]+mm3p[i][3]+mm3p[i][12]+mm3p[i][13]+mm3p[i][14]+mm3p[i][15]);
-        //cout << "Error "<<seqError[i]<<" "<<seqError[2*MAXLENGTH-1-i]<<"\n";
-        freqCT[i] = mm5p[i][7]/scaleCT[i];
-        freqCT[2*MAXLENGTH-1-i] = mm3p[i][7]/scaleCT[2*MAXLENGTH-1-i];
-        freqGA[i] = mm3p[i][8]/scaleGA[i];
-        freqGA[2*MAXLENGTH-1-i] = mm5p[i][8]/scaleGA[2*MAXLENGTH-1-i];
-        max5 = std::max(max5,std::max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
-        max3 = std::max(max3,std::max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
-    }
-    maxall = std::max(max5,max3);
-    //    cout<<"max5 is "<<max5<<", max3 is "<<max3<<".\n";
-    for (int i=0; i<MAXLENGTH;i++){
-        scaleCT[i] = scaleCT[i]/maxall;
-        scaleGA[i] = scaleGA[i]/maxall;
-        scaleCT[2*MAXLENGTH-1-i] = scaleCT[2*MAXLENGTH-1-i]/maxall;
-        scaleGA[2*MAXLENGTH-1-i] = scaleGA[2*MAXLENGTH-1-i]/maxall;
-        //cout<<scaleCT[i]<<" "<<scaleGA[i]<<"\n";
-    }
-    
-    
-    fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
-    fprintf(stderr,"Dir.\tPos.\tFreqCT\tFreqGA\n");
-    for (int i=0; i<5;i++){
-        fprintf(stderr,"5'\t%d\t",i+1);
-        fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
-    }
-    for (int i=0; i<5;i++){
-        fprintf(stderr,"3'\t%d\t",i+1);
-        fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
-    }
-
-    //std::cout << mydataD.fwD[i*16+r*4+o] << std::endl;
-    */
 
     return 0;
 }
