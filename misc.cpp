@@ -170,6 +170,7 @@ void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, c
         while(gzgets(gz,buf,STRLENS)){
             Length[n] = atoi(strtok(buf,"\n\t "));
             Freq[n] = atof(strtok(NULL,"\n\t "));
+            std::cout << "length "<< Length[n] << " FASERQ " << Freq[n] << std::endl;
             if(Length[n] < len_limit){
                 m = n;
                 Sumf += Freq[n];

@@ -16,10 +16,11 @@
 #include <cstring>
 #include <zlib.h>
 #include <iostream>
-
+#include <vector>
 #define MAX_LENGTH 1000 // Define the maximum length as required
 #define NUM_COLUMNS 16  // Define the number of columns to parse
 #define STR_LENS 1024    // Define the maximum length of a line in the file
+
 
 struct mydataD {
     double* fwD;
@@ -92,9 +93,109 @@ void parse_bdamage_Data(mydataD &md,double **dat,int howmany) {
     }
 }
 
+
+
+void removeZeroCounts(int*& rlen, double*& count, int& rlen_length, int& count_length) {
+    // Create vectors to store non-zero values temporarily
+    std::vector<int> temp_rlen;
+    std::vector<double> temp_count;
+
+    // Iterate through the arrays and copy non-zero values to temporary vectors
+    for (int i = 0; i < count_length; ++i) {
+        if (count[i] != 0) {
+            temp_rlen.push_back(rlen[i]);
+            temp_count.push_back(count[i]);
+        }
+    }
+
+    // Update rlen and count arrays and their lengths
+    rlen_length = temp_rlen.size();
+    count_length = temp_count.size();
+
+    // Delete the memory allocated for the original arrays
+    delete[] rlen;
+    delete[] count;
+
+    // Resize the vectors to the desired size
+    temp_rlen.resize(rlen_length);
+    temp_count.resize(count_length);
+
+    // Assign the vectors to rlen and count
+    rlen = &temp_rlen[0];
+    count = &temp_count[0];
+}
+
+void FragArrayReaderRlen(int*& rlen, double*& count, int &no_val,const char* filename) {
+    int STRLENS = 4096;
+
+
+    char line[STRLENS];
+    char *token;
+    int line_number = 0; // Line number counter
+    int rlen_length = 0;
+    int count_length = 0;
+    int n = 0;
+    int m = 0;
+    
+    gzFile file = gzopen(filename, "rb"); // Replace "your_file_name.txt.gz" with your actual gzipped file name
+    
+    // Read each line from the file
+    while (gzgets(file, line, STRLENS) != NULL) {
+        //fprintf(stderr,"Line %d:\n", line_number);
+
+        // Tokenize the line using tab as delimiter
+        token = strtok(line, "\t");
+
+        // Skip the first token (id column)
+        token = strtok(NULL, "\t");
+
+        // Print each subsequent token (column) in the line
+        while (token != NULL) {
+            if (line_number == 0){
+                // Check if the line length is greater than 4 characters
+                if (strlen(token) > 4) {
+                    // Copy the line content starting from the 5th character
+                    memmove(token, token + 4, strlen(token) - 4 + 1);
+                    rlen[n] = atoi(token);
+                    //fprintf(stderr,"test %d \n",atoi(token));
+                    n++;
+                }
+            }
+            else if (line_number == 1) {
+                count[m] = atof(token);
+                m++;
+            }
+
+            //printf("%s\n", token);
+            token = strtok(NULL, "\t");
+        }
+        line_number++; // Increment line number
+
+    }
+
+    removeZeroCounts(rlen, count, n, m);
+
+    no_val = n;
+
+    gzclose(file);
+}
+
+// Can deal with both counts and freqs.
+
+
 #ifdef __WITH_MAIN__
 //g++ bdamagereader.cpp ../htslib/libhts.a -std=c++11 -lz -lm -lbz2 -llzma -lpthread -lcurl -lcrypto -ggdb -D__WITH_MAIN__
 int main(){
+    int* rlen_length = new int[4096];
+    double* rlen_count = new double[4096];
+    int no_values = 0;
+    FragArrayReaderRlen(rlen_length,rlen_count,no_values,"Chr22_024_36_68_0097.rlens.gz");
+
+    for (int i = 0; i < no_values; i++) {
+        fprintf(stderr,"Length %d \t and count %f \n",rlen_length[i],rlen_count[i]);
+    }
+    
+    exit(1);
     int howmany = 16;
     int MAXLENGTH = 15;
     double** mm5p, **mm3p;
