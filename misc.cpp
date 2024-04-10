@@ -206,9 +206,9 @@ int tabreader(char *tabname){
     time_t t2=time(NULL);
     
     if(tabname){
-        fprintf(stderr,"The tab file %s has been inputted successfully\n",tabname);
         //parse_tabledata(tabname, Table);
         parse_tabledata(tabname,Table);
+        fprintf(stderr,"The tab file %s has been inputted successfully \t %d\n",tabname,MAXLENGTH);
     }
     
     for (int i=0; i<MAXLENGTH; i++){
@@ -239,6 +239,7 @@ void parse_tabledata(const char* filename,double** Table){
         //Length[n] = atoi(strtok(buf,"\n\t "));
         strtok(buf,"\t\n ");
         strtok(NULL,"\t\n ");
+        std::cout << buf << std::endl;
         for (int j=0;j<16;j++){
             Table[i][j+2]=atof(strtok(NULL,"\t\n "));
         }

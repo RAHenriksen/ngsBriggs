@@ -148,8 +148,8 @@ int main(int argc, char **argv){
         bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min);
         //cout<<"Minimum length is "<<len_min<<"\n";
     }else if(tabname != NULL && lenname != NULL){
-        fprintf(stderr,"Loading the table file...\n");
         tabreader(tabname);
+        fprintf(stderr,"Loading the table file with MAXLENGTH %d\n",MAXLENGTH);
     }else{
         fprintf(stdout,"Please provide a fragment length distribution file, if table file is provided!\n");
         return 0;
