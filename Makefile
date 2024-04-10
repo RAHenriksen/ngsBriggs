@@ -1,7 +1,7 @@
 CC  ?= gcc
 CXX ?= g++
 
-LIBS = -lz -lm -lbz2 -llzma -lpthread -lcurl -lgsl -lgslcblas
+LIBS = -lz -lm -lbz2 -llzma -lpthread -lcurl 
 
 CRYPTO_TRY=$(shell echo 'int main(){}'|$(CXX) -x c++ - -lcrypto 2>/dev/null -o /dev/null; echo $$?)
 ifeq "$(CRYPTO_TRY)" "0"
@@ -85,7 +85,7 @@ PROGRAMS = ngsbriggs
 
 all: $(PROGRAMS) misc
 
-PACKAGE_VERSION  = 0.4
+PACKAGE_VERSION  = 0.01
 
 ifneq "$(wildcard .git)" ""
 PACKAGE_VERSION := $(shell git describe --always --dirty)
@@ -93,7 +93,7 @@ version.h: $(if $(wildcard version.h),$(if $(findstring "$(PACKAGE_VERSION)",$(s
 endif
 
 version.h:
-	echo '#define METADAMAGE_VERSION "$(PACKAGE_VERSION)"' > $@
+	echo '#define NGSBRIGS_VERSION "$(PACKAGE_VERSION)"' > $@
 
 .PHONY: all clean install install-all install-misc misc test
 

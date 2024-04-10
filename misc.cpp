@@ -10,8 +10,6 @@
 #include <zlib.h>
 #include <cmath>
 #include <iomanip>
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Eigenvalues>
 #include <ctime>
 #include <getopt.h>
 #include <iostream>

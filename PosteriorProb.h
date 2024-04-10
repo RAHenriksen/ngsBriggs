@@ -12,8 +12,7 @@
 #include <zlib.h>
 #include <cmath>
 #include <iomanip>
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Eigenvalues>
+
 #include <ctime>
 
 double NoPMDGivenAnc_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv);

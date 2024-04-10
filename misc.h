@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <cmath>
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Eigenvalues>
 #include <string>
 #include <sstream>
 #include <fstream>
