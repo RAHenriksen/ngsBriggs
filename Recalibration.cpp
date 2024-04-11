@@ -264,10 +264,10 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
                     fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                     return -1;
                 }
-                double y_max1 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
-                double y_min1 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
-                double y_max2 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
-                double y_min2 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+                double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+                double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+                double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+                double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
                 ll += log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
                 //double PostAncProb = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps);
                 //double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model);
@@ -390,10 +390,10 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                 return -1;
             }
-            double y_max1 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
-            double y_min1 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
-            double y_max2 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
-            double y_min2 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+            double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+            double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+            double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+            double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
      //cout<<"liklik "<<bam_get_qname(b)<<" "<<l_anc<<" "<<l_err<<" "<<eps<<" "<<NormalINC(y_max1, y_min1, x_max1, x_min1)<<" "<<NormalINC(y_max2, y_min2, x_max2, x_min2)<<" "<<l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps<<" "<<log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps)<<"\n";
 	     ll += log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
             //    fprintf(stderr,"ll\t[%d]\t[%d]\t%f\tyourread:%s\tyourref:%s\n",threadid,i,ll,yourread,yourrefe);
@@ -431,7 +431,7 @@ void *tsk_All_loglike_recalibration_slave(void *dats){
     pthread_exit(NULL);
 }
 
-void loglike_recalibration_grad(const double *x, double *y, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, string s){
+void loglike_recalibration_grad(const double *x, double *y, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, std::string s){
     //fprintf(stderr,"mapped_only: %d\n",mapped_only);
     htsFormat *dingding7 =(htsFormat*) calloc(1,sizeof(htsFormat));
     double anc_mu = x[0];
@@ -490,7 +490,7 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
         kstr1->s = NULL;
         kstr1->l = kstr1->m = 0;
         int line=0;
-        string word0, word;
+	std::string word0, word;
         bgzf_getline(fp,'\n',kstr1);
         for (int j=0; j<chrom_num; j++){
             chrom_line[j] = line;
@@ -666,12 +666,10 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
                     fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                     exit;
                 }
-                double y_max1 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
-                double y_min1 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
-                double y_max2 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
-                double y_min2 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
-                
-                
+                double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+                double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+                double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+                double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
                 //ll += log(l_anc*normalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*normalINC(y_max2, y_min2, x_max2, x_min2)*eps);
                 y[0] -= l_anc*(1-eps)*NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
                 y[1] -= l_anc*(1-eps)*NormalINC_grad_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
@@ -794,10 +792,10 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                 exit;
             }
-            double y_max1 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
-            double y_min1 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
-            double y_max2 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
-            double y_min2 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+            double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+            double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+            double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+            double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
             
             //cout<<"nuc_lliktest y_max1 "<<y_max1<<" y_min1 "<<y_min1<<" "<<NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)<<"\n";
             //ll += log(l_anc*normalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*normalINC(y_max2, y_min2, x_max2, x_min2)*eps)
@@ -929,10 +927,10 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                 exit;
             }
-            double y_max1 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
-            double y_min1 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
-            double y_max2 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
-            double y_min2 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+            double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+            double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+            double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+            double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
             
             double denom = l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps;
             y[0][0] += l_anc*(1-eps)*NormalINC_hess_mu2(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/denom - pow(l_anc*(1-eps)*NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/denom,2);

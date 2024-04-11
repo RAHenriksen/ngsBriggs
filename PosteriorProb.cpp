@@ -892,6 +892,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
 
 bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, const char* bedname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, string s)
 {
+  char nuc[6] = "ACGTN";
     fprintf(stderr,"print msg mapped_only: %d\n",mapped_only);
     htsFormat *dingding5 =(htsFormat*) calloc(1,sizeof(htsFormat));
     htsFormat *dingding6 =(htsFormat*) calloc(1,sizeof(htsFormat));

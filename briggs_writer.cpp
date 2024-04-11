@@ -35,7 +35,7 @@ void realloc_queue(queue_t *q){
   //  fprintf(stderr,"reallcing from: q:%d to q:%d\n",q->m,2*q->m);
 
   for(int i=0;0&&i<q->l;i++)
-    fprintf(stderr,"inqueu[%d].pos:%d\n",i,q->d[i]->core.pos);
+    fprintf(stderr,"inqueu[%d].pos:%zu\n",i,q->d[i]->core.pos);
 
   bam1_t **d2 = (bam1_t **) malloc(2*q->m*sizeof(bam1_t*));
 
@@ -51,7 +51,7 @@ void realloc_queue(queue_t *q){
   q->m=2*q->m;
   
   for(int i=0;0&&i<q->m;i++)
-    fprintf(stderr,"onqueu[%d].pos:%d\n",i,q->d[i]->core.pos);
+    fprintf(stderr,"onqueu[%d].pos:%zu\n",i,q->d[i]->core.pos);
   
 }
 

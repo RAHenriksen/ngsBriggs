@@ -2,27 +2,30 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <cmath>
+#include <ctime>
+#include <iostream>
+#include <zlib.h>
+#include <array>
+#include <algorithm>
+
 #include <htslib/hts.h>
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
 #include <htslib/faidx.h>
 #include <htslib/faidx.h>
-#include <zlib.h>
-#include <cmath>
-#include <iomanip>
-#include <ctime>
-#include <getopt.h>
-#include <iostream>
+#include <htslib/bgzf.h>
+
 #include "profile.h"
 #include "bfgs.h"
-#include "htslib/bgzf.h"
+
 #include "briggs_writer.h"
 #include "read_all_reads.h"
-#include <array>
+
 
 #include "misc.h"
 #include "ngsBriggs.h"
-#define PI acos(-1)
+#define PI M_PI
 
 
 double NormalCDF(double x) // Phi(-∞, x) aka N(x)
@@ -168,7 +171,7 @@ void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, c
         while(gzgets(gz,buf,STRLENS)){
             Length[n] = atoi(strtok(buf,"\n\t "));
             Freq[n] = atof(strtok(NULL,"\n\t "));
-            //std::cout << "length "<< Length[n] << " FASERQ " << Freq[n] << std::endl;
+            //std::std::cout << "length "<< Length[n] << " FASERQ " << Freq[n] << std::endl;
             if(Length[n] < len_limit){
                 m = n;
                 Sumf += Freq[n];
@@ -191,6 +194,30 @@ void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, c
     for(int i=0;i<number;i++){
         Freq[i] = Freq[i]/Sumf;
     }
+}
+void parse_tabledata(const char* filename,double** Table){
+    //int numpos = MAXLENGTH*2;
+    //int numcolumn = 16 + 4;
+    int i = 0;
+    //double Sumf = 0;
+    gzFile gz = Z_NULL;
+    char buf[STRLENS];
+    
+    gz = gzopen(filename, "r");
+    assert(gz!=Z_NULL);
+    while(gzgets(gz,buf,STRLENS)){
+        //Length[n] = atoi(strtok(buf,"\n\t "));
+        strtok(buf,"\t\n ");
+        strtok(NULL,"\t\n ");
+        for (int j=0;j<16;j++){
+            Table[i][j+2]=atof(strtok(NULL,"\t\n "));
+        }
+        i++;
+        //        Sumf += Freq[n];
+        //        n++;
+    }
+
+    gzclose(gz);
 }
 
 int tabreader(char *tabname){
@@ -223,72 +250,6 @@ int tabreader(char *tabname){
     return 0;
 }
 
-
-void parse_tabledata(const char* filename,double** Table){
-    //int numpos = MAXLENGTH*2;
-    //int numcolumn = 16 + 4;
-    int i = 0;
-    //double Sumf = 0;
-    gzFile gz = Z_NULL;
-    char buf[STRLENS];
-    
-    gz = gzopen(filename, "r");
-    assert(gz!=Z_NULL);
-    while(gzgets(gz,buf,STRLENS)){
-        //Length[n] = atoi(strtok(buf,"\n\t "));
-        strtok(buf,"\t\n ");
-        strtok(NULL,"\t\n ");
-        for (int j=0;j<16;j++){
-            Table[i][j+2]=atof(strtok(NULL,"\t\n "));
-        }
-        i++;
-        //        Sumf += Freq[n];
-        //        n++;
-    }
-
-    gzclose(gz);
-}
-
-
-// If possible, rewrite this part
-void parse_tabledata2(const char* filename,double** Table){
-    cout<<"Hello!\n";
-    ifstream infile;
-    infile.open(filename);
-    string line;
-    if(infile.is_open()){
-        getline(infile, line);
-        istringstream iss(line);
-        string word;
-        int i = 0;
-        int row = 0;
-        double tab;
-        while(getline(infile, line)){
-            int col = 0;
-            istringstream iss1(line);
-            // cout << iss1 << "\n";
-            while (getline(iss1,word,'\t')){
-                int n = word.size();
-                if (n>0){
-                    if (word[n-1]!='\''){
-                        stringstream ss2(word);
-                        ss2 >> tab;
-                        cout<< row <<" " << col<<" " << tab << "\n";
-                        Table[row][col] = (double) tab;
-                    }else{
-                        stringstream ss3(word.substr(0,n-1));
-                        ss3 >> tab;
-                        cout <<row <<" " << col<<" " << tab << "\n";
-                        Table[row][col] = (double) tab;
-                    }
-                    col = col + 1;
-                }
-            }
-            row = row + 1;
-        }
-    }
-    infile.close();
-}
 
 int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min){
     char *refName = NULL;
@@ -331,16 +292,16 @@ void wrapperwithref(const bam1_t   * b,const bam_hdr_t  *hdr, char myread[512], 
     int32_t   n_cigar_op = b->core.n_cigar;
     uint32_t *cigar      = bam_get_cigar(b);
     
-    //cout<<"Hello "<<n_cigar_op<<"\n";
+    //std::cout<<"Hello "<<n_cigar_op<<"\n";
     int at =0;
     for(int32_t i = 0; i < n_cigar_op; i++){
         char opchr = bam_cigar_opchr(cigar[i]);
         int32_t oplen = bam_cigar_oplen(cigar[i]);
-        //cout<<opchr<<" "<< oplen <<"\n";
+        //std::cout<<opchr<<" "<< oplen <<"\n";
         memset(reconstructedTemp+at,opchr,oplen);
         at += oplen;
     }
-    //cout<<"\n";
+    //std::cout<<"\n";
     int initialPositionControl=b->core.pos;
     
     for (unsigned int k=0;k<(int)b->core.l_qseq;k++){
@@ -391,15 +352,15 @@ void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int l
         for(int L=30; L<len_limit; L++){
             //double f = freqLEN[i];
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=std::min(MAXORDER,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
                     if (l+r<=MAXORDER){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -408,15 +369,15 @@ void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int l
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=std::min(MAXORDER,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
                     if (l+r<=MAXORDER){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -454,15 +415,15 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
         //double freqGA2 = 0;
         for(int L=30; L<len_limit; L++){
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=std::min(MAXORDER,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
                     if (l+r<=MAXORDER){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -471,15 +432,15 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=std::min(MAXORDER,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
                     if (l+r<=MAXORDER){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -579,13 +540,13 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
         kstr1->s = NULL;
         kstr1->l = kstr1->m = 0;
         int line=0;
-        string word0, word;
+	std::string word0, word;
         bgzf_getline(fp,'\n',kstr1);
         for (int j=0; j<chrom_num; j++){
             chrom_line[j] = line;
             do{
                 //while(bgzf_getline(fp,'\n',kstr1)>0){
-                istringstream iss(kstr1->s);
+	      std::istringstream iss(kstr1->s);
                 //string word0, word;
                 getline(iss,word0,'\t');
                 size_t num;
@@ -606,7 +567,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
                         }
                     }
                 }
-                //cout << "\n";
+                //std::cout << "\n";
             }while (strcmp(word0.c_str(),hdr->target_name[j])==0 && bgzf_getline(fp,'\n',kstr1)>0);
         }
     }
@@ -715,9 +676,9 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
             wrapper(b,mypair.first->s,mypair.second,0,0,NULL,NULL,1,myread,myrefe);
         }
         //      for(int i=0;i<b->core.l_qseq;i++){
-        //          cout<<myread[i];
+        //          std::cout<<myread[i];
         //      }
-        //      cout<<"\n";
+        //      std::cout<<"\n";
         int temp = 0;
         if (len_limit <=0){
             len_limit = 512;
@@ -734,18 +695,18 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
                 refeBase = refToChar[myrefe[cycle]];
                 readBase = refToChar[myread[cycle]];
                 size_t pos = b->core.pos+cycle;
-                //cout << max_site << "\n";
+                //std::cout << max_site << "\n";
                 //if (pos<max_site){
-                //   cout<<pos<<" "<<max_site<<"\n";
+                //   std::cout<<pos<<" "<<max_site<<"\n";
                 //}
                 
                 // If the bedfile is provided, and the focal position is within the bedfile
                 if(refeBase!=4 && readBase!=4 && bedname!=NULL &&  pos < max_site && indref[pos]==1){
                     int dist5p=cycle;
                     int dist3p=b->core.l_qseq-1-cycle;
-                    //cout<<"flag "<<b->core.flag<<"\n";
+                    //std::cout<<"flag "<<b->core.flag<<"\n";
                     if( bam_is_rev(b) ){
-                        // cout<<"rev "<<"\t";
+                        // std::cout<<"rev "<<"\t";
                         refeBase=com[refeBase];
                         readBase=com[readBase];
                         //dist5p=int(al.QueryBases.size())-1-i;
@@ -762,7 +723,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
                     int dist5p=cycle;
                     int dist3p=b->core.l_qseq-1-cycle;
                     if( bam_is_rev(b) ){
-                        // cout<<"rev "<<"\t";
+                        // std::cout<<"rev "<<"\t";
                         refeBase=com[refeBase];
                         readBase=com[readBase];
                         //dist5p=int(al.QueryBases.size())-1-i;
@@ -810,7 +771,8 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
 
 //STOP HERE
 void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam1_t *b, double PostProb){
-    // cout<<"Post Prob is "<<PostProb<<"\n";
+    // std::cout<<"Post Prob is "<<PostProb<<"\n";
+  char nuc[6] = "ACGTN";
     double v0,v1,v2,v3;
     for (int cycle=0;cycle<b->core.l_qseq;cycle++){
 	v0 = 0.25;
@@ -818,9 +780,9 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
 	v2 = 0.25;
 	v3 = 0.25;
         if (cycle<15){
-            ksprintf(kstr,"%s\t%s\t%lld\t%c\t%f\t",bam_get_qname(b),chromname,b->core.pos,nuc[(int)refToChar[myread[cycle]]],PostProb);
+            ksprintf(kstr,"%s\t%s\t%zu\t%c\t%f\t",bam_get_qname(b),chromname,b->core.pos,nuc[(int)refToChar[myread[cycle]]],PostProb);
             //ksprintf(kstr,"%s\t%f\t%s",bam_get_qname(b),PostProb,nuc[(int)refToChar[myread[cycle]]]);
-            //cout << bam_get_qname(b) << "\t" << PostProb << "\t" << nuc[(int)refToChar[myread[cycle]]];
+            //std::cout << bam_get_qname(b) << "\t" << PostProb << "\t" << nuc[(int)refToChar[myread[cycle]]];
             if ( bam_is_rev(b) ){
                 if (com[refToChar[myread[cycle]]]==0){
                     v3 = 1-PhredError[bam_get_qual(b)[cycle]];
@@ -843,7 +805,7 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                     v1 = PhredErrorAThird[bam_get_qual(b)[0]];
                     v0 = 1-PhredError[bam_get_qual(b)[0]];
                 }
-                ksprintf(kstr,"%d\t%d\t%lld\t%f\t%f\t%f\t%f\n",16,cycle,b->core.pos+cycle,v0,v1,v2,v3);
+                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",16,cycle,b->core.pos+cycle,v0,v1,v2,v3);
                 nuclist nuc_llik;
                 nuc_llik.pos = b->core.pos+cycle;
                 nuc_llik.chrid = chrid;
@@ -853,8 +815,8 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                 nuc_llik.nuclik[2] = log(v2);
                 nuc_llik.nuclik[3] = log(v3);
                 comp_nuc_llik.push_back(nuc_llik);
-                //cout<<"\t"<<16<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
-                //cout<<"\n";
+                //std::cout<<"\t"<<16<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
+                //std::cout<<"\n";
             }else{
                 if (refToChar[myread[cycle]]==0){
                     v0 = 1-PhredError[bam_get_qual(b)[cycle]];
@@ -877,7 +839,7 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                     v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
                     v3 = 1-PhredError[bam_get_qual(b)[cycle]];
                 }
-                ksprintf(kstr,"%d\t%d\t%lld\t%f\t%f\t%f\t%f\n",0,cycle,b->core.pos+cycle,v0,v1,v2,v3);
+                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",0,cycle,b->core.pos+cycle,v0,v1,v2,v3);
                 nuclist nuc_llik;
                 nuc_llik.pos = b->core.pos+cycle;
                 nuc_llik.chrid = chrid;
@@ -887,11 +849,11 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                 nuc_llik.nuclik[2] = log(v2);
                 nuc_llik.nuclik[3] = log(v3);
                 comp_nuc_llik.push_back(nuc_llik);
-                //cout<<"\t"<<0<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
+                //std::cout<<"\t"<<0<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
             }
         }else if (cycle>=b->core.l_qseq-15){
-            //cout << bam_get_qname(b) << "\t" << PostProb << "\t" << nuc[(int)refToChar[myread[cycle]]];
-            ksprintf(kstr,"%s\t%s\t%lld\t%c\t%f\t",bam_get_qname(b),chromname,b->core.pos,nuc[(int)refToChar[myread[cycle]]],PostProb);
+            //std::cout << bam_get_qname(b) << "\t" << PostProb << "\t" << nuc[(int)refToChar[myread[cycle]]];
+            ksprintf(kstr,"%s\t%s\t%zu\t%c\t%f\t",bam_get_qname(b),chromname,b->core.pos,nuc[(int)refToChar[myread[cycle]]],PostProb);
             if ( bam_is_rev(b) ){
                 if (com[refToChar[myread[cycle]]]==0){
                     v3 = 1-PhredError[bam_get_qual(b)[cycle]];
@@ -914,7 +876,7 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                     v1 = PhredErrorAThird[bam_get_qual(b)[0]];
                     v0 = 1-PhredError[bam_get_qual(b)[0]];
                 }
-                ksprintf(kstr,"%d\t%d\t%lld\t%f\t%f\t%f\t%f\n",16,cycle,b->core.pos+cycle,v0,v1,v2,v3);
+                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",16,cycle,b->core.pos+cycle,v0,v1,v2,v3);
                 nuclist nuc_llik;
                 nuc_llik.pos = b->core.pos+cycle;
                 nuc_llik.chrid = chrid;
@@ -924,8 +886,8 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                 nuc_llik.nuclik[2] = log(v2);
                 nuc_llik.nuclik[3] = log(v3);
                 comp_nuc_llik.push_back(nuc_llik);
-                //cout<<"\t"<<16<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
-                //cout<<"\n";
+                //std::cout<<"\t"<<16<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
+                //std::cout<<"\n";
             }else{
                 if (refToChar[myread[cycle]]==0){
                     v0 = 1-PhredError[bam_get_qual(b)[cycle]];
@@ -948,7 +910,7 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                     v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
                     v3 = 1-PhredError[bam_get_qual(b)[cycle]];
                 }
-                ksprintf(kstr,"%d\t%d\t%lld\t%f\t%f\t%f\t%f\n",0,cycle,b->core.pos+cycle,v0,v1,v2,v3);
+                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",0,cycle,b->core.pos+cycle,v0,v1,v2,v3);
                 nuclist nuc_llik;
                 nuc_llik.pos = b->core.pos+cycle;
                 nuc_llik.chrid = chrid;
@@ -958,7 +920,7 @@ void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam
                 nuc_llik.nuclik[2] = log(v2);
                 nuc_llik.nuclik[3] = log(v3);
                 comp_nuc_llik.push_back(nuc_llik);
-                //cout<<nuc_llik.nuclik[0]<<"\n";
+                //std::cout<<nuc_llik.nuclik[0]<<"\n";
             }
         }
     }

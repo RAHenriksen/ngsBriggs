@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Eigenvalues> //sort and merge
+
+
 #include <ctime>
 #include <getopt.h>
 #include <iostream>
@@ -55,30 +57,6 @@ void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, d
         y[0] -= scaleCT[i]*(freqCT[i]*(-(i+1)*pow(1-lambda,i)/2*(delta_s-delta))/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*((i+1)*pow(1-lambda,i)/2*(delta_s-delta))/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*(-(i+1))/(1-lambda)+(1-freqGA[i])*((i+1)*pow(1-lambda,i)/2*delta_s)/(1-pow(1-lambda,i+1)/2*delta_s));
         y[1] -= scaleCT[i]*(freqCT[i]*(1-pow(1-lambda,i+1)/2)/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*(-1+pow(1-lambda,i+1)/2)/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)));
         y[2] -= scaleCT[i]*(freqCT[i]*(pow(1-lambda,i+1)/2)/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*(-pow(1-lambda,i+1)/2)/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*1/(delta_s)+(1-freqGA[i])*(-pow(1-lambda,i+1)/2)/(1-pow(1-lambda,i+1)/2*delta_s));
-    }
-}
-// There might be a scale parameters.
-void loglike_hessian(const double *x, double ** z, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA){
-    Eigen::Matrix3d A, B;
-    double lambda = x[0];
-    double delta = x[1];
-    double delta_s = x[2];
-    for(int i=0; i<MAXLENGTH; i++){
-        A(0,0) += scaleCT[i]*(freqCT[i]*(i*(i+1)*pow(1-lambda,i-1)/2*(delta_s-delta)*delta-(i+1)*pow(1-lambda,2*i)/4*pow(delta_s-delta,2))/pow(delta+pow(1-lambda,i+1)/2*(delta_s-delta),2)+(1-freqCT[i])*(-i*(i+1)*pow(1-lambda,i-1)/2*(delta_s-delta)*(1-delta)-(i+1)*pow(1-lambda,2*i)/4*pow(delta_s-delta,2))/pow(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta),2))+scaleGA[i]*(freqGA[i]*(i+1)/pow(1-lambda,2)+(1-freqGA[i])*(-i*(i+1)*pow(1-lambda,i-1)/2*delta_s-(i+1)*pow(1-lambda,2*i)/4*pow(delta_s,2))/pow(1-pow(1-lambda,i+1)/2*delta_s,2));
-        A(0,1) += scaleCT[i]*(freqCT[i]*((i+1)*pow(1-lambda,i)/2*delta_s)/pow(delta+pow(1-lambda,i+1)/2*(delta_s-delta),2)+(1-freqCT[i])*((i+1)*pow(1-lambda,i)/2*(delta_s-1))/pow(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta),2));
-        A(0,2) += scaleCT[i]*(freqCT[i]*(-(i+1)*pow(1-lambda,i)/2*delta)/pow(delta+pow(1-lambda,i+1)/2*(delta_s-delta),2)+(1-freqCT[i])*((i+1)*pow(1-lambda,i)/2*(1-delta))/pow(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta),2))+scaleGA[i]*((1-freqGA[i])*((i+1)*pow(1-lambda,i)/2)/pow(1-pow(1-lambda,i+1)/2*delta_s,2));
-        A(1,1) += scaleCT[i]*(-freqCT[i]*pow((1-pow(1-lambda,i+1)/2)/(delta+pow(1-lambda,i+1)/2*(delta_s-delta)),2)-(1-freqCT[i])*pow((-1+pow(1-lambda,i+1)/2)/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)),2));
-        A(1,2) += scaleCT[i]*(-freqCT[i]*pow(1-lambda,i+1)/2*(1-pow(1-lambda,i+1)/2)/pow(delta+pow(1-lambda,i+1)/2*(delta_s-delta),2)-(1-freqCT[i])*pow(1-lambda,i+1)/2*(1-pow(1-lambda,i+1)/2)/pow(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta),2));
-        A(2,2) += scaleCT[i]*(-freqCT[i]*(pow(1-lambda,2*i+2)/4)/pow(delta+pow(1-lambda,i+1)/2*(delta_s-delta),2)-(1-freqCT[i])*(pow(1-lambda,2*i+2)/4)/pow(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta),2))+scaleGA[i]*(-freqGA[i]*1/pow(delta_s,2)-(1-freqGA[i])*(pow(1-lambda,2*i+2)/4)/pow(1-pow(1-lambda,i+1)/2*delta_s,2));
-    }
-    A(1,0) = A(0,1);
-    A(2,0) = A(0,2);
-    A(2,1) = A(1,2);
-    B = -A.inverse();
-    for (int i=0;i<3;i++){
-        for (int j=0;j<3;j++){
-            z[i][j] = B(i,j);
-        }
     }
 }
 

@@ -4,11 +4,6 @@
 
 extern int VERBOSE;
 extern int SIG_COND;
-
-#define PI acos(-1)
-using namespace std;
-#include <vector>
-
 extern int tsk_nthreads;
 
 //int main(int argc,char **argv){}
@@ -76,7 +71,6 @@ extern double Tol; // Tolerance
 static char DUMMYCHAR='#';
 
 extern double l_check;
-extern char *nuc;
 
 // likelihood global
 extern double *freqCT, *freqGA, *scaleCT, *scaleGA, *seqError;
