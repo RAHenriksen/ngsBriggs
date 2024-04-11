@@ -29,6 +29,8 @@ typedef struct{
   int isrecal; // should we recalibrate the PD with the information of length as well as PMD model
   // I also want to add output the recalibrated genotype likelihood option.
   int nthread;
+  char *bdamage; // length distribution file, mass probability distribution, not the cdf
+  char *rlens; // length distribution file, mass probability distribution, not the cdf
 }argStruct;
 argStruct *pars_briggs(int argc,char ** argv);
 void argStruct_destroy(argStruct *mypars);

@@ -17,13 +17,15 @@
 #include "briggs_writer.h"
 #include "read_all_reads.h"
 #include <array>  //Rasmus
-
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Eigenvalues> //sort and merge
 #include "misc.h"
 #include "Recalibration.h"
 #include "Likelihood.h"
 #include "PosteriorProb.h"
 #include "ngsBriggs_cli.h"
 #include "ngsBriggs.h"
+#include "bdamagereader.h"
 
 // definining all global variables used across multiple scripts
 int VERBOSE = 1;
@@ -109,54 +111,73 @@ int main(int argc, char **argv){
     Contam_eps = mypars->eps; // Modern contamination rate \in [0,1)
     int len_limit = 150;
     
+    char* bdamage = mypars->bdamage;
+    char* rlens = mypars->rlens;
+
+
     faidx_t *seq_ref = NULL;
     seq_ref = fai_load(fastafile);
     fprintf(stderr,"\t-> fasta load \n");
     
-    mm5p = (double**) malloc(MAXLENGTH * sizeof(double*));
-    mm3p = (double**) malloc(MAXLENGTH * sizeof(double*));
-    for (int i = 0; i < MAXLENGTH-1; i++){
-        mm5p[i] =(double *) malloc(16 * sizeof(double));
-        mm3p[i] =(double *) malloc(16 * sizeof(double));
-    }
-    mm5p[MAXLENGTH-1] =(double *) malloc(16 * sizeof(double));
-    mm3p[MAXLENGTH-1] =(double *) malloc(16 * sizeof(double));
-    for (int i=0; i<MAXLENGTH-1;i++){
-        for (int j=0; j<16;j++){
-            mm5p[i][j]=0;
-            mm3p[i][j]=0;
-        }
-    }
-    for (int j=0; j<16;j++){
-        mm5p[MAXLENGTH-1][j]=0;
-        mm3p[MAXLENGTH-1][j]=0;
-    }
-    
-    freqCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
-    freqGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
-    scaleCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
-    scaleGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
-    seqError = (double*) malloc(2*MAXLENGTH * sizeof(double));
-    int len_min;
-    if ((fname != NULL && tabname != NULL) || (fname == NULL && tabname == NULL)){
+    int inference_type = 0;
+    if ((fname != NULL && tabname != NULL && bdamage != NULL) || (fname == NULL && tabname == NULL && bdamage == NULL)){
         fprintf(stdout,"Please provide either a bamfile or a table!\n");
         return 0;
-    }else if (fname != NULL){
-        fprintf(stderr,"Loading the bamfile...\n");
-        bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min);
-        //cout<<"Minimum length is "<<len_min<<"\n";
-    }else if(tabname != NULL && lenname != NULL){
-        tabreader(tabname);
-        fprintf(stderr,"Loading the table file with MAXLENGTH %d\n",MAXLENGTH);
-    }else{
-        fprintf(stdout,"Please provide a fragment length distribution file, if table file is provided!\n");
-        return 0;
     }
-    len_min = len_min > 30 ? len_min : 30;
+    else if (fname != NULL){
+        inference_type = 1;
+    }
+    else if(tabname != NULL && lenname != NULL){
+        inference_type = 2;
+    }
+    else if(bdamage != NULL && rlens != NULL){
+        inference_type = 3;
+    }
+
     double max5=0;
     double max3=0;
     double maxall=0;
-    for (int i=0; i<MAXLENGTH;i++){
+    int len_min;
+    if(inference_type < 3){
+        mm5p = (double**) malloc(MAXLENGTH * sizeof(double*));
+        mm3p = (double**) malloc(MAXLENGTH * sizeof(double*));
+        for (int i = 0; i < MAXLENGTH-1; i++){
+            mm5p[i] =(double *) malloc(16 * sizeof(double));
+            mm3p[i] =(double *) malloc(16 * sizeof(double));
+        }
+        mm5p[MAXLENGTH-1] =(double *) malloc(16 * sizeof(double));
+        mm3p[MAXLENGTH-1] =(double *) malloc(16 * sizeof(double));
+        for (int i=0; i<MAXLENGTH-1;i++){
+            for (int j=0; j<16;j++){
+                mm5p[i][j]=0;
+                mm3p[i][j]=0;
+            }
+        }
+        for (int j=0; j<16;j++){
+            mm5p[MAXLENGTH-1][j]=0;
+            mm3p[MAXLENGTH-1][j]=0;
+        }
+        
+        
+
+        if (fname != NULL){
+            fprintf(stderr,"Loading the bamfile\n");
+            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min);
+            //cout<<"Minimum length is "<<len_min<<"\n";
+        }else if(tabname != NULL && lenname != NULL){
+            tabreader(tabname);
+            fprintf(stderr,"Loading the table file with MAXLENGTH %d\n",MAXLENGTH);
+        }
+        freqCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
+        freqGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
+        scaleCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
+        scaleGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
+        seqError = (double*) malloc(2*MAXLENGTH * sizeof(double));
+        
+        len_min = len_min > 30 ? len_min : 30;
+
+        
+        for (int i=0; i<MAXLENGTH;i++){
         // Double-check this part
         // scaleCT[i] = mm5p[i][5]+mm5p[i][7];
         scaleCT[i] = mm5p[i][4]+mm5p[i][5]+mm5p[i][6]+mm5p[i][7];
@@ -177,27 +198,122 @@ int main(int argc, char **argv){
         freqGA[2*MAXLENGTH-1-i] = mm5p[i][8]/scaleGA[2*MAXLENGTH-1-i];
         max5 = max(max5,max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
         max3 = max(max3,max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
+        }
+        maxall = max(max5,max3);
+        //    cout<<"max5 is "<<max5<<", max3 is "<<max3<<".\n";
+        for (int i=0; i<MAXLENGTH;i++){
+            scaleCT[i] = scaleCT[i]/maxall;
+            scaleGA[i] = scaleGA[i]/maxall;
+            scaleCT[2*MAXLENGTH-1-i] = scaleCT[2*MAXLENGTH-1-i]/maxall;
+            scaleGA[2*MAXLENGTH-1-i] = scaleGA[2*MAXLENGTH-1-i]/maxall;
+            //cout<<scaleCT[i]<<" "<<scaleGA[i]<<"\n";
+        }
+        
+        
+        fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
+        fprintf(stderr,"Dir.\tPos.\tFreqCT\tFreqGA\n");
+        for (int i=0; i<5;i++){
+            fprintf(stderr,"5'\t%d\t",i+1);
+            fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
+        }
+        for (int i=0; i<5;i++){
+            fprintf(stderr,"3'\t%d\t",i+1);
+            fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
+        }
     }
-    maxall = max(max5,max3);
-    //    cout<<"max5 is "<<max5<<", max3 is "<<max3<<".\n";
-    for (int i=0; i<MAXLENGTH;i++){
-        scaleCT[i] = scaleCT[i]/maxall;
-        scaleGA[i] = scaleGA[i]/maxall;
-        scaleCT[2*MAXLENGTH-1-i] = scaleCT[2*MAXLENGTH-1-i]/maxall;
-        scaleGA[2*MAXLENGTH-1-i] = scaleGA[2*MAXLENGTH-1-i]/maxall;
-        //cout<<scaleCT[i]<<" "<<scaleGA[i]<<"\n";
-    }
-    
-    
-    fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
-    fprintf(stderr,"Dir.\tPos.\tFreqCT\tFreqGA\n");
-    for (int i=0; i<5;i++){
-        fprintf(stderr,"5'\t%d\t",i+1);
-        fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
-    }
-    for (int i=0; i<5;i++){
-        fprintf(stderr,"3'\t%d\t",i+1);
-        fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
+    else if(inference_type == 3){
+        std::cout << " bdamage file "<< bdamage << " rlens " << rlens << std::endl;
+        std::map<int, mydataD> retmap = load_bdamage_full(bdamage,MAXLENGTH);
+        fprintf(stderr, "\t-> loading bdamage file in %lu mismatch matrices read for %d base pairs\n", retmap.size(), MAXLENGTH);
+        for (std::map<int, mydataD>::iterator it = retmap.begin(); it != retmap.end(); it++) {
+            int taxid = it->first;
+            mydataD md = it->second;
+            if (it->second.nreads == 0){
+                continue;
+            }
+            // allocating memory for my mm5p and mm3p such that i can incorporate the tables 
+            mm5p = (double**) malloc(MAXLENGTH * sizeof(double*));
+            mm3p = (double**) malloc(MAXLENGTH * sizeof(double*));
+            for (int i = 0; i < MAXLENGTH-1; i++){
+                mm5p[i] =(double *) malloc(16 * sizeof(double));
+                mm3p[i] =(double *) malloc(16 * sizeof(double));
+            }
+            mm5p[MAXLENGTH-1] =(double *) malloc(16 * sizeof(double));
+            mm3p[MAXLENGTH-1] =(double *) malloc(16 * sizeof(double));
+            for (int i=0; i<MAXLENGTH-1;i++){
+                for (int j=0; j<16;j++){
+                    mm5p[i][j]=0;
+                    mm3p[i][j]=0;
+                }
+            }
+            for (int j=0; j<16;j++){
+                mm5p[MAXLENGTH-1][j]=0;
+                mm3p[MAXLENGTH-1][j]=0;
+            }
+
+            freqCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
+            freqGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
+            scaleCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
+            scaleGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
+            seqError = (double*) malloc(2*MAXLENGTH * sizeof(double));
+            
+            //tabreader(tabname);
+
+            int numpos = MAXLENGTH*2+1;
+            int numcolumn = 16;
+            double ** Table = (double **) malloc(numpos*(sizeof(double *))); /*I allocate memory here.  If this function is called many times it may be better to move the memmory allocation out of this function*/
+            for (int i=0; i<numpos; i++){
+                Table[i]=(double *) malloc(numcolumn*(sizeof(double)));
+            }  
+
+            parse_bdamage_Data(md, Table, MAXLENGTH);
+            
+            for (int i=0; i<MAXLENGTH; i++){
+                for (int j=0; j<MAXLENGTH;j++){
+                    mm5p[i][j] = Table[i][j];
+                    mm3p[i][j] = Table[i+MAXLENGTH][j];
+                }
+            }
+
+            for (int i=0; i<MAXLENGTH;i++){
+                // i -> 0 to 14
+                // 2*MAXLENGTH-1-i -> 29 to 15
+                scaleCT[i] = mm5p[i][4]+mm5p[i][5]+mm5p[i][6]+mm5p[i][7];
+                scaleCT[2*MAXLENGTH-1-i] = mm3p[i][4]+mm3p[i][5]+mm3p[i][6]+mm3p[i][7];
+                freqCT[i] = mm5p[i][7]/scaleCT[i];
+                freqCT[2*MAXLENGTH-1-i] = mm3p[i][7]/scaleCT[2*MAXLENGTH-1-i];
+                //std::cout << freqCT[i] << std::endl;
+
+                scaleGA[i] = mm3p[i][8]+mm3p[i][9]+mm3p[i][10]+mm3p[i][11];
+                scaleGA[2*MAXLENGTH-1-i] = mm5p[i][8]+mm5p[i][9]+mm5p[i][10]+mm5p[i][11];
+                freqGA[i] = mm3p[i][8]/scaleGA[i];
+                freqGA[2*MAXLENGTH-1-i] = mm5p[i][8]/scaleGA[2*MAXLENGTH-1-i];
+                
+                max5 = std::max(max5,std::max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
+                max3 = std::max(max3,std::max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
+
+                // Overall sequencing errors are position specific, estimated by 1 - [N(AA)+N(TT)]/[N(AA)+N(AC)+N(AG)+N(AT)+N(TA)+N(TC)+N(TG)+N(TT)]
+                seqError[i] = 1 - (mm5p[i][0]+mm5p[i][15])/(mm5p[i][0]+mm5p[i][1]+mm5p[i][2]+mm5p[i][3]+mm5p[i][12]+mm5p[i][13]+mm5p[i][14]+mm5p[i][15]);
+                seqError[2*MAXLENGTH-1-i] = 1 - (mm3p[i][0]+mm3p[i][15])/(mm3p[i][0]+mm3p[i][1]+mm3p[i][2]+mm3p[i][3]+mm3p[i][12]+mm3p[i][13]+mm3p[i][14]+mm3p[i][15]);
+            }
+            maxall = std::max(max5,max3);
+            for (int i=0; i<MAXLENGTH;i++){
+                scaleCT[i] = scaleCT[i]/maxall;
+                scaleGA[i] = scaleGA[i]/maxall;
+                scaleCT[2*MAXLENGTH-1-i] = scaleCT[2*MAXLENGTH-1-i]/maxall;
+                scaleGA[2*MAXLENGTH-1-i] = scaleGA[2*MAXLENGTH-1-i]/maxall;
+            }
+            fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
+            fprintf(stderr,"Dir.\tPos.\tFreqCT\tFreqGA\n");
+            for (int i=0; i<5;i++){
+                fprintf(stderr,"5'\t%d\t",i+1);
+                fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
+            }
+            for (int i=0; i<5;i++){
+                fprintf(stderr,"3'\t%d\t",i+1);
+                fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
+            }
+        }
     }
     
     //Inference
@@ -222,12 +338,32 @@ int main(int argc, char **argv){
         z2[i] =(double *) malloc(4 * sizeof(double));
     }
     
+    /*
     if (lenname != NULL){
         fprintf(stderr,"The provided fragment length distribution file is used!\n");
         FragArrayReader(len_limit, number, Frag_len, Frag_freq, lenname);
+        for (int i = 0; i < number; i++) {
+            fprintf(stderr,"Length %d and count %f \n",Frag_len[i],Frag_freq[i]);
+        }
+        exit(1);
     }else{
         fprintf(stderr,"The fragment length distribution is calculated from the bam file!\n");
     }
+    */
+    if(inference_type < 3){
+        if (lenname != NULL){
+            fprintf(stderr,"The provided fragment length distribution file is used!\n");
+            FragArrayReader(len_limit, number, Frag_len, Frag_freq, lenname);
+        }
+        else{
+            fprintf(stderr,"The fragment length distribution is calculated from the bam file!\n");
+        }
+    }
+    else if(inference_type == 3){
+        FragArrayReaderRlen(len_limit,number,Frag_len,Frag_freq,rlens);
+   
+    }
+    
     //BinNum = -1;
     FragArrayBin(number, BinNum, Frag_len, Frag_freq, Bin_Frag_len, Bin_Frag_freq);
     double invec2[4] = {invec1[0],invec1[1],invec1[2],0.01};

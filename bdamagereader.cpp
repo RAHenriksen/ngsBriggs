@@ -17,66 +17,12 @@
 #include <zlib.h>
 #include <iostream>
 #include <vector>
+
+#include "profile.h"
+
 #define MAX_LENGTH 1000 // Define the maximum length as required
 #define NUM_COLUMNS 16  // Define the number of columns to parse
 #define STR_LENS 1024    // Define the maximum length of a line in the file
-
-
-struct mydataD {
-    double* fwD;
-    double* bwD;
-    int nreads;
-};
-
-std::map<int, mydataD> load_bdamage_fulltmp(const char* fname, int& printlength) {
-    const char* infile = fname;
-    BGZF* bgfp = NULL;
-
-    if (((bgfp = bgzf_open(infile, "r"))) == NULL) {
-        fprintf(stderr, "Could not open input BAM file: %s\n", infile);
-        exit(0);
-    }
-
-    std::map<int, mydataD> retmap;
-    printlength = 0;
-    assert(sizeof(int) == bgzf_read(bgfp, &printlength, sizeof(int)));
-
-    int ref_nreads[2];
-
-    while (1) {
-        int nread = bgzf_read(bgfp, ref_nreads, 2 * sizeof(int));
-        if (nread == 0)
-            break;
-        assert(nread == 2 * sizeof(int));
-        mydataD md;
-
-        md.fwD = new double[NUM_COLUMNS * printlength];
-        md.bwD = new double[NUM_COLUMNS * printlength];
-        md.nreads = ref_nreads[1];
-
-        float tmp[NUM_COLUMNS];
-        for (int i = 0; i < printlength; i++) {
-            assert(NUM_COLUMNS * sizeof(float) == bgzf_read(bgfp, tmp, sizeof(float) * NUM_COLUMNS));
-            for (int ii = 0; ii < NUM_COLUMNS; ii++)
-                md.fwD[i * NUM_COLUMNS + ii] = tmp[ii];
-                //fprintf(stderr,"position fwd %d\tcolumn no %d\t and value %f\n",i,NUM_COLUMNS,md.fwD[i * NUM_COLUMNS]);
-        }
-
-        for (int i = 0; i < printlength; i++) {
-            assert(NUM_COLUMNS * sizeof(float) == bgzf_read(bgfp, tmp, sizeof(float) * NUM_COLUMNS));
-            for (int ii = 0; ii < NUM_COLUMNS; ii++)
-                md.bwD[i * NUM_COLUMNS + ii] = tmp[ii];
-        }
-        retmap[ref_nreads[0]] = md;
-    }
-
-    if (bgfp)
-        bgzf_close(bgfp);
-    fprintf(stderr, "\t-> Done loading binary bdamage.gz file. It contains: %lu\n", retmap.size());
-
-    return retmap;
-}
-
 
 void parse_bdamage_Data(mydataD &md,double **dat,int howmany) {
     
@@ -95,14 +41,15 @@ void parse_bdamage_Data(mydataD &md,double **dat,int howmany) {
 
 
 
-void removeZeroCounts(int*& rlen, double*& count, int& rlen_length, int& count_length) {
+void removeCounts(int*& rlen, double*& count, int& rlen_length, int& count_length,int len_limit,int &no_val) {
     // Create vectors to store non-zero values temporarily
     std::vector<int> temp_rlen;
     std::vector<double> temp_count;
 
     // Iterate through the arrays and copy non-zero values to temporary vectors
     for (int i = 0; i < count_length; ++i) {
-        if (count[i] != 0) {
+        if (rlen[i] > 0 && rlen[i] < len_limit) {
+            //std::cout << " i val " << i << std::endl;
             temp_rlen.push_back(rlen[i]);
             temp_count.push_back(count[i]);
         }
@@ -112,20 +59,26 @@ void removeZeroCounts(int*& rlen, double*& count, int& rlen_length, int& count_l
     rlen_length = temp_rlen.size();
     count_length = temp_count.size();
 
-    // Delete the memory allocated for the original arrays
+    // Deallocate the old memory
     delete[] rlen;
     delete[] count;
 
-    // Resize the vectors to the desired size
-    temp_rlen.resize(rlen_length);
-    temp_count.resize(count_length);
+    // Allocate new memory
+    rlen = new int[rlen_length];
+    count = new double[count_length];
 
-    // Assign the vectors to rlen and count
-    rlen = &temp_rlen[0];
-    count = &temp_count[0];
+    // Copy values from vectors to arrays
+    for (int i = 0; i < rlen_length; ++i) {
+        rlen[i] = temp_rlen[i];
+    }
+    for (int i = 0; i < count_length; ++i) {
+        count[i] = temp_count[i];
+    }
+    
+    no_val = count_length;
 }
 
-void FragArrayReaderRlen(int*& rlen, double*& count, int &no_val,const char* filename) {
+void FragArrayReaderRlen(int len_limit,int &no_val,int*& rlen, double*& count,const char* filename) {
     int STRLENS = 4096;
 
 
@@ -136,7 +89,7 @@ void FragArrayReaderRlen(int*& rlen, double*& count, int &no_val,const char* fil
     int count_length = 0;
     int n = 0;
     int m = 0;
-    
+    double count_sum = 0;
     gzFile file = gzopen(filename, "rb"); // Replace "your_file_name.txt.gz" with your actual gzipped file name
     
     // Read each line from the file
@@ -163,6 +116,7 @@ void FragArrayReaderRlen(int*& rlen, double*& count, int &no_val,const char* fil
             }
             else if (line_number == 1) {
                 count[m] = atof(token);
+                count_sum += count[m];
                 m++;
             }
 
@@ -173,9 +127,13 @@ void FragArrayReaderRlen(int*& rlen, double*& count, int &no_val,const char* fil
 
     }
 
-    removeZeroCounts(rlen, count, n, m);
-
     no_val = n;
+
+    removeCounts(rlen, count, n, m,len_limit,no_val);
+
+    for(int i=0;i<no_val;i++){
+        count[i] = count[i]/count_sum;
+    }
 
     gzclose(file);
 }
@@ -189,11 +147,13 @@ int main(){
     int* rlen_length = new int[4096];
     double* rlen_count = new double[4096];
     int no_values = 0;
-    FragArrayReaderRlen(rlen_length,rlen_count,no_values,"Chr22_024_36_68_0097.rlens.gz");
+    int len_limit = 150;
+    FragArrayReaderRlen(rlen_length,rlen_count,no_values,"Chr22_024_36_68_0097.rlens.gz",len_limit);
 
+    /*
     for (int i = 0; i < no_values; i++) {
-        fprintf(stderr,"Length %d \t and count %f \n",rlen_length[i],rlen_count[i]);
-    }
+        fprintf(stderr,"Length %d and count %f \n",rlen_length[i],rlen_count[i]);
+    }*/
     
     exit(1);
     int howmany = 16;
@@ -203,13 +163,13 @@ int main(){
     int len_min;
 
     // Load data using load_bdamage_full
-    std::map<int, mydataD> retmap = load_bdamage_fulltmp("Chr22_024_36_68_0097.bdamage.gz",howmany);
+    std::map<int, mydataDtmp> retmap = load_bdamage("Chr22_024_36_68_0097.bdamage.gz",howmany);
     
     fprintf(stderr, "\t-> %lu mismatch matrices read for %d base pairs\n", retmap.size(), howmany);
 
-    for (std::map<int, mydataD>::iterator it = retmap.begin(); it != retmap.end(); it++) {
+    for (std::map<int, mydataDtmp>::iterator it = retmap.begin(); it != retmap.end(); it++) {
         int taxid = it->first;
-        mydataD md = it->second;
+        mydataDtmp md = it->second;
         if (it->second.nreads == 0)
         continue;
         

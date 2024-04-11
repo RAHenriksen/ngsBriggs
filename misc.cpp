@@ -168,7 +168,7 @@ void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, c
         while(gzgets(gz,buf,STRLENS)){
             Length[n] = atoi(strtok(buf,"\n\t "));
             Freq[n] = atof(strtok(NULL,"\n\t "));
-            std::cout << "length "<< Length[n] << " FASERQ " << Freq[n] << std::endl;
+            //std::cout << "length "<< Length[n] << " FASERQ " << Freq[n] << std::endl;
             if(Length[n] < len_limit){
                 m = n;
                 Sumf += Freq[n];
@@ -238,7 +238,6 @@ void parse_tabledata(const char* filename,double** Table){
         //Length[n] = atoi(strtok(buf,"\n\t "));
         strtok(buf,"\t\n ");
         strtok(NULL,"\t\n ");
-        std::cout << buf << std::endl;
         for (int j=0;j<16;j++){
             Table[i][j+2]=atof(strtok(NULL,"\t\n "));
         }

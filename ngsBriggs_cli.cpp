@@ -48,6 +48,9 @@ argStruct *pars_briggs(int argc,char ** argv){
     Briggspars->eps = 0;
     Briggspars->isrecal = 0;
     Briggspars->nthread = 1;
+    Briggspars->bdamage = NULL;
+    Briggspars->rlens = NULL;
+
 
     ++argv;
     while(*argv){
@@ -108,6 +111,12 @@ argStruct *pars_briggs(int argc,char ** argv){
         else if(strcasecmp("-nthread",*argv)==0){
             Briggspars->nthread=atoi(*(++argv));
         }
+        else if(strcasecmp("-bdamage",*argv)==0){
+            Briggspars->bdamage=strdup(*(++argv));
+        }
+        else if(strcasecmp("-rlens",*argv)==0){
+            Briggspars->rlens=strdup(*(++argv));
+        }
         else{
             fprintf(stderr,"Unrecognized input option %s, see ngsBriggs help page\n\n",*(argv));
             return NULL;
@@ -134,5 +143,7 @@ void argStruct_destroy(argStruct *Briggspars){
     free(Briggspars->olen);
     free(Briggspars->model);
     free(Briggspars->olik);
+    free(Briggspars->bdamage);
+    free(Briggspars->rlens);
     delete(Briggspars);
 }
