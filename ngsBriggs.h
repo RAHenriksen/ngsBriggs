@@ -40,11 +40,6 @@ typedef struct{
 
 extern int number;
 
-extern int STRLENS;
-
-extern int* Frag_len;
-extern double* Frag_freq;
-
 extern double Contam_eps; //Contamination rate defined as the proportion of the number of the contaminated reads
 extern double MAX0;
 extern double MIN0;
@@ -78,10 +73,6 @@ extern int ncalls_grad;
 // I finally decide to use the accurate but the most complex model to check my inference
 extern int MAXORDER; //This can be adjusted for different tolerance of errors.
 //Check the code again
-
-extern int BinNum;
-extern double* Bin_Frag_len, *Bin_Frag_freq;
-
 // OTHER DEFINES VALUES
 
 extern char *refName2, *fname2, *model2;

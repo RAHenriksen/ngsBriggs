@@ -48,15 +48,15 @@ void merge(std::vector<nuclist> &x_sort);
 
 void FragArrayBin(int number, int &BinNum, int*& Length, double *& Freq, double*& BinLength, double*& BinFreq);
 
-void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, const char* filename);
+void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, const char* filename,int STRLENS);
 
-int tabreader(char *tabname);
+int tabreader(char *tabname,int STRLENS);
 
-void parse_tabledata(const char* filename,double** Table);
+void parse_tabledata(const char* filename,double** Table,int STRLENS);
 
 void parse_tabledata2(const char* filename,double** Table);
 
-int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min);
+int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq);
 
 void wrapperwithref(const bam1_t   * b,const bam_hdr_t  *hdr, char myread[512], char myref[512],faidx_t *seq_ref);
 
@@ -64,7 +64,7 @@ void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int l
 
 void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int len_limit);
 
-void parse_sequencingdata1(char *refName,char *fname,const char* chromname, const char* bedname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min);
+void parse_sequencingdata1(char *refName,char *fname,const char* chromname, const char* bedname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq);
 
 void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam1_t *b, double PostProb);
 

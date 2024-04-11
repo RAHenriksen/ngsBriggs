@@ -199,9 +199,7 @@ int main(){
         scaleGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
         seqError = (double*) malloc(2*MAXLENGTH * sizeof(double));
         
-        //tabreader(tabname);
-
-        int numpos = MAXLENGTH*2+1;
+	int numpos = MAXLENGTH*2+1;
         int numcolumn = 16;
         double ** Table = (double **) malloc(numpos*(sizeof(double *))); /*I allocate memory here.  If this function is called many times it may be better to move the memmory allocation out of this function*/
         for (int i=0; i<numpos; i++){

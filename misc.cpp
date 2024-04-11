@@ -158,7 +158,7 @@ void FragArrayBin(int number, int &BinNum, int*& Length, double *& Freq, double*
 }
 
 // Can deal with both counts and freqs.
-void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, const char* filename){
+void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, const char* filename,int STRLENS){
     int n = 0;
     int m = 0;
     double Sumf = 0;
@@ -195,7 +195,8 @@ void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, c
         Freq[i] = Freq[i]/Sumf;
     }
 }
-void parse_tabledata(const char* filename,double** Table){
+
+void parse_tabledata(const char* filename,double** Table,int STRLENS){
     //int numpos = MAXLENGTH*2;
     //int numcolumn = 16 + 4;
     int i = 0;
@@ -220,7 +221,7 @@ void parse_tabledata(const char* filename,double** Table){
     gzclose(gz);
 }
 
-int tabreader(char *tabname){
+int tabreader(char *tabname,int STRLENS){
     int numpos = MAXLENGTH*2+1;
     int numcolumn = 16 + 4;
     double ** Table = (double **) malloc(numpos*(sizeof(double *))); /*I allocate memory here.  If this function is called many times it may be better to move the memmory allocation out of this function*/
@@ -233,7 +234,7 @@ int tabreader(char *tabname){
     
     if(tabname){
         //parse_tabledata(tabname, Table);
-        parse_tabledata(tabname,Table);
+      parse_tabledata(tabname,Table,STRLENS);
         fprintf(stderr,"The tab file %s has been inputted successfully \t %d\n",tabname,MAXLENGTH);
     }
     
@@ -251,7 +252,7 @@ int tabreader(char *tabname){
 }
 
 
-int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min){
+int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq){
     char *refName = NULL;
     clock_t t=clock();
     time_t t2=time(NULL);
@@ -267,7 +268,7 @@ int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * 
         }else{
             fprintf(stderr, "Reference is not provided, and it will be reconstructed according to the MD tags!\n");
         }
-        parse_sequencingdata1(refName,fname,chromname,bedname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min);
+        parse_sequencingdata1(refName,fname,chromname,bedname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq);
     }
     
     fprintf(stderr,
@@ -489,7 +490,7 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
 
 
 //QUALITY CONTROL and LENGTH DISTRIBUTION
-void parse_sequencingdata1(char *refName,char *fname,const char* chromname, const char* bedname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min){
+void parse_sequencingdata1(char *refName,char *fname,const char* chromname, const char* bedname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq){
     fprintf(stderr,"mapped_only: %d\n",mapped_only);
     htsFormat *dingding3 =(htsFormat*) calloc(1,sizeof(htsFormat));
 
@@ -747,6 +748,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
     while (Frag_len_count[l1] == 0){
         l1--;
     }
+    
     int k = 0;
     for (int l2 = l0; l2<=l1; l2++){
         Frag_len[k] = l2;

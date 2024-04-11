@@ -29,9 +29,7 @@
 int VERBOSE = 1;
 int SIG_COND = 1;
 
-int STRLENS = 4096;
-int* Frag_len = new int[STRLENS];
-double* Frag_freq = new double[STRLENS];
+
 
 double MAX0 = 1-1e-8;
 double MIN0 = 1e-8;
@@ -61,9 +59,7 @@ int number;
 double *freqCT, *freqGA, *scaleCT, *scaleGA, *seqError;
 double Contam_eps; //Contamination rate defined as the proportion of the number of the contaminated reads
 
-int BinNum = -1;
-double* Bin_Frag_len = new double[STRLENS];
-double* Bin_Frag_freq = new double[STRLENS];
+
 
 char *refName2 = NULL; // or initialize with appropriate value
 char *fname2 = NULL; // or initialize with appropriate value
@@ -82,11 +78,19 @@ int main(int argc, char **argv){
     PhredError[i] = pow(10,-di/10.0);
     PhredErrorAThird[i] = PhredError[i]/3.0;
   }
+
+  int STRLENS = 4096;
+  int* Frag_len = new int[STRLENS];
+  double* Frag_freq = new double[STRLENS];
+  int BinNum = -1;
+  double* Bin_Frag_len = new double[STRLENS];
+  double* Bin_Frag_freq = new double[STRLENS];
+  
   argStruct *mypars = NULL;
-    if(argc==1||(argc==2&&(strcasecmp(argv[1],"--help")==0||strcasecmp(argv[1],"-h")==0))){
-        HelpPage(stderr);
-        return 0;
-    }
+   if(argc==1||(argc==2&&(strcasecmp(argv[1],"--help")==0||strcasecmp(argv[1],"-h")==0))){
+     HelpPage(stderr);
+     return 0;
+   }
     
     std::string s = "./ngsBriggs ";
 
@@ -163,10 +167,10 @@ int main(int argc, char **argv){
 
         if (fname != NULL){
             fprintf(stderr,"Loading the bamfile\n");
-            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min);
+            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min,Frag_len,Frag_freq);
             //cout<<"Minimum length is "<<len_min<<"\n";
         }else if(tabname != NULL && lenname != NULL){
-            tabreader(tabname);
+	  tabreader(tabname,STRLENS);
             fprintf(stderr,"Loading the table file with MAXLENGTH %d\n",MAXLENGTH);
         }
         freqCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
@@ -353,7 +357,7 @@ int main(int argc, char **argv){
 	    //frag_len is really the fragment length
 	    //Frag_freq is the relative frequency of frag_len
 	    //const char * containing filename (-len input)
-            FragArrayReader(len_limit, number, Frag_len, Frag_freq, lenname);
+            FragArrayReader(len_limit, number, Frag_len, Frag_freq, lenname,STRLENS);
         }
         else{
             fprintf(stderr,"The fragment length distribution is calculated from the bam file!\n");
