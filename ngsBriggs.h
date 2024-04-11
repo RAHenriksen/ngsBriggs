@@ -71,7 +71,7 @@ static char DUMMYCHAR='#';
 extern double l_check;
 
 // likelihood global
-extern double *freqCT, *freqGA, *scaleCT, *scaleGA, *seqError;
+//extern double *freqCT, *freqGA, *scaleCT, *scaleGA, *seqError;
 extern int ncalls;
 extern int ncalls_grad;
 

@@ -69,7 +69,7 @@ void b_loglike_grad(const double *x,double *y,const void*ptr){
 
 
 //Consider contamination rate eps + sequencing error
-double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps){
+double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -155,7 +155,7 @@ double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA
 
 
 // Considering Seq Error + Non-biotin model: symmetric pattern
-double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps){
+double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -242,17 +242,19 @@ double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqG
     return -ll;
 }
 
-double b_loglike_complex3_full(const double *x, const void *){
+double b_loglike_complex3_full(const double *x, const void *ptr){
     ncalls++;
-    return loglike_complex3_full_b(x, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
+    const wrapOne *wo =(const wrapOne *) ptr;
+    return loglike_complex3_full_b(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
 }
 
-double nb_loglike_complex3_full(const double *x, const void *){
+double nb_loglike_complex3_full(const double *x, const void *ptr){
     ncalls++;
-    return loglike_complex3_full_nb(x, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
+    const wrapOne *wo =(const wrapOne *) ptr;
+    return loglike_complex3_full_nb(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
 }
 
-void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps){
+void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -434,18 +436,10 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
                 y[3] -= count[j]/freq[j]*freq_nv[j]; // Derivative of nv
             }
         }
-        //        // Derivative of lambda
-        //        y[0] -= scaleCT[n]*(freqCT[n]/freqCT3*freqCT3_lambda-(1-freqCT[n])/freqCC3*freqCT3_lambda)+scaleCT[2*MAXLENGTH-1-n]*(freqCT[2*MAXLENGTH-1-n]/freqCT4*freqCT4_lambda-(1-freqCT[2*MAXLENGTH-1-n])/freqCC4*freqCT4_lambda)+scaleGA[n]*(freqGA[n]/freqGA3*freqGA3_lambda-(1-freqGA[n])/freqGG3*freqGA3_lambda)+scaleGA[2*MAXLENGTH-1-n]*(freqGA[2*MAXLENGTH-1-n]/freqGA4*freqGA4_lambda-(1-freqGA[2*MAXLENGTH-1-n])/freqGG4*freqGA4_lambda);
-        //        // Derivative of delta
-        //        y[1] -= scaleCT[n]*(freqCT[n]/freqCT3*pf3_l1-(1-freqCT[n])/freqCC3*pf3_l1)+scaleCT[2*MAXLENGTH-1-n]*(freqCT[2*MAXLENGTH-1-n]/freqCT4*pf3_r1-(1-freqCT[2*MAXLENGTH-1-n])/freqCC4*pf3_r1)+scaleGA[n]*(freqGA[n]/freqGA3*pf1_r1-(1-freqGA[n])/freqGG3*pf1_r1)+scaleGA[2*MAXLENGTH-1-n]*(freqGA[2*MAXLENGTH-1-n]/freqGA4*pf1_l1-(1-freqGA[2*MAXLENGTH-1-n])/freqGG4*pf1_l1);
-        //        // Derivative of delta_s
-        //        y[2] -= scaleCT[n]*(freqCT[n]/freqCT3*pf4_l1-(1-freqCT[n])/freqCC3*pf4_l1)+scaleGA[n]*(freqGA[n]/freqGA3*pf2_r1-(1-freqGA[n])/freqGG3*pf2_r1);
-        //        // Derivative of nv
-        //        y[3] -= scaleCT[n]*(freqCT[n]/freqCT3*freqCT3_nv-(1-freqCT[n])/freqCC3*freqCT3_nv)+scaleCT[2*MAXLENGTH-1-n]*(freqCT[2*MAXLENGTH-1-n]/freqCT4*freqCT4_nv-(1-freqCT[2*MAXLENGTH-1-n])/freqCC4*freqCT4_nv)+scaleGA[n]*(freqGA[n]/freqGA3*freqGA3_nv-(1-freqGA[n])/freqGG3*freqGA3_nv)+scaleGA[2*MAXLENGTH-1-n]*(freqGA[2*MAXLENGTH-1-n]/freqGA4*freqGA4_nv-(1-freqGA[2*MAXLENGTH-1-n])/freqGG4*freqGA4_nv);
     }
 }
 
-void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps){
+void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -641,26 +635,21 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
                 y[3] -= count[j]/freq[j]*freq_nv[j]; // Derivative of nv
             }
         }
-        //        // Derivative of lambda
-        //        y[0] -= scaleCT[n]*(freqCT[n]/freqCT3*freqCT3_lambda-(1-freqCT[n])/freqCC3*freqCT3_lambda)+scaleCT[2*MAXLENGTH-1-n]*(freqCT[2*MAXLENGTH-1-n]/freqCT4*freqCT4_lambda-(1-freqCT[2*MAXLENGTH-1-n])/freqCC4*freqCT4_lambda)+scaleGA[n]*(freqGA[n]/freqGA3*freqGA3_lambda-(1-freqGA[n])/freqGG3*freqGA3_lambda)+scaleGA[2*MAXLENGTH-1-n]*(freqGA[2*MAXLENGTH-1-n]/freqGA4*freqGA4_lambda-(1-freqGA[2*MAXLENGTH-1-n])/freqGG4*freqGA4_lambda);
-        //        // Derivative of delta
-        //        y[1] -= scaleCT[n]*(freqCT[n]/freqCT3*pf3_l1-(1-freqCT[n])/freqCC3*pf3_l1)+scaleCT[2*MAXLENGTH-1-n]*(freqCT[2*MAXLENGTH-1-n]/freqCT4*pf3_r1-(1-freqCT[2*MAXLENGTH-1-n])/freqCC4*pf3_r1)+scaleGA[n]*(freqGA[n]/freqGA3*pf1_r1-(1-freqGA[n])/freqGG3*pf1_r1)+scaleGA[2*MAXLENGTH-1-n]*(freqGA[2*MAXLENGTH-1-n]/freqGA4*pf1_l1-(1-freqGA[2*MAXLENGTH-1-n])/freqGG4*pf1_l1);
-        //        // Derivative of delta_s
-        //        y[2] -= scaleCT[n]*(freqCT[n]/freqCT3*pf4_l1-(1-freqCT[n])/freqCC3*pf4_l1)+scaleGA[n]*(freqGA[n]/freqGA3*pf2_r1-(1-freqGA[n])/freqGG3*pf2_r1);
-        //        // Derivative of nv
-        //        y[3] -= scaleCT[n]*(freqCT[n]/freqCT3*freqCT3_nv-(1-freqCT[n])/freqCC3*freqCT3_nv)+scaleCT[2*MAXLENGTH-1-n]*(freqCT[2*MAXLENGTH-1-n]/freqCT4*freqCT4_nv-(1-freqCT[2*MAXLENGTH-1-n])/freqCC4*freqCT4_nv)+scaleGA[n]*(freqGA[n]/freqGA3*freqGA3_nv-(1-freqGA[n])/freqGG3*freqGA3_nv)+scaleGA[2*MAXLENGTH-1-n]*(freqGA[2*MAXLENGTH-1-n]/freqGA4*freqGA4_nv-(1-freqGA[2*MAXLENGTH-1-n])/freqGG4*freqGA4_nv);
+       
     }
 }
 
 
-void b_loglike_complex3_grad_full(const double *x,double *y,const void *){
+void b_loglike_complex3_grad_full(const double *x,double *y,const void *ptr){
     ncalls_grad++;
-    loglike_complex3_grad_full_b(x, y, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
+    const wrapOne *wo =(const wrapOne *) ptr;
+    loglike_complex3_grad_full_b(x, y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
 }
 
-void nb_loglike_complex3_grad_full(const double *x,double *y,const void *){
+void nb_loglike_complex3_grad_full(const double *x,double *y,const void *ptr){
     ncalls_grad++;
-    loglike_complex3_grad_full_nb(x, y, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
+    const wrapOne *wo =(const wrapOne *) ptr;
+    loglike_complex3_grad_full_nb(x, y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
 }
 
 void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double * LEN, double * freqLEN, double eps){

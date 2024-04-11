@@ -7,30 +7,34 @@ typedef struct{
   double *scaleCT;
   double *scaleGA;
   double *seqError;
+  int BinNum;
+  double *Bin_Frag_len;
+  double *Bin_Frag_freq;
+  double Contam_eps;
 }wrapOne;
 
-
+//below are naive versions with out the nick. 
+void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA);
 double loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA);
-
 double b_loglike(const double *x, const void *);
 
-void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA);
+
 
 void loglike_hessian(const double *x, double ** z, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA);
 
 void b_loglike_grad(const double *x,double *y,const void*);
 
-double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps);
+double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps);
 
-double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps);
+double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps);
 
 double b_loglike_complex3_full(const double *x, const void *);
 
 double nb_loglike_complex3_full(const double *x, const void *);
 
-void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps);
+void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps);
 
-void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int& BinNum, double*& LEN, double*& freqLEN, double eps);
+void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps);
 
 void b_loglike_complex3_grad_full(const double *x,double *y,const void *);
 

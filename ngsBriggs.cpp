@@ -371,14 +371,19 @@ int main(int argc, char **argv){
     ncalls=0;
     ncalls_grad = 0;
     double withgrad2 = 0;
+    wo.BinNum = BinNum;
+    wo.Bin_Frag_len = Bin_Frag_len;
+    wo.Bin_Frag_freq = Bin_Frag_freq;
+    wo.Contam_eps = Contam_eps;
+    
     if (model != NULL){
         if (!strcasecmp("b",model)){
-            //fprintf(stderr,"%s\n","The chosen model is a biotin model.");
-            withgrad2 = findmax_bfgs(4,invec2,NULL,b_loglike_complex3_full,b_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
+	  fprintf(stderr,"%s\n","The chosen model is a biotin model.");
+	  withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,b_loglike_complex3_full,b_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
             loglike_complex3_hessian_full_b(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
         }else if(!strcasecmp("nb",model)){
-            //fprintf(stderr,"%s\n","The chosen model is non-biotin model.");
-            withgrad2 = findmax_bfgs(4,invec2,NULL,nb_loglike_complex3_full,nb_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
+	  fprintf(stderr,"%s\n","The chosen model is non-biotin model.");
+            withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,nb_loglike_complex3_full,nb_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
             loglike_complex3_hessian_full_nb(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
         }else{
             fprintf(stderr,"Please provide a meaningful deamination model for further calculations.\n");
