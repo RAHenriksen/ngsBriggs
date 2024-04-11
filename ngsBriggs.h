@@ -6,8 +6,6 @@ extern int VERBOSE;
 extern int SIG_COND;
 extern int tsk_nthreads;
 
-//int main(int argc,char **argv){}
-
 typedef struct{
     std::vector<bam1_t*> *reads;
     sam_hdr_t *hdr;

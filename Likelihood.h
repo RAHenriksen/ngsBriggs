@@ -1,6 +1,15 @@
 #ifndef LIKELIHOOD_H
 #define LIKELIHOOD_H
 
+typedef struct{
+  double *freqCT;
+  double *freqGA;
+  double *scaleCT;
+  double *scaleGA;
+  double *seqError;
+}wrapOne;
+
+
 double loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA);
 
 double b_loglike(const double *x, const void *);

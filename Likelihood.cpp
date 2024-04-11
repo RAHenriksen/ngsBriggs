@@ -10,8 +10,8 @@
 #include <zlib.h>
 #include <cmath>
 #include <iomanip>
-#include <eigen3/Eigen/Core>
-#include <eigen3/Eigen/Eigenvalues> //sort and merge
+#include <Eigen/Core>
+#include <Eigen/Eigenvalues> //sort and merge
 
 
 #include <ctime>
@@ -41,9 +41,10 @@ double loglike(const double *x, double * freqCT, double * freqGA, double * scale
     return -ll;
 }
 
-double b_loglike(const double *x, const void *){
+double b_loglike(const double *x, const void *ptr){
     ncalls++;
-    return loglike(x, freqCT, freqGA, scaleCT, scaleGA);
+    const wrapOne *wo =(const wrapOne *) ptr;
+    return loglike(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA);
 }
 
 void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA){
@@ -60,9 +61,10 @@ void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, d
     }
 }
 
-void b_loglike_grad(const double *x,double *y,const void*){
+void b_loglike_grad(const double *x,double *y,const void*ptr){
     ncalls_grad++;
-    loglike_grad(x,y, freqCT, freqGA, scaleCT, scaleGA);
+    const wrapOne *wo =(const wrapOne *) ptr;
+    loglike_grad(x,y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA);
 }
 
 

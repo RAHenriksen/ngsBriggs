@@ -328,7 +328,13 @@ int main(int argc, char **argv){
     double invec1[3] = {0.2,0.1,0.1};
     ncalls=0;
     ncalls_grad = 0;
-    double withgrad = findmax_bfgs(3,invec1,NULL,b_loglike,b_loglike_grad,lbd,ubd,nbd,-1);
+    wrapOne wo;
+    wo.freqCT = freqCT;
+    wo.freqGA = freqGA;
+    wo.scaleCT = scaleCT;
+    wo.scaleGA = scaleGA;
+    wo.seqError = seqError;
+    double withgrad = findmax_bfgs(3,invec1,(void *)&wo,b_loglike,b_loglike_grad,lbd,ubd,nbd,-1);
     
     double lbd1[4] = {1e-8,1e-8,1e-8,1e-8};
     double ubd1[4] = {1-1e-8,1-1e-8,1-1e-8,1-1e-8};
