@@ -30,7 +30,12 @@ int HelpPage(FILE *fp){
     fprintf(fp,"\t-> -isrecal: Choose 1 if recalibration based on length is needed, otherwise 0 (default);\n");
     fprintf(fp,"\t-> -olik: The output nucleotide likelihood file;\n");
     fprintf(fp,"\t-> -nthreads: Choose the number of threads to speed up the recalibration process.\n");
-  
+    fprintf(fp,"\t-> -bdamage: The mismatch matrix in bdamage format for metagenomic framework.\n");
+    fprintf(fp,"\t-> -rlens: The read length distributions for metagenomic framework.\n");
+    fprintf(fp,"\t-> Examples.\n");
+    fprintf(fp,"\t-> ./ngsbriggs -model nb -bdamage Chr22_024_36_68_0097.bdamage.gz -rlens Chr22_024_36_68_0097.rlens.gz\n");
+    fprintf(fp,"\t-> ./ngsbriggs -tab mismatch2.txt -len len.txt -model nb\n");
+    fprintf(fp,"\t-> ./ngsbriggs -bam Chr22_024_36_68_0097.sorted.MD.bam -ref chr22.fa -model nb\n");
     exit(1);
   return 0;
 }
