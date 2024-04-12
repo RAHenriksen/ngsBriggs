@@ -28,6 +28,13 @@
 #include "ngsBriggs.h"
 #include "PosteriorProb.h"
 
+double PhredError[255];
+double PhredErrorAThird[255];
+
+double MAX0 = 1-1e-8;
+double MIN0 = 1e-8;
+
+extern tsk_struct *my_tsk_struct;
 
 // Naive likelihood without nick frequencies
 double loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA){
@@ -553,18 +560,7 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
             freqCT2 += dd2;
             freqCT2_lambda += dd2_lambda;
             freqCT2_nv += dd2_nv;
-            // freqCT1 += (p3_l*delta+p4_l*delta_s)*f;
-            // freqCT1_lambda += (p3_l_lambda*delta+p4_l_lambda*delta_s)*f;
-            // freqCT1_nv += (p3_l_nv*delta+p4_l_nv*delta_s)*f;
-            // freqGA1 += (p1_r*delta+p2_r*delta_s)*f;
-            // freqGA1_lambda += (p1_r_lambda*delta+p2_r_lambda*delta_s)*f;
-            // freqGA1_nv += (p1_r_nv*delta+p2_r_nv*delta_s)*f;
-            // freqCT2 += (p3_r*delta)*f;
-            // freqCT2_lambda += (p3_r_lambda*delta)*f;
-            // freqCT2_nv += (p3_r_nv*delta)*f;
-            // freqGA2 += (p1_l*delta)*f;
-            // freqGA2_lambda += (p1_l_lambda*delta)*f;
-            // freqGA2_nv += (p1_l_nv*delta)*f;
+          
         }
         freqCT1 = (1-eps)*freqCT1;
         freqCT1_lambda = (1-eps)*freqCT1_lambda;

@@ -24,6 +24,8 @@
 #include "Likelihood.h"
 #include "ngsBriggs.h"
 
+extern tsk_struct *my_tsk_struct;
+
 
 //The log-likelihood for recalibration the ancient prob
 double loglike_recalibration(const double *x, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,std::string s){

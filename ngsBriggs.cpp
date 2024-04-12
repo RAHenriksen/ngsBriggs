@@ -1,22 +1,25 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
-#include <htslib/hts.h>
-#include <htslib/sam.h>
-#include <htslib/kstring.h>
-#include <htslib/faidx.h>
 #include <zlib.h>
 #include <cmath>
 #include <ctime>
 #include <getopt.h>
 #include <iostream>
 #include <algorithm>
+
+
+#include <htslib/hts.h>
+#include <htslib/sam.h>
+#include <htslib/kstring.h>
+#include <htslib/faidx.h>
+
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
 #include "briggs_writer.h"
 #include "read_all_reads.h"
-#include <array>  //Rasmus
+
 #include "misc.h"
 #include "Recalibration.h"
 #include "Likelihood.h"
@@ -28,18 +31,9 @@
 // definining all global variables used across multiple scripts
 int VERBOSE = 1;
 int SIG_COND = 1;
-
-
-
-double MAX0 = 1-1e-8;
-double MIN0 = 1e-8;
-
 int nproc1 = 0;//number of reads processed not used
 int MAXORDER = MAXLENGTH;
 
-
-double PhredError[255];
-double PhredErrorAThird[255];
 
 double Tol = 1.0E-8; // Tolerance
 
@@ -53,14 +47,6 @@ tsk_struct *my_tsk_struct = NULL;
 
 int tsk_nthreads = -1;
 
-double **deamRateCT;
-double **deamRateGA;
-int number;
-double *freqCT, *freqGA, *scaleCT, *scaleGA, *seqError;
-double Contam_eps; //Contamination rate defined as the proportion of the number of the contaminated reads
-
-
-
 char *refName2 = NULL; // or initialize with appropriate value
 char *fname2 = NULL; // or initialize with appropriate value
 char *model2 = NULL; // or initialize with appropriate value
@@ -73,6 +59,13 @@ std::string s2;
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
+  
+  double **deamRateCT;
+  double **deamRateGA;
+  int number;
+  double *freqCT, *freqGA, *scaleCT, *scaleGA, *seqError;
+  double Contam_eps; //Contamination rate defined as the proportion of the number of the contaminated reads
+
   for(int i=0;i<255;i++){
     double di = i;
     PhredError[i] = pow(10,-di/10.0);
@@ -167,7 +160,7 @@ int main(int argc, char **argv){
 
         if (fname != NULL){
             fprintf(stderr,"Loading the bamfile\n");
-            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min,Frag_len,Frag_freq);
+            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number);
             //cout<<"Minimum length is "<<len_min<<"\n";
         }else if(tabname != NULL && lenname != NULL){
 	  tabreader(tabname,STRLENS);

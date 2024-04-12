@@ -1,5 +1,35 @@
 #ifndef LIKELIHOOD_H
 #define LIKELIHOOD_H
+#include <vector>
+#include <htslib/sam.h>
+#include <htslib/faidx.h>
+
+extern double PhredError[255];
+extern double PhredErrorAThird[255];
+extern int tsk_nthreads;
+
+
+typedef struct{
+    std::vector<bam1_t*> *reads;
+    sam_hdr_t *hdr;
+    faidx_t *seq_ref;
+    int len_limit;
+    int len_min;
+    char *model;
+    double eps;
+    double lambda;
+    double delta;
+    double delta_s;
+    double nv;
+    int from;
+    int to;
+    double llh_result;
+    double *x;
+    double *llh_result_grad; //Add the gradient feature
+    double **llh_result_hess; //Add the hessian matrix feature
+    int threadid;
+}tsk_struct;
+
 
 typedef struct{
   double *freqCT;
