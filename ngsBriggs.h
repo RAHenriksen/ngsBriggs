@@ -17,7 +17,7 @@ extern unsigned char toDIndex[16][16];
 extern int MAXLENGTH;
 extern double** mm5p, **mm3p, **dmm5p, **dmm3p;
 
-extern double Tol; // Tolerance
+//extern double Tol; // Tolerance
 
 static char DUMMYCHAR='#';
 

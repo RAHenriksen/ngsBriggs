@@ -28,6 +28,7 @@ typedef struct{
     double *llh_result_grad; //Add the gradient feature
     double **llh_result_hess; //Add the hessian matrix feature
     int threadid;
+    double Tol;
 }tsk_struct;
 
 
@@ -82,8 +83,8 @@ void like_hess_master(const double *xs,double **y);
 
 double ErrorLik(char reffrag[], char frag[], int L, int seqError[]);
 
-double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[]);
+double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol);
 
-double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[]);
+double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol);
 
 #endif

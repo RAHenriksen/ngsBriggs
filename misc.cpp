@@ -355,15 +355,15 @@ void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int l
         for(int L=30; L<len_limit; L++){
             //double f = freqLEN[i];
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=std::min(MAXORDER,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -372,15 +372,15 @@ void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int l
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=std::min(MAXORDER,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -403,15 +403,15 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
         //double freqGA2 = 0;
         for(int L=30; L<len_limit; L++){
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=std::min(MAXORDER,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=std::min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -420,15 +420,15 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=std::min(MAXORDER,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=std::min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;

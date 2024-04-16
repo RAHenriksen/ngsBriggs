@@ -92,15 +92,15 @@ double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA
             double L = LEN[i];
             double f = freqLEN[i];
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -109,15 +109,15 @@ double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -178,15 +178,15 @@ double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqG
             double L = LEN[i];
             double f = freqLEN[i];
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -195,15 +195,15 @@ double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqG
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -295,19 +295,19 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu); //double p1_l = pow(1+lambda,2)*(n+1)*nu/(1+(L-2)*nu);
             double p1_l_lambda = 2*(1+lambda)*n*nu/(1+(L-2)*nu);
             double p1_l_nv = pow(1+lambda,2)*n/pow(1+(L-2)*nu,2);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_nv += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)/pow(1+(L-2-l-r)*nu,2);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -328,19 +328,19 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu); // p1_r = pow(1+lambda,2)*(L-n)*nu/(1+(L-2)*nu);
             double p1_r_lambda = 2*(1+lambda)*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_nv = pow(1+lambda,2)*(L-n-1)/pow(1+(L-2)*nu,2);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                         p1_r_nv += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)/pow(1+(L-2-l-r)*nu,2);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -480,19 +480,19 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu); //double p1_l = pow(1+lambda,2)*(n+1)*nu/(1+(L-2)*nu);
             double p1_l_lambda = 2*(1+lambda)*n*nu/(1+(L-2)*nu);
             double p1_l_nv = pow(1+lambda,2)*n/pow(1+(L-2)*nu,2);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_nv += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)/pow(1+(L-2-l-r)*nu,2);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -513,19 +513,19 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu); // p1_r = pow(1+lambda,2)*(L-n)*nu/(1+(L-2)*nu);
             double p1_r_lambda = 2*(1+lambda)*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_nv = pow(1+lambda,2)*(L-n-1)/pow(1+(L-2)*nu,2);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                         p1_r_nv += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)/pow(1+(L-2-l-r)*nu,2);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -708,15 +708,15 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
             double p1_l_lambda2 = 2*n*nu/(1+(L-2)*nu);
             double p1_l_lambda_nv = 2*(1+lambda)*n/pow(1+(L-2)*nu,2);
             double p1_l_nv2 = -2*pow(1+lambda,2)*n*(L-2)/pow(1+(L-2)*nu,3);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_lambda2 += (2*pow(1-lambda,l)-2*l*(1+2*lambda)*pow(1-lambda,l-1)+l*(l-1)*lambda*(1+lambda)*pow(1-lambda,l-2))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda_nv += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*(L-2-l)/pow(1+(L-2-l)*nu,3);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_nv += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)/pow(1+(L-2-l-r)*nu,2);
@@ -726,7 +726,7 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -765,15 +765,15 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
             double p1_r_lambda2 = 2*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_lambda_nv = 2*(1+lambda)*(L-n-1)/pow(1+(L-2)*nu,2);
             double p1_r_nv2 = -2*pow(1+lambda,2)*(L-n-1)*(L-2)/pow(1+(L-2)*nu,3);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_lambda2 += (2*pow(1-lambda,r)-2*r*(1+2*lambda)*pow(1-lambda,r-1)+r*(r-1)*lambda*(1+lambda)*pow(1-lambda,r-2))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda_nv += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*(L-2-r)/pow(1+(L-2-r)*nu,3);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                         p1_r_nv += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)/pow(1+(L-2-l-r)*nu,2);
@@ -783,7 +783,7 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -1066,15 +1066,15 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
             double p1_l_lambda2 = 2*n*nu/(1+(L-2)*nu);
             double p1_l_lambda_nv = 2*(1+lambda)*n/pow(1+(L-2)*nu,2);
             double p1_l_nv2 = -2*pow(1+lambda,2)*n*(L-2)/pow(1+(L-2)*nu,3);
-            for(int l=1;l<=min(MAXORDER,n);l++){
+            for(int l=1;l<=min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_lambda2 += (2*pow(1-lambda,l)-2*l*(1+2*lambda)*pow(1-lambda,l-1)+l*(l-1)*lambda*(1+lambda)*pow(1-lambda,l-2))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda_nv += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*(L-2-l)/pow(1+(L-2-l)*nu,3);
-                for (int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
-                    if (l+r<=MAXORDER){
+                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                    if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_nv += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)/pow(1+(L-2-l-r)*nu,2);
@@ -1084,7 +1084,7 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXORDER,(double)(L-n-1));r++){
+            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -1123,15 +1123,15 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
             double p1_r_lambda2 = 2*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_lambda_nv = 2*(1+lambda)*(L-n-1)/pow(1+(L-2)*nu,2);
             double p1_r_nv2 = -2*pow(1+lambda,2)*(L-n-1)*(L-2)/pow(1+(L-2)*nu,3);
-            for(int r=1;r<=min(MAXORDER,n);r++){
+            for(int r=1;r<=min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_lambda2 += (2*pow(1-lambda,r)-2*r*(1+2*lambda)*pow(1-lambda,r-1)+r*(r-1)*lambda*(1+lambda)*pow(1-lambda,r-2))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda_nv += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*(L-2-r)/pow(1+(L-2-r)*nu,3);
-                for (int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
-                    if (l+r<=MAXORDER){
+                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                    if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                         p1_r_nv += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)/pow(1+(L-2-l-r)*nu,2);
@@ -1141,7 +1141,7 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXORDER,(double)(L-n-1));l++){
+            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -1520,7 +1520,7 @@ double ErrorLik(char reffrag[], char frag[], int L, int seqError[]){
 
 // Calculate the observation likelihood based on the Ancient model/ biotin model
 // additive mode -> multiplicity model + speed up
-double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[]){
+double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol){
     double l_pmd=0; //Likelihood
     double p = 0;
     // To change the additive effects to multiplicative effects
@@ -2062,7 +2062,7 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
 
 // The function below is for calculating likelihood of the reverse-complementary strand of the "biotin model" strand, the name is just for simplicity.
 // additive -> mulplicative
-double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[]){
+double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol){
     double l_pmd=0; // Likelihood
     double p = 0; // Accumulated prob of (l,r)
     double exterm_s = 0;

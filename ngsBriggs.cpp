@@ -30,15 +30,14 @@
 
 // definining all global variables used across multiple scripts
 
-int nproc1 = 0;//number of reads processed not used
-int MAXORDER = MAXLENGTH;
+int nproc1 = 0;//number of reads processed maybe not used
 
 
-double Tol = 1.0E-8; // Tolerance
-
+//
 double l_check = 15;
 int ncalls =0;
 int ncalls_grad =0;
+
 
 std::vector<nuclist> comp_nuc_llik;
 
@@ -58,7 +57,7 @@ std::string s2;
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
-  
+  double Tol = 1.0E-8; // Tolerance
   double **deamRateCT;
   double **deamRateGA;
   int number;
@@ -576,6 +575,7 @@ int main(int argc, char **argv){
             my_tsk_struct[ii].x = new double [4];
             my_tsk_struct[ii].llh_result_grad = new double [4];
             my_tsk_struct[ii].llh_result_hess = new double* [4];
+	    my_tsk_struct[ii].Tol = Tol;
             for(int i=0;i<4;i++){
                 my_tsk_struct[ii].x[i] = distparam[i];
                 my_tsk_struct[ii].llh_result_hess[i] = new double [4];
@@ -617,7 +617,7 @@ int main(int argc, char **argv){
     kstr3->l = kstr3->m = 0;
  
     if (fname1!=NULL){
-      bam_hdr_t* hdr = CalPostPMDProb(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,s,deamRateCT,deamRateGA);
+      bam_hdr_t* hdr = CalPostPMDProb(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,s,deamRateCT,deamRateGA,Tol);
         sort(comp_nuc_llik.begin(),comp_nuc_llik.end(),cmp);
         merge(comp_nuc_llik);
         if (olik1!=NULL){

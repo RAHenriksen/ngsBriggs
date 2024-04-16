@@ -28,7 +28,7 @@ extern tsk_struct *my_tsk_struct;
 
 
 //The log-likelihood for recalibration the ancient prob
-double loglike_recalibration(const double *x, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,std::string s){
+double loglike_recalibration(const double *x, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,std::string s,double Tol){
     fprintf(stderr,"mapped_only: %d [%s]\n",mapped_only,__FUNCTION__);
     htsFormat *dingding7 =(htsFormat*) calloc(1,sizeof(htsFormat));
     double anc_mu = x[0];
@@ -256,9 +256,9 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
 	  int L = b->core.l_qseq;
 	  l_err = ErrorLik(yourrefe, yourread, L, yourqual);
 	  if (!strcasecmp("b",model)){
-	    l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on biotin model
+	    l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
 	  }else if(!strcasecmp("nb",model)){
-	    l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on non-biotin model
+	    l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
 	  }else{
 	    fprintf(stderr,"Please specify a deamination model for further calculations.\n");
 	    return -1;
@@ -293,7 +293,7 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
 }
 
 //The log-likelihood for recalibration the ancient probs
-double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,int threadid){
+double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,int threadid,double Tol){
     //  fprintf(stderr,"(%f,%f,%f,%f) seq_ref: %p\n",x[0],x[1],x[2],x[3],seq_ref);
     double anc_mu = x[0];
     double anc_si = x[1];
@@ -376,10 +376,10 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
             int L = b->core.l_qseq;
             l_err = ErrorLik(yourrefe, yourread, L, yourqual);
             if (!strcasecmp("b",model)){
-                l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on biotin model
+	      l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
             }else if(!strcasecmp("nb",model)){
                 //cout<<"liklik "<<bam_get_qname(b)<<"\n";
-                l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on non-biotin model
+	      l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
                 //cout<<"l_anc "<<l_anc<<"\n";
                 //cout<<"Check nuc_llik "<<PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)<<" "<<PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)<<"\n";
             }else{
@@ -401,19 +401,11 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
     return -ll;
 }
 
-double All_loglike_recalibration(const double *x, const void *){
-    // fprintf(stderr,"[%s]\n",__FUNCTION__);
-    ncalls++;
-    double check = loglike_recalibration(x, refName2, fname2, chromname2, bedname2, mapped_only2, se_only2, mapq2, seq_ref2, len_limit2, len_min2, model2, eps2, lambda2, delta2, delta_s2, nv2,s2);
-    return check;
-}
-
-
 double tsk_All_loglike_recalibration(const double *x, const void *dats){
     //  fprintf(stderr,"[%s]\n",__FUNCTION__);
     ncalls++;
     tsk_struct *ts = (tsk_struct *) dats;
-    double check = tsk_loglike_recalibration(x, ts->reads,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->len_min, ts->model, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid);
+    double check = tsk_loglike_recalibration(x, ts->reads,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->len_min, ts->model, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid,ts->Tol);
     //  fprintf(stderr,"[%s]: total like: %f\n",__FUNCTION__,check);
     return check;
 }
@@ -422,12 +414,12 @@ void *tsk_All_loglike_recalibration_slave(void *dats){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
     ncalls++;
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
-    ts->llh_result = tsk_loglike_recalibration(ts->x, ts->reads,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->len_min, ts->model, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid);
+    ts->llh_result = tsk_loglike_recalibration(ts->x, ts->reads,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->len_min, ts->model, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid,ts->Tol);
     
     pthread_exit(NULL);
 }
 
-void loglike_recalibration_grad(const double *x, double *y, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, std::string s){
+void loglike_recalibration_grad(const double *x, double *y, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, std::string s,double Tol){
     //fprintf(stderr,"mapped_only: %d\n",mapped_only);
     htsFormat *dingding7 =(htsFormat*) calloc(1,sizeof(htsFormat));
     double anc_mu = x[0];
@@ -655,9 +647,9 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
                 int L = b->core.l_qseq;
                 l_err = ErrorLik(yourrefe, yourread, L, yourqual);
                 if (!strcasecmp("b",model)){
-                    l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on biotin model
+		  l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
                 }else if(!strcasecmp("nb",model)){
-                    l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on non-biotin model
+		  l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
                 }else{
                     fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                     exit;
@@ -700,7 +692,7 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
 
 }
 
-void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1_t*> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv){
+void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1_t*> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
     htsFormat *dingding7 =(htsFormat*) calloc(1,sizeof(htsFormat));
     double anc_mu = x[0];
@@ -781,9 +773,9 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
             int L = b->core.l_qseq;
             l_err = ErrorLik(yourrefe, yourread, L, yourqual);
             if (!strcasecmp("b",model)){
-                l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on biotin model
+	      l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
             }else if(!strcasecmp("nb",model)){
-                l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on non-biotin model
+	      l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
             }else{
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                 exit;
@@ -810,16 +802,11 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
     }
 }
 
-void All_loglike_recalibration_grad(const double *x, double *y,const void *){
-    ncalls_grad++;
-    loglike_recalibration_grad(x, y, refName2, fname2, chromname2, bedname2, mapped_only2, se_only2, mapq2, seq_ref2, len_limit2, len_min2, model2, eps2, lambda2, delta2, delta_s2, nv2,s2);
-}
-
 void tsk_All_loglike_recalibration_grad(const double *x, double *y,const void *dats){
     ncalls_grad++;
     //tsk_struct *ts = &my_tsk_struct[0];//assuming single thread
     tsk_struct *ts = (tsk_struct *) dats;//assuming multiple threads
-    tsk_loglike_recalibration_grad(x,y,ts->reads,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min, ts->model,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv);
+    tsk_loglike_recalibration_grad(x,y,ts->reads,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min, ts->model,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv,ts->Tol);
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
 }
 
@@ -829,12 +816,12 @@ void *tsk_All_loglike_recalibration_grad_slave(void *dats){
     ncalls_grad++;
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
     //ts->llh_grad_result;
-    tsk_loglike_recalibration_grad(ts->x,ts->llh_result_grad,ts->reads,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min,ts->model,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv);
+    tsk_loglike_recalibration_grad(ts->x,ts->llh_result_grad,ts->reads,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min,ts->model,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv,ts->Tol);
     //ts->llh_result = tsk_loglike_recalibration(ts->x, ts->reads,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->model, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid);
     pthread_exit(NULL);
 }
 
-void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam1_t*> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv){
+void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam1_t*> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
     htsFormat *dingding7 =(htsFormat*) calloc(1,sizeof(htsFormat));
     double anc_mu = x[0];
@@ -916,9 +903,9 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
             int L = b->core.l_qseq;
             l_err = ErrorLik(yourrefe, yourread, L, yourqual);
             if (!strcasecmp("b",model)){
-                l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on biotin model
+	      l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
             }else if(!strcasecmp("nb",model)){
-                l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on non-biotin model
+	      l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
             }else{
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                 exit;
@@ -953,6 +940,6 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
 
 void *tsk_All_loglike_recalibration_hess_slave(void *dats){
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
-    tsk_loglike_recalibration_hess(ts->x,ts->llh_result_hess,ts->reads,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min,ts->model,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv);
+    tsk_loglike_recalibration_hess(ts->x,ts->llh_result_hess,ts->reads,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min,ts->model,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv,ts->Tol);
     pthread_exit(NULL);
 }
