@@ -48,10 +48,7 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
     kstr->s=NULL;
     mypair.first = kstr;
     samFile *in=NULL;
-    //ofname = strdup("test.bam");
-    //samFile *out=NULL;
-    //if (ofname!=NULL){
-    // out = sam_open_format(ofname, strdup("wb"), dingding6);
+
     int nthreads = 1;
 
     char refeBase, readBase;
@@ -144,144 +141,141 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
     double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
     double x_min2 = ((double)len_min-0.5-mod_mu)/mod_si;
     while(((ret=sam_read1(in,hdr,b)))>0) {
-        //      fprintf(stderr,"looping through bam\n");
-        //nproc1++;
+      fprintf(stderr,"looping through bam\n");
+      //nproc1++;
         //if -m was used, discard unmapped reads
-        if(mapped_only!=0){
-            if(b->core.flag&4)
-                continue;
-        }
-        
-        //default -a 1
-        //only use single end reads
-        //which is either single end or collapsed reads
-        //#if 0
-        if(se_only==1){
-            if(b->core.flag&1)//if paired continue
-                continue;
-        }
-        //#endif
-        if(b->core.flag>256)
-            continue; //Remove possible duplicates
-        
-        // if mapq threshold is set
-        if(mapq!=-1 && b->core.qual<mapq)
-            continue;
-        if (chromId==-1||chromId==b->core.tid){
-            nproc1++;
-        }else if (chromId!=b->core.tid){
-            continue;
-        }
-        if(refId==-1||refId!=b->core.tid){
-            refId=b->core.tid;
-            //fprintf(stderr,"\t-> Now at Chromosome: %s\n",hdr->target_name[refId]);
-            if (bedname!=NULL){
-                if (indref!=NULL){
-                    free(indref);
-                }
-                //checkchrome=b->core.tid;
-                max_site = 0;
-                size_t max_line =  refId < chrom_num-1 ? chrom_line[refId+1] : bedsites.size();
-                for (size_t l=chrom_line[refId]; l < max_line; l++){
-                    if (max_site < bedsites[l][1]){
-                        max_site = bedsites[l][1]; //Assume the provided bed file is 1-based (but will treat it as 0-based internally)
-                    }
-                }
-                size_t chr_len = max_site; // The maximum position considered in the bed file along this chromosome
-                
-                //faidx_seq_len(seq_ref,hdr->target_name[refId]);
-                indref = (uchar*) malloc(chr_len*sizeof(uchar));
-                for (size_t l=0; l<chr_len; l++){
-                    indref[l] = (uchar)0;
-                }
-                
-                for (size_t l=chrom_line[refId]; l < max_line; l++){
-                    for (size_t i = bedsites[l][0]; i <= bedsites[l][1]; i++){
-                        indref[i-1] = (uchar)1; // Shift by 1 so that it is treated 0 based internally.
-                    }
-                }
-            }
-        }
-        
-        //then we simply write it to the output
-        memset(reconstructedRef,0,512);
-        memset(myread,'N',512);
-        memset(myrefe,'N',512);
-        
-        if (seq_ref != NULL){
-            wrapperwithref(b,hdr,myread,myrefe,seq_ref);
-        }else{
-            reconstructRefWithPosHTS(b,mypair,reconstructedRef);
-            wrapper(b,mypair.first->s,mypair.second,0,0,NULL,NULL,1,myread,myrefe);
-        }
-        
-        if (len_limit <=0){
-            len_limit = 512;
-        };
-        //cout << b->core.l_qseq << "Test nuc_llik\n";
-        if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit){
-            for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                yourqual[cycle] = -1;
-            }
-            //cout << b->core.l_qseq << "\n";
-            int isbedfrag = 0;
-            for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                refeBase = refToChar[myrefe[cycle]];
-                readBase = refToChar[myread[cycle]];
-                size_t pos = b->core.pos+cycle;
-                //                cout << (int)refeBase << " " << (int)readBase<<" "<<pos<<" "<<max_site<<"\n";
-                if(refeBase!=4 && readBase!=4 && bedname!=NULL &&  pos < max_site && indref[pos]==1){ //check whether the fragment has intersection with the bed file
-                    isbedfrag += 1;
-                }else if(refeBase!=4 && readBase!=4 && bedname==NULL){
-                    isbedfrag += 1;
-                }
-            }
-            if (isbedfrag > 0){
-                
-                for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                    int dist5p=cycle;
-                    int dist3p=b->core.l_qseq-1-cycle;
-                    //cout<<"flag "<<b->core.flag<<"\n";
-                    if( bam_is_rev(b) ){
-                        // cout<<"rev "<<"\t";
-                        refeBase=com[refeBase];
-                        readBase=com[readBase];
-                        //dist5p=int(al.QueryBases.size())-1-i;
-                        dist5p=int(b->core.l_qseq)-1-cycle;
-                        dist3p=cycle;
-                    }
-                    yourread[dist5p] = readBase;
-                    yourrefe[dist5p] = refeBase;
-                    yourqual[dist5p] = bam_get_qual(b)[cycle];
-                }
-                
-                double l_anc, l_err;
-                int L = b->core.l_qseq;
-                l_err = ErrorLik(yourrefe, yourread, L, yourqual);
-                if (!strcasecmp("b",model)){
-                    l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on biotin model
-                }else if(!strcasecmp("nb",model)){
-                    l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on non-biotin model
-                }else{
-                    fprintf(stderr,"Please specify a deamination model for further calculations.\n");
-                    return -1;
-                }
-                double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
-                double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
-                double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
-                double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
-                ll += log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
-                //double PostAncProb = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps);
-                //double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model);
-                //cout<<"\t"<<"AN: "<<PostAncProb<<" \t"<<"PD: "<<PostPMDProb<<"\n";
-                num += 1.0; //number of intersected reads.
-            }
-        }
-        //    fprintf(stderr,"\nmyread:\n%.*s\nmyReference:\n%.*s\n",b->core.l_qseq,myread,b->core.l_qseq,myrefe);
-        //    fprintf(stderr,"---read[%d]----\n",nproc1);
+      if(mapped_only!=0){
+	if(b->core.flag&4)
+	  continue;
+      }
+      
+      //default -a 1
+      //only use single end reads
+      //which is either single end or collapsed reads
+      //#if 0
+      if(se_only==1){
+	if(b->core.flag&1)//if paired continue
+	  continue;
+      }
+      //#endif
+      if(b->core.flag>256)
+	continue; //Remove possible duplicates
+      
+      // if mapq threshold is set
+      if(mapq!=-1 && b->core.qual<mapq)
+	continue;
+      if (chromId==-1||chromId==b->core.tid){
+	nproc1++;
+      }else if (chromId!=b->core.tid){
+	continue;
+      }
+      if(refId==-1||refId!=b->core.tid){
+	refId=b->core.tid;
+	//fprintf(stderr,"\t-> Now at Chromosome: %s\n",hdr->target_name[refId]);
+	if (bedname!=NULL){
+	  if (indref!=NULL){
+	    free(indref);
+	  }
+	  //checkchrome=b->core.tid;
+	  max_site = 0;
+	  size_t max_line =  refId < chrom_num-1 ? chrom_line[refId+1] : bedsites.size();
+	  for (size_t l=chrom_line[refId]; l < max_line; l++){
+	    if (max_site < bedsites[l][1]){
+	      max_site = bedsites[l][1]; //Assume the provided bed file is 1-based (but will treat it as 0-based internally)
+	    }
+	  }
+	  size_t chr_len = max_site; // The maximum position considered in the bed file along this chromosome
+          
+	  //faidx_seq_len(seq_ref,hdr->target_name[refId]);
+	  indref = (uchar*) malloc(chr_len*sizeof(uchar));
+	  for (size_t l=0; l<chr_len; l++){
+	    indref[l] = (uchar)0;
+	  }
+          
+	  for (size_t l=chrom_line[refId]; l < max_line; l++){
+	    for (size_t i = bedsites[l][0]; i <= bedsites[l][1]; i++){
+	      indref[i-1] = (uchar)1; // Shift by 1 so that it is treated 0 based internally.
+	    }
+	  }
+	}
+      }
+      
+      //then we simply write it to the output
+      memset(reconstructedRef,0,512);
+      memset(myread,'N',512);
+      memset(myrefe,'N',512);
+      
+      if (seq_ref != NULL){
+	wrapperwithref(b,hdr,myread,myrefe,seq_ref);
+      }else{
+	reconstructRefWithPosHTS(b,mypair,reconstructedRef);
+	wrapper(b,mypair.first->s,mypair.second,0,0,NULL,NULL,1,myread,myrefe);
+      }
+      
+      if (len_limit <=0){
+	len_limit = 512;
+      };
+      //cout << b->core.l_qseq << "Test nuc_llik\n";
+      if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit){
+	for (int cycle=0;cycle<b->core.l_qseq;cycle++){
+	  yourqual[cycle] = -1;
+	}
+	//cout << b->core.l_qseq << "\n";
+	int isbedfrag = 0;
+	for (int cycle=0;cycle<b->core.l_qseq;cycle++){
+	  refeBase = refToChar[myrefe[cycle]];
+	  readBase = refToChar[myread[cycle]];
+	  size_t pos = b->core.pos+cycle;
+	  //                cout << (int)refeBase << " " << (int)readBase<<" "<<pos<<" "<<max_site<<"\n";
+	  if(refeBase!=4 && readBase!=4 && bedname!=NULL &&  pos < max_site && indref[pos]==1){ //check whether the fragment has intersection with the bed file
+	    isbedfrag += 1;
+	  }else if(refeBase!=4 && readBase!=4 && bedname==NULL){
+	    isbedfrag += 1;
+	  }
+	}
+	if (isbedfrag > 0){
+	  
+	  for (int cycle=0;cycle<b->core.l_qseq;cycle++){
+	    int dist5p=cycle;
+	    int dist3p=b->core.l_qseq-1-cycle;
+	    //cout<<"flag "<<b->core.flag<<"\n";
+	    if( bam_is_rev(b) ){
+	      // cout<<"rev "<<"\t";
+	      refeBase=com[refeBase];
+	      readBase=com[readBase];
+	      //dist5p=int(al.QueryBases.size())-1-i;
+	      dist5p=int(b->core.l_qseq)-1-cycle;
+	      dist3p=cycle;
+	    }
+	    yourread[dist5p] = readBase;
+	    yourrefe[dist5p] = refeBase;
+	    yourqual[dist5p] = bam_get_qual(b)[cycle];
+	  }
+          
+	  double l_anc, l_err;
+	  int L = b->core.l_qseq;
+	  l_err = ErrorLik(yourrefe, yourread, L, yourqual);
+	  if (!strcasecmp("b",model)){
+	    l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on biotin model
+	  }else if(!strcasecmp("nb",model)){
+	    l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual); // Ancient Likelihood based on non-biotin model
+	  }else{
+	    fprintf(stderr,"Please specify a deamination model for further calculations.\n");
+	    return -1;
+	  }
+	  double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+	  double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+	  double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+	  double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+	  ll += log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
+	  //double PostAncProb = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps);
+	  //double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model);
+	  //cout<<"\t"<<"AN: "<<PostAncProb<<" \t"<<"PD: "<<PostPMDProb<<"\n";
+	  num += 1.0; //number of intersected reads.
+	}
+      }
     }
-    //free(ofname);
-    //assert(sam_close(out)==0);
+
     if (indref!=NULL){
         free(indref);
     }

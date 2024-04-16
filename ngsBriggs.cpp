@@ -29,8 +29,7 @@
 #include "bdamagereader.h"
 
 // definining all global variables used across multiple scripts
-int VERBOSE = 1;
-int SIG_COND = 1;
+
 int nproc1 = 0;//number of reads processed not used
 int MAXORDER = MAXLENGTH;
 
