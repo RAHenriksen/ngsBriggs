@@ -210,7 +210,7 @@ int main(int argc, char **argv){
         
         fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
         fprintf(stderr,"Dir.\tPos.\tFreqCT\tFreqGA\n");
-        for (int i=0; i<5;i++){
+        for (int i=0; i<5;i++){	// 
             fprintf(stderr,"5'\t%d\t",i+1);
             fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
         }
@@ -499,7 +499,6 @@ int main(int argc, char **argv){
         bgzf_close(fp);
     }
     
-    return 0;
     char* refName;
     refName = NULL;
     int mapq =-1;
@@ -521,9 +520,9 @@ int main(int argc, char **argv){
     }
     if (isrecal>=0){
         if (!strcasecmp("b",model)){
-            CaldeamRate_b(invec2[0],invec2[1],invec2[2],invec2[3],len_limit);
+	  CaldeamRate_b(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA);
         }else if (!strcasecmp("nb",model)){
-            CaldeamRate_nb(invec2[0],invec2[1],invec2[2],invec2[3],len_limit);
+	  CaldeamRate_nb(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA);
         }
 
     }
@@ -619,7 +618,7 @@ int main(int argc, char **argv){
     kstr3->l = kstr3->m = 0;
  
     if (fname1!=NULL){
-        bam_hdr_t* hdr = CalPostPMDProb(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,s);
+      bam_hdr_t* hdr = CalPostPMDProb(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,s,deamRateCT,deamRateGA);
         sort(comp_nuc_llik.begin(),comp_nuc_llik.end(),cmp);
         merge(comp_nuc_llik);
         if (olik1!=NULL){
@@ -630,21 +629,12 @@ int main(int argc, char **argv){
                 strcat(concat, olik1);
             }
             fp3 = bgzf_open(concat,"wb");
-            //           fprintf(stderr,"%s\t%s\t%s\t%s\t%s\t%s\n","ChrName","NucPos","A","C","G","T");
             ksprintf(kstr3,"%s\t%s\t%s\t%s\t%s\t%s\n","ChrName","NucPos","A","C","G","T");
-            //           fprintf(stderr,"%s\t%s\t%s\t%s\t%s\t%s\n","ChrName","NucPos","A","C","G","T");
-            //my_bgzf_write(fp3,kstr3->s,kstr3->l);
             assert(bgzf_write(fp3,kstr3->s,kstr3->l)==kstr3->l);
-            //           fprintf(stderr,"%s\t%s\t%s\t%s\t%s\t%s\n","ChrName","NucPos","A","C","G","T");
             kstr3->l = 0;
-            //           fprintf(stderr,"%s\t%s\t%s\t%s\t%s\t%s\n","ChrName","NucPos","A","C","G","T");
             for (size_t s = 0; s < comp_nuc_llik.size(); s++){
-                //                fprintf(stderr,"%s\n",comp_nuc_llik[s].chr);
-                //fprintf(stderr,"%lld\n",comp_nuc_llik[s].pos);
-                //fprintf(stderr,"%f\t%f\t%f\t%f\n",comp_nuc_llik[s].nuclik[0],comp_nuc_llik[s].nuclik[1],comp_nuc_llik[s].nuclik[2],comp_nuc_llik[s].nuclik[3]);
-                //                fprintf(stderr,"%s\t%lld\t%f\t%f\t%f\t%f\n",hdr1->target_name[comp_nuc_llik[s].chrid],comp_nuc_llik[s].pos,comp_nuc_llik[s].nuclik[0],comp_nuc_llik[s].nuclik[1],comp_nuc_llik[s].nuclik[2],comp_nuc_llik[s].nuclik[3]);
                 ksprintf(kstr3,"%s\t%zu\t%f\t%f\t%f\t%f\n",hdr->target_name[comp_nuc_llik[s].chrid], comp_nuc_llik[s].pos, comp_nuc_llik[s].nuclik[0], comp_nuc_llik[s].nuclik[1], comp_nuc_llik[s].nuclik[2], comp_nuc_llik[s].nuclik[3]);
-                //my_bgzf_write(fp3,kstr3->s,kstr3->l);
+
                 assert(bgzf_write(fp3,kstr3->s,kstr3->l)==kstr3->l);
                 kstr3->l = 0;
             }

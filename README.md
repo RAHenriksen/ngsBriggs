@@ -3,6 +3,18 @@ a fast regression method to estimate postmortem damage
 
 
 ## INSTALLATION & REQUIREMENTS
+* (optional eigenlib)
+
+```
+git clone https://gitlab.com/libeigen/eigen
+```
+
+Then remember to add
+```
+FLAGS="-I ../eigen/"
+```
+to make commands below
+
 * Use local installation of htslib
 
 git clone https://github.com/RAHenriksen/ngsBriggs.git
