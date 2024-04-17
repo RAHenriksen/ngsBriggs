@@ -1,20 +1,25 @@
-#include "PosteriorProb.h"
+
 
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <zlib.h>
+#include <cmath>
+#include <iomanip>
+#include <ctime>
+#include <getopt.h>
+
+
 #include <htslib/hts.h>
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
 #include <htslib/faidx.h>
-#include <zlib.h>
-#include <cmath>
-#include <iomanip>
 
-#include <ctime>
-#include <getopt.h>
-#include <iostream>
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
@@ -26,6 +31,8 @@
 #include "Recalibration.h"
 #include "ngsBriggs.h"
 #include "Likelihood.h"
+
+#include "PosteriorProb.h"
 
 void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam1_t *b, double PostProb,double **deamRateCT,double **deamRateGA){
     // std::cout<<"Post Prob is "<<PostProb<<"\n";

@@ -2,6 +2,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <sstream>
+#include <string>
+
 #include <htslib/hts.h>
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
@@ -652,7 +655,7 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
 		  l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
                 }else{
                     fprintf(stderr,"Please specify a deamination model for further calculations.\n");
-                    exit;
+                    exit(0);
                 }
                 double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
                 double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
@@ -778,7 +781,7 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
 	      l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
             }else{
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
-                exit;
+                exit(0);
             }
             double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
             double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
@@ -908,7 +911,7 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
 	      l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
             }else{
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
-                exit;
+                exit(0);
             }
             double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
             double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
