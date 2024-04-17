@@ -38,9 +38,6 @@ double l_check = 15;
 int ncalls =0;
 int ncalls_grad =0;
 
-
-std::vector<nuclist> comp_nuc_llik;
-
 tsk_struct *my_tsk_struct = NULL;
 
 int tsk_nthreads = -1;
@@ -611,35 +608,13 @@ int main(int argc, char **argv){
         return 0;
     }
     
-    BGZF *fp3; // Compressed nucliklihood file;
     kstring_t *kstr3 = new kstring_t;
     kstr3->s = NULL;
     kstr3->l = kstr3->m = 0;
  
     if (fname1!=NULL){
       bam_hdr_t* hdr = CalPostPMDProb(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,s,deamRateCT,deamRateGA,Tol);
-        sort(comp_nuc_llik.begin(),comp_nuc_llik.end(),cmp);
-        merge(comp_nuc_llik);
-        if (olik1!=NULL){
-            const char* comp = "comp_"; // RASMUS  
-            char * concat = (char*) malloc(strlen(comp) + strlen(olik1) + 1);
-            if (concat){
-                strcpy(concat, comp);
-                strcat(concat, olik1);
-            }
-            fp3 = bgzf_open(concat,"wb");
-            ksprintf(kstr3,"%s\t%s\t%s\t%s\t%s\t%s\n","ChrName","NucPos","A","C","G","T");
-            assert(bgzf_write(fp3,kstr3->s,kstr3->l)==kstr3->l);
-            kstr3->l = 0;
-            for (size_t s = 0; s < comp_nuc_llik.size(); s++){
-                ksprintf(kstr3,"%s\t%zu\t%f\t%f\t%f\t%f\n",hdr->target_name[comp_nuc_llik[s].chrid], comp_nuc_llik[s].pos, comp_nuc_llik[s].nuclik[0], comp_nuc_llik[s].nuclik[1], comp_nuc_llik[s].nuclik[2], comp_nuc_llik[s].nuclik[3]);
-
-                assert(bgzf_write(fp3,kstr3->s,kstr3->l)==kstr3->l);
-                kstr3->l = 0;
-            }
-            bgzf_close(fp3);
-        }
-        sam_hdr_destroy(hdr);
+      sam_hdr_destroy(hdr);
     }
     
     free(Frag_len);
@@ -669,7 +644,6 @@ int main(int argc, char **argv){
     free(mm5p);
     free(mm3p);
     argStruct_destroy(mypars);
-    comp_nuc_llik.clear();
 
     // check deallocation of my_tsk_struct values
     delete my_tsk_struct;

@@ -6,7 +6,6 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <string>
 #include <zlib.h>
 #include <cmath>
@@ -33,162 +32,6 @@
 #include "Likelihood.h"
 
 #include "PosteriorProb.h"
-
-void Calnuclik(char myread[], kstring_t *kstr, char* chromname, uchar chrid, bam1_t *b, double PostProb,double **deamRateCT,double **deamRateGA){
-    // std::cout<<"Post Prob is "<<PostProb<<"\n";
-  char nuc[6] = "ACGTN";
-    double v0,v1,v2,v3;
-    for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-	v0 = 0.25;
-	v1 = 0.25;
-	v2 = 0.25;
-	v3 = 0.25;
-        if (cycle<15){
-            ksprintf(kstr,"%s\t%s\t%zu\t%c\t%f\t",bam_get_qname(b),chromname,b->core.pos,nuc[(int)refToChar[myread[cycle]]],PostProb);
-            //ksprintf(kstr,"%s\t%f\t%s",bam_get_qname(b),PostProb,nuc[(int)refToChar[myread[cycle]]]);
-            //std::cout << bam_get_qname(b) << "\t" << PostProb << "\t" << nuc[(int)refToChar[myread[cycle]]];
-            if ( bam_is_rev(b) ){
-                if (com[refToChar[myread[cycle]]]==0){
-                    v3 = 1-PhredError[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PostProb*deamRateGA[b->core.l_qseq-30][cycle]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (com[refToChar[myread[cycle]]]==1){
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = -PostProb*deamRateCT[b->core.l_qseq-30][30-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (com[refToChar[myread[cycle]]]==2){
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = -PostProb*deamRateGA[b->core.l_qseq-30][cycle]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (com[refToChar[myread[cycle]]]==3){
-                    v3 = PhredErrorAThird[bam_get_qual(b)[0]];
-                    v2 = PostProb*deamRateCT[b->core.l_qseq-30][30-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[0]];
-                    v0 = 1-PhredError[bam_get_qual(b)[0]];
-                }
-                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",16,cycle,b->core.pos+cycle,v0,v1,v2,v3);
-                nuclist nuc_llik;
-                nuc_llik.pos = b->core.pos+cycle;
-                nuc_llik.chrid = chrid;
-                nuc_llik.chr = chromname;
-                nuc_llik.nuclik[0] = log(v0);
-                nuc_llik.nuclik[1] = log(v1);
-                nuc_llik.nuclik[2] = log(v2);
-                nuc_llik.nuclik[3] = log(v3);
-                comp_nuc_llik.push_back(nuc_llik);
-                //std::cout<<"\t"<<16<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
-                //std::cout<<"\n";
-            }else{
-                if (refToChar[myread[cycle]]==0){
-                    v0 = 1-PhredError[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = PostProb*deamRateGA[b->core.l_qseq-30][30-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (refToChar[myread[cycle]]==1){
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = -PostProb*deamRateCT[b->core.l_qseq-30][cycle]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (refToChar[myread[cycle]]==2){
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = -PostProb*deamRateGA[b->core.l_qseq-30][30-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (refToChar[myread[cycle]]==3){
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PostProb*deamRateCT[b->core.l_qseq-30][cycle]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v3 = 1-PhredError[bam_get_qual(b)[cycle]];
-                }
-                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",0,cycle,b->core.pos+cycle,v0,v1,v2,v3);
-                nuclist nuc_llik;
-                nuc_llik.pos = b->core.pos+cycle;
-                nuc_llik.chrid = chrid;
-                nuc_llik.chr = chromname;
-                nuc_llik.nuclik[0] = log(v0);
-                nuc_llik.nuclik[1] = log(v1);
-                nuc_llik.nuclik[2] = log(v2);
-                nuc_llik.nuclik[3] = log(v3);
-                comp_nuc_llik.push_back(nuc_llik);
-                //std::cout<<"\t"<<0<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
-            }
-        }else if (cycle>=b->core.l_qseq-15){
-            //std::cout << bam_get_qname(b) << "\t" << PostProb << "\t" << nuc[(int)refToChar[myread[cycle]]];
-            ksprintf(kstr,"%s\t%s\t%zu\t%c\t%f\t",bam_get_qname(b),chromname,b->core.pos,nuc[(int)refToChar[myread[cycle]]],PostProb);
-            if ( bam_is_rev(b) ){
-                if (com[refToChar[myread[cycle]]]==0){
-                    v3 = 1-PhredError[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PostProb*deamRateGA[b->core.l_qseq-30][cycle+30-b->core.l_qseq]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (com[refToChar[myread[cycle]]]==1){
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = -PostProb*deamRateCT[b->core.l_qseq-30][b->core.l_qseq-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (com[refToChar[myread[cycle]]]==2){
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = -PostProb*deamRateGA[b->core.l_qseq-30][cycle+30-b->core.l_qseq]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (com[refToChar[myread[cycle]]]==3){
-                    v3 = PhredErrorAThird[bam_get_qual(b)[0]];
-                    v2 = PostProb*deamRateCT[b->core.l_qseq-30][b->core.l_qseq-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[0]];
-                    v0 = 1-PhredError[bam_get_qual(b)[0]];
-                }
-                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",16,cycle,b->core.pos+cycle,v0,v1,v2,v3);
-                nuclist nuc_llik;
-                nuc_llik.pos = b->core.pos+cycle;
-                nuc_llik.chrid = chrid;
-                nuc_llik.chr = chromname;
-                nuc_llik.nuclik[0] = log(v0);
-                nuc_llik.nuclik[1] = log(v1);
-                nuc_llik.nuclik[2] = log(v2);
-                nuc_llik.nuclik[3] = log(v3);
-                comp_nuc_llik.push_back(nuc_llik);
-                //std::cout<<"\t"<<16<<"\t"<<cycle<<"\t"<<v1<<"\t"<<v2<<"\t"<<v3<<"\t"<<v4<<"\n";
-                //std::cout<<"\n";
-            }else{
-                if (refToChar[myread[cycle]]==0){
-                    v0 = 1-PhredError[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = PostProb*deamRateGA[b->core.l_qseq-30][b->core.l_qseq-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (refToChar[myread[cycle]]==1){
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = -PostProb*deamRateCT[b->core.l_qseq-30][cycle+30-b->core.l_qseq]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (refToChar[myread[cycle]]==2){
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = -PostProb*deamRateGA[b->core.l_qseq-30][b->core.l_qseq-cycle-1]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+1-PhredError[bam_get_qual(b)[cycle]];
-                    v3 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                }else if (refToChar[myread[cycle]]==3){
-                    v0 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v1 = PostProb*deamRateCT[b->core.l_qseq-30][cycle+30-b->core.l_qseq]*(1-4*PhredErrorAThird[bam_get_qual(b)[cycle]])+PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v2 = PhredErrorAThird[bam_get_qual(b)[cycle]];
-                    v3 = 1-PhredError[bam_get_qual(b)[cycle]];
-                }
-                ksprintf(kstr,"%d\t%d\t%zu\t%f\t%f\t%f\t%f\n",0,cycle,b->core.pos+cycle,v0,v1,v2,v3);
-                nuclist nuc_llik;
-                nuc_llik.pos = b->core.pos+cycle;
-                nuc_llik.chrid = chrid;
-                nuc_llik.chr = chromname;
-                nuc_llik.nuclik[0] = log(v0);
-                nuc_llik.nuclik[1] = log(v1);
-                nuc_llik.nuclik[2] = log(v2);
-                nuc_llik.nuclik[3] = log(v3);
-                comp_nuc_llik.push_back(nuc_llik);
-                //std::cout<<nuc_llik.nuclik[0]<<"\n";
-            }
-        }
-    }
-}
 
 
 double NoPMDGivenAnc_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv,double Tol){
@@ -1077,20 +920,6 @@ bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, cons
     //ofname = strdup("test.bam");
     samFile *out=NULL;
     
-    BGZF *fp2;
-    kstring_t *kstr2 = new kstring_t;
-    kstr2->s = NULL;
-    kstr2->l = kstr2->m = 0;
-    
-    if (olik!=NULL){
-        fp2 = bgzf_open(olik,"wb");
-        ksprintf(kstr2,"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n","SeqName","ChrName","ReadPos","ReadNuc","PostProb","Dir","CycPos","NucPos","A","C","G","T");
-        //my_bgzf_write(fp2,kstr2->s,kstr2->l);
-        assert(bgzf_write(fp2,kstr2->s,kstr2->l)==kstr2->l);
-
-        kstr2->l = 0;
-    }
-    
     if (ofname!=NULL){
         out = sam_open_format(ofname, strdup("wb"), dingding6);
         int nthreads = 1;
@@ -1321,26 +1150,14 @@ bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, cons
                     yourqual[dist5p] = bam_get_qual(b)[cycle];
                 }
                 
-                //cout<<"isbedfrag "<<yourrefe[0]+0<<"\n";
+
                 double PostAncProb1 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 0, len_limit, len_min,Tol);
                 double PostAncProb2 = 0;
-                //cout<<"nuc_llik_check_name "<<bam_get_qname(b)<<"\n";
-                if (isrecal==1){
-		  PostAncProb2 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 1, len_limit, len_min,Tol);
-                    if (olik!=NULL){
-		      Calnuclik(myread, kstr2, hdr->target_name[refId],(uchar)refId,b, PostAncProb2,deamRateCT,deamRateGA);
-                    }
-                }else{
-                    if (olik!=NULL)
-		      Calnuclik(myread, kstr2,hdr->target_name[refId],(uchar)refId, b, PostAncProb1,deamRateCT,deamRateGA);
-                }
-                if (olik!=NULL){
-                    //my_bgzf_write(fp2,kstr2->s,kstr2->l);
-                    assert(bgzf_write(fp2,kstr2->s,kstr2->l)==kstr2->l);
 
-                    kstr2->l = 0;
-                    
-                }
+                if (isrecal==1) {
+		  PostAncProb2 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 1, len_limit, len_min,Tol);
+		}
+   
                 double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model,Tol);
                 //cout << "length 0" << " " << b->core.l_qseq << "\n";
                 if (ofname == NULL){
@@ -1396,10 +1213,6 @@ bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, cons
     free(dingding5);
     //sam_hdr_destroy(hdr);
     assert(sam_close(in)==0);
-    if (olik!=NULL){
-        //fp = bgzf_open(olik,"wb");
-        bgzf_close(fp2);
-    }//STOPHERE
-    //free(fname);
+ 
     return hdr;
 }
