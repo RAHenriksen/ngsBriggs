@@ -401,11 +401,11 @@ void damage::write(char *fname,bam_hdr_t *hdr){
       ksprintf(&kstr,"%lu",it->second.nreads);
     for(int l=0;l<MAXLENGTH;l++){
       for(int i=0;i<16;i++)
-	ksprintf(&kstr,"\t%d",it->second.mm5pF[l][i]);
+	ksprintf(&kstr,"\t%f",it->second.mm5pF[l][i]);
     }
     for(int l=0;l<MAXLENGTH;l++){
       for(int i=0;i<16;i++)
-	ksprintf(&kstr,"\t%d",it->second.mm3pF[l][i]);
+	ksprintf(&kstr,"\t%f",it->second.mm3pF[l][i]);
     }
     ksprintf(&kstr,"\n");
     assert(bgzf_write(fp,kstr.s,kstr.l)==kstr.l);

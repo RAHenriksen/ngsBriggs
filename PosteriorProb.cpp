@@ -900,7 +900,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
     return post_pmd;
 }
 
-bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, const char* bedname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, std::string s,double **deamRateCT,double **deamRateGA,double Tol)
+bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, const char* chromname, const char* bedname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
 {
   char nuc[6] = "ACGTN";
     fprintf(stderr,"print msg mapped_only: %d\n",mapped_only);
@@ -943,7 +943,7 @@ bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, cons
     //code below only relevant if using cram files
     if(refName!=NULL){
         char *ref =(char*) malloc(10 + strlen(refName) + 1);
-        sprintf(ref, "reference=%s", refName);
+        snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
         hts_opt_add((hts_opt **)&dingding5->specific,ref);
         free(ref);
     }
@@ -958,7 +958,7 @@ bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, cons
     bam_hdr_t  *hdr = sam_hdr_read(in);
     bam_hdr_t  *hdr1 = NULL;
     if (ofname!=NULL){
-        sam_hdr_add_pg(hdr,"metadamage_briggs","VN","1.0","CL",s.c_str(), NULL);
+        sam_hdr_add_pg(hdr,"metadamage_briggs","VN","1.0","CL",str_cli->s, NULL);
         assert(sam_hdr_write(out, hdr) >= 0);
     }
     bam1_t *b = bam_init1();

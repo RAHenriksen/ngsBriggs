@@ -31,26 +31,12 @@
 // definining all global variables used across multiple scripts
 
 int nproc1 = 0;//number of reads processed maybe not used
-
-
-//
 double l_check = 15;
 int ncalls =0;
 int ncalls_grad =0;
-
 tsk_struct *my_tsk_struct = NULL;
 
 int tsk_nthreads = -1;
-
-char *refName2 = NULL; // or initialize with appropriate value
-char *fname2 = NULL; // or initialize with appropriate value
-char *model2 = NULL; // or initialize with appropriate value
-const char* chromname2, *bedname2;
-int mapped_only2, se_only2, mapq2, len_limit2, len_min2;
-double eps2, lambda2, delta2, delta_s2, nv2;
-
-faidx_t *seq_ref2;
-std::string s2;
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
@@ -81,15 +67,15 @@ int main(int argc, char **argv){
      HelpPage(stderr);
      return 0;
    }
-    
-    std::string s = "./ngsBriggs ";
+
+   kstring_t str_cli; str_cli.s=NULL;str_cli.l=str_cli.m=0;
+   ksprintf(&str_cli,"./ngsBriggs");;
+
 
     for(int i=0;i<argc;i++)
-    {  s += " ";
-        s += argv[i];
-    }
-    
-    //printf("The resulting string is: %s\n", s.c_str());
+      ksprintf(&str_cli," %s",argv[0]);
+    ksprintf(&str_cli,"\n");
+
     mypars = pars_briggs(argc,argv);
 
 
@@ -533,23 +519,6 @@ int main(int argc, char **argv){
         std::vector<bam1_t*> tsk_reads;
         hdr = read_all_reads(fname1,bedname1,refName,tsk_reads);
         //tsk stop
-        fprintf(stderr,"BRANCH!\n");fflush(stderr);
-        refName2 = refName;
-        chromname2 = chromname1;
-        bedname2 = bedname1;
-        mapped_only2 = mapped_only;
-        se_only2 = se_only;
-        mapq2 = mapq;
-        seq_ref2 = seq_ref;
-        len_limit2 = len_limit;
-        len_min2 = len_min;
-        model2 = model;
-        eps2 = Contam_eps;
-        s2 = s;
-        lambda2 = invec2[0];
-        delta2 = invec2[1];
-        delta_s2 = invec2[2];
-        nv2 = invec2[3];
         ncalls = 0;
         ncalls_grad = 0;
         //double lbd2[4] = {30,1e-8,30,1e-8};
@@ -615,7 +584,7 @@ int main(int argc, char **argv){
     kstr3->l = kstr3->m = 0;
  
     if (fname1!=NULL){
-      bam_hdr_t* hdr = CalPostPMDProb(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,s,deamRateCT,deamRateGA,Tol);
+      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,&str_cli,deamRateCT,deamRateGA,Tol);
       sam_hdr_destroy(hdr);
     }
     
