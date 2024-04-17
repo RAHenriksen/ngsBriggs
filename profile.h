@@ -20,6 +20,9 @@ typedef struct{
 }triple;
 
 
+extern char toIndex[4][4];
+
+
 class damage{
   char *reconstructedTemp;
 public:

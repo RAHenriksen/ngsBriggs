@@ -104,27 +104,6 @@ double NormalINC_hess_mu_si(double y, double x, double x_max, double x_min,doubl
     }
 }
 
-bool cmp(nuclist x,nuclist y){
-    return (x.chrid<y.chrid) || ((x.chrid==y.chrid) && (x.pos<y.pos));
-}
-
-void merge(std::vector<nuclist> &x_sort){
-    size_t s0 = 0;
-    while (s0<x_sort.size()){
-        size_t s = s0+1;
-        while ((x_sort[s].chrid == x_sort[s0].chrid) && (x_sort[s].pos == x_sort[s0].pos) && s<x_sort.size()){
-            for (int i = 0; i<4; i++){
-                x_sort[s0].nuclik[i] += x_sort[s].nuclik[i];
-            }
-            s = s+1;
-        }
-        x_sort.erase(x_sort.begin()+s0+1,x_sort.begin()+s);
-        s0 = s0+1;
-    }
-}
-
-// Borrow from NGSNGS
-
 //Bin the lengths to speed up the inference
 void FragArrayBin(int number, int &BinNum, int*& Length, double *& Freq, double*& BinLength, double*& BinFreq){
     if((BinNum >= number) || (BinNum)<=0){
@@ -223,7 +202,7 @@ void parse_tabledata(const char* filename,double** Table,int STRLENS){
     gzclose(gz);
 }
 
-int tabreader(char *tabname,int STRLENS){
+int tabreader(char *tabname,int STRLENS,double** mm5p, double **mm3p){
     int numpos = MAXLENGTH*2+1;
     int numcolumn = 16 + 4;
     double ** Table = (double **) malloc(numpos*(sizeof(double *))); /*I allocate memory here.  If this function is called many times it may be better to move the memmory allocation out of this function*/
@@ -254,7 +233,7 @@ int tabreader(char *tabname,int STRLENS){
 }
 
 
-int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number){
+int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number,double **mm5p,double **mm3p){
     char *refName = NULL;
     clock_t t=clock();
     time_t t2=time(NULL);
@@ -270,7 +249,7 @@ int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * 
         }else{
             fprintf(stderr, "Reference is not provided, and it will be reconstructed according to the MD tags!\n");
         }
-        parse_sequencingdata1(refName,fname,chromname,bedname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number);
+        parse_sequencingdata1(refName,fname,chromname,bedname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
     }
     
     fprintf(stderr,
@@ -477,7 +456,7 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
 
 
 //QUALITY CONTROL and LENGTH DISTRIBUTION
-void parse_sequencingdata1(char *refName,char *fname,const char* chromname, const char* bedname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number){
+void parse_sequencingdata1(char *refName,char *fname,const char* chromname, const char* bedname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number,double** mm5p, double **mm3p){
     fprintf(stderr,"mapped_only: %d\n",mapped_only);
     htsFormat *dingding3 =(htsFormat*) calloc(1,sizeof(htsFormat));
 
@@ -574,7 +553,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
     if (chromId==-1){
         fprintf(stderr,"No meaningful chromosome name is provided, therefore we will focus on all provided chromosomes!\n");
     }
-    uchar * indref = NULL;
+    unsigned char * indref = NULL;
     double Frag_len_count[512];
     for (int j=0;j<512;j++){
         Frag_len_count[j] = 0.0;
@@ -631,14 +610,14 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
                 
                 //faidx_seq_len(seq_ref,hdr->target_name[refId]);
                 // Construct a logic array with 1 inside the bedfile, 0 outside the bedfile
-                indref = (uchar*) malloc(chr_len*sizeof(uchar));
+                indref = (unsigned char*) malloc(chr_len*sizeof(unsigned char));
                 for (size_t l=0; l<chr_len; l++){
-                    indref[l] = (uchar)0;
+                    indref[l] = (unsigned char)0;
                 }
                 // The internal site position is 0-based.
                 for (size_t l=chrom_line[refId]; l < max_line; l++){
                     for (size_t i = bedsites[l][0]; i <= bedsites[l][1]; i++){
-                        indref[i-1] = (uchar)1; // Shift by 1 so that it is treated 0 based internally.
+                        indref[i-1] = (unsigned char)1; // Shift by 1 so that it is treated 0 based internally.
                     }
                 }
             }

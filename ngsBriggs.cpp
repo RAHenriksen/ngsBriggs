@@ -54,6 +54,8 @@ std::string s2;
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
+
+  double** mm5p, **mm3p;// **dmm5p, **dmm3p;
   double Tol = 1.0E-8; // Tolerance
   double **deamRateCT;
   double **deamRateGA;
@@ -155,10 +157,10 @@ int main(int argc, char **argv){
 
         if (fname != NULL){
             fprintf(stderr,"Loading the bamfile\n");
-            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number);
+            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
             //cout<<"Minimum length is "<<len_min<<"\n";
         }else if(tabname != NULL && lenname != NULL){
-	  tabreader(tabname,STRLENS);
+	  tabreader(tabname,STRLENS,mm5p,mm3p);
             fprintf(stderr,"Loading the table file with MAXLENGTH %d\n",MAXLENGTH);
         }
         freqCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
@@ -189,10 +191,10 @@ int main(int argc, char **argv){
         freqCT[2*MAXLENGTH-1-i] = mm3p[i][7]/scaleCT[2*MAXLENGTH-1-i];
         freqGA[i] = mm3p[i][8]/scaleGA[i];
         freqGA[2*MAXLENGTH-1-i] = mm5p[i][8]/scaleGA[2*MAXLENGTH-1-i];
-        max5 = max(max5,max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
-        max3 = max(max3,max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
+        max5 = std::max(max5,std::max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
+        max3 = std::max(max3,std::max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
         }
-        maxall = max(max5,max3);
+        maxall = std::max(max5,max3);
         //    cout<<"max5 is "<<max5<<", max3 is "<<max3<<".\n";
         for (int i=0; i<MAXLENGTH;i++){
             scaleCT[i] = scaleCT[i]/maxall;

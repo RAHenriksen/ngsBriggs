@@ -6,6 +6,7 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <string>
 #include <zlib.h>
 #include <cmath>
@@ -32,6 +33,8 @@
 #include "Likelihood.h"
 
 #include "PosteriorProb.h"
+
+typedef unsigned char uchar;
 
 
 double NoPMDGivenAnc_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv,double Tol){
@@ -840,10 +843,10 @@ double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, 
         double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
         double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
         double x_min2 = ((double)len_min-0.5-mod_mu)/mod_si;
-        double y_max1 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
-        double y_min1 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
-        double y_max2 = (min((double)len_limit-1,max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
-        double y_min2 = (max((double)len_min,min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+        double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+        double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+        double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+        double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
         l_anc_l = NormalINC(y_max1, y_min1, x_max1, x_min1);
         l_err_l = NormalINC(y_max2, y_min2, x_max2, x_min2);
     }
@@ -897,7 +900,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
     return post_pmd;
 }
 
-bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, const char* bedname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, string s,double **deamRateCT,double **deamRateGA,double Tol)
+bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, const char* bedname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, std::string s,double **deamRateCT,double **deamRateGA,double Tol)
 {
   char nuc[6] = "ACGTN";
     fprintf(stderr,"print msg mapped_only: %d\n",mapped_only);
@@ -974,13 +977,13 @@ bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, cons
         kstr1->s = NULL;
         kstr1->l = kstr1->m = 0;
         int line=0;
-        string word0, word;
+	std::string word0, word;
         bgzf_getline(fp,'\n',kstr1);
         for (int j=0; j<chrom_num; j++){
             chrom_line[j] = line;
             do{
                 //while(bgzf_getline(fp,'\n',kstr1)>0){
-                istringstream iss(kstr1->s);
+	      std::istringstream iss(kstr1->s);
                 //string word0, word;
                 getline(iss,word0,'\t');
                 size_t num;
@@ -1162,25 +1165,25 @@ bam_hdr_t* CalPostPMDProb(char *refName,char *fname, const char* chromname, cons
                 //cout << "length 0" << " " << b->core.l_qseq << "\n";
                 if (ofname == NULL){
                     // Read Name
-                    cout << bam_get_qname(b) << "\t";
+		  std::cout << bam_get_qname(b) << "\t";
                     //cout << bam_aux_get(b,"FL") << "\t";
                     for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                        cout<<nuc[(int)refToChar[myread[cycle]]];
+		      std::cout<<nuc[(int)refToChar[myread[cycle]]];
                     }
-                    cout<<"\t";
+		    std::cout<<"\t";
                     //cout << "length 2" << b->core.l_qseq << "\n";
                     for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                        cout<<nuc[(int)refToChar[myrefe[cycle]]];
+		      std::cout<<nuc[(int)refToChar[myrefe[cycle]]];
                     }
-                    cout<<"\t";
+		    std::cout<<"\t";
 
                     for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                        cout<<(char)(bam_get_qual(b)[cycle]+33);
+		      std::cout<<(char)(bam_get_qual(b)[cycle]+33);
                     }
                     if (isrecal==1){
-                        cout<<"\t"<<"AO:f:"<<PostAncProb1<<"\t"<<"AN:f:"<<PostAncProb2<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
+		      std::cout<<"\t"<<"AO:f:"<<PostAncProb1<<"\t"<<"AN:f:"<<PostAncProb2<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
                     }else{
-                        cout<<"\t"<<"AN:f:"<<PostAncProb1<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
+		      std::cout<<"\t"<<"AN:f:"<<PostAncProb1<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
                     }
                 }else{
                     //Bam output is the bam file orientation

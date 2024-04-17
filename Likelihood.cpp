@@ -92,15 +92,15 @@ double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA
             double L = LEN[i];
             double f = freqLEN[i];
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                     if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -109,15 +109,15 @@ double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                     if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -178,15 +178,15 @@ double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqG
             double L = LEN[i];
             double f = freqLEN[i];
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                     if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -195,15 +195,15 @@ double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqG
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                     if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -295,11 +295,11 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu); //double p1_l = pow(1+lambda,2)*(n+1)*nu/(1+(L-2)*nu);
             double p1_l_lambda = 2*(1+lambda)*n*nu/(1+(L-2)*nu);
             double p1_l_nv = pow(1+lambda,2)*n/pow(1+(L-2)*nu,2);
-            for(int l=1;l<=min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
-                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                     if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
@@ -307,7 +307,7 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -328,11 +328,11 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu); // p1_r = pow(1+lambda,2)*(L-n)*nu/(1+(L-2)*nu);
             double p1_r_lambda = 2*(1+lambda)*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_nv = pow(1+lambda,2)*(L-n-1)/pow(1+(L-2)*nu,2);
-            for(int r=1;r<=min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
-                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                     if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
@@ -340,7 +340,7 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -480,11 +480,11 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu); //double p1_l = pow(1+lambda,2)*(n+1)*nu/(1+(L-2)*nu);
             double p1_l_lambda = 2*(1+lambda)*n*nu/(1+(L-2)*nu);
             double p1_l_nv = pow(1+lambda,2)*n/pow(1+(L-2)*nu,2);
-            for(int l=1;l<=min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
-                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                     if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
@@ -492,7 +492,7 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -513,11 +513,11 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu); // p1_r = pow(1+lambda,2)*(L-n)*nu/(1+(L-2)*nu);
             double p1_r_lambda = 2*(1+lambda)*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_nv = pow(1+lambda,2)*(L-n-1)/pow(1+(L-2)*nu,2);
-            for(int r=1;r<=min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
-                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                     if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
@@ -525,7 +525,7 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -708,14 +708,14 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
             double p1_l_lambda2 = 2*n*nu/(1+(L-2)*nu);
             double p1_l_lambda_nv = 2*(1+lambda)*n/pow(1+(L-2)*nu,2);
             double p1_l_nv2 = -2*pow(1+lambda,2)*n*(L-2)/pow(1+(L-2)*nu,3);
-            for(int l=1;l<=min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_lambda2 += (2*pow(1-lambda,l)-2*l*(1+2*lambda)*pow(1-lambda,l-1)+l*(l-1)*lambda*(1+lambda)*pow(1-lambda,l-2))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda_nv += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*(L-2-l)/pow(1+(L-2-l)*nu,3);
-                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                     if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
@@ -726,7 +726,7 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -765,14 +765,14 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
             double p1_r_lambda2 = 2*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_lambda_nv = 2*(1+lambda)*(L-n-1)/pow(1+(L-2)*nu,2);
             double p1_r_nv2 = -2*pow(1+lambda,2)*(L-n-1)*(L-2)/pow(1+(L-2)*nu,3);
-            for(int r=1;r<=min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_lambda2 += (2*pow(1-lambda,r)-2*r*(1+2*lambda)*pow(1-lambda,r-1)+r*(r-1)*lambda*(1+lambda)*pow(1-lambda,r-2))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda_nv += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*(L-2-r)/pow(1+(L-2-r)*nu,3);
-                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                     if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
@@ -783,7 +783,7 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -1066,14 +1066,14 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
             double p1_l_lambda2 = 2*n*nu/(1+(L-2)*nu);
             double p1_l_lambda_nv = 2*(1+lambda)*n/pow(1+(L-2)*nu,2);
             double p1_l_nv2 = -2*pow(1+lambda,2)*n*(L-2)/pow(1+(L-2)*nu,3);
-            for(int l=1;l<=min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu); //p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_lambda2 += (2*pow(1-lambda,l)-2*l*(1+2*lambda)*pow(1-lambda,l-1)+l*(l-1)*lambda*(1+lambda)*pow(1-lambda,l-2))*(n-l)*nu/(1+(L-2-l)*nu);
                 p1_l_lambda_nv += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(n-l)/pow(1+(L-2-l)*nu,2);
                 p1_l_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*(L-2-l)/pow(1+(L-2-l)*nu,3);
-                for (int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                     if (l+r<=MAXLENGTH){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu); //p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                         p1_l_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(n-l)*nu/(1+(L-2-l-r)*nu);
@@ -1084,7 +1084,7 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
                     }
                 }
             }
-            for(int r=1;r<=min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu); // p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
                 p1_l_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*n*nu/(1+(L-2-r)*nu);
                 p1_l_nv += lambda*(1+lambda)*pow(1-lambda,r)*n/pow(1+(L-2-r)*nu,2);
@@ -1123,14 +1123,14 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
             double p1_r_lambda2 = 2*(L-n-1)*nu/(1+(L-2)*nu);
             double p1_r_lambda_nv = 2*(1+lambda)*(L-n-1)/pow(1+(L-2)*nu,2);
             double p1_r_nv2 = -2*pow(1+lambda,2)*(L-n-1)*(L-2)/pow(1+(L-2)*nu,3);
-            for(int r=1;r<=min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1-r)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_lambda2 += (2*pow(1-lambda,r)-2*r*(1+2*lambda)*pow(1-lambda,r-1)+r*(r-1)*lambda*(1+lambda)*pow(1-lambda,r-2))*(L-n-1)*nu/(1+(L-2-r)*nu);
                 p1_r_lambda_nv += ((1+2*lambda)*pow(1-lambda,r)-r*lambda*(1+lambda)*pow(1-lambda,r-1))*(L-n-1)/pow(1+(L-2-r)*nu,2);
                 p1_r_nv2 += -2*lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*(L-2-r)/pow(1+(L-2-r)*nu,3);
-                for (int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                     if (l+r<=MAXLENGTH){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu); // p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-r)*nu/(1+(L-2-l-r)*nu);
                         p1_r_lambda += (2*lambda*pow(1-lambda,l+r)-(l+r)*pow(lambda,2)*pow(1-lambda,l+r-1))*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
@@ -1141,7 +1141,7 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
                     }
                 }
             }
-            for(int l=1;l<=min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu); // p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1)*nu/(1+(L-2-l)*nu);
                 p1_r_lambda += ((1+2*lambda)*pow(1-lambda,l)-l*lambda*(1+lambda)*pow(1-lambda,l-1))*(L-n-1-l)*nu/(1+(L-2-l)*nu);
                 p1_r_nv += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)/pow(1+(L-2-l)*nu,2);
@@ -1377,8 +1377,8 @@ double like_master(const double *xs,const void *){
     for(int i=0;i<nThreads;i++)
         for(int ii=0;ii<4;ii++)
             my_tsk_struct[i].x[ii] = xs[ii];
-    cout<<"mu_anc\tsig_anc\tmu_mod\tsig_mod\n";
-    cout<<xs[0]<<"\t"<<xs[1]<<"\t"<<xs[2]<<"\t"<<xs[3]<<"\n";
+    fprintf(stderr,"mu_anc\tsig_anc\tmu_mod\tsig_mod\n");
+    fprintf(stderr,"%f\t%f\t%f\t%f\n",xs[0],xs[1],xs[2],xs[3]);
     pthread_t thd[nThreads];
     for(size_t i=0;i<nThreads;i++){
         int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
@@ -1551,33 +1551,33 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm = delta-4*delta*error1AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3 && i<=l-1){// C to T change, left single strand part
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i<=l-1){ // G to A change, left single strand part
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i<=l-1){ // C to C, left single strand part
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+			      l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i<=l-1){ // G to G, left single strand part
-                                l2 += log(max(1-error1,MIN0));
+			      l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i<=npos){ // C to T change, left double strand part before nick
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i<=npos){ // G to A change, left double strand part before nick
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i<=npos){ // C to C, left double strand part before nick
-                                l2 += log(max(1-error1-exterm,MIN0));
+			      l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i<=npos){ // G to G, left double strand part before nick
-                                l2 += log(max(1-error1,MIN0));
+			      l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i>npos){ // C to T change, left double strand part after nick
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i>npos){ // G to A change, left double strand part after nick
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i>npos){ // C to C, left double strand part after nick
-                                l2 += log(max(1-error1,MIN0));
+			      l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i>npos){ // G to G, left double strand part after nick
-                                l2 += log(max(1-error1-exterm,MIN0));
+			      l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                                l2 += log(max(1-error1,MIN0));
+			      l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other possible changes
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }
                         }
                         //cout << "l2 " <<l2<<"\n";
@@ -1587,27 +1587,27 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm = delta-4*delta*error2AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= r-1){ // G to A change, right single strand part
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
-				//cout<<log(min(error2AThird+exterm_s,MAX0))<<"\n";
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
+				//cout<<log(std::min(error2AThird+exterm_s,MAX0))<<"\n";
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= r-1){ // C to T change, right single strand part
-                                l2 += log(min(error2AThird,MAX0));
-                                //cout<<log(min(error2AThird,MAX0))<<"\n";
+                                l2 += log(std::min(error2AThird,MAX0));
+                                //cout<<log(std::min(error2AThird,MAX0))<<"\n";
                             }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= r-1){ // G to G, right single strand part
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+			      l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= r-1){ // C to C, right single strand part
-                                l2 += log(max(1-error2,MIN0));
+			      l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0){ // G to A change, right double strand part
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3){ // C to T change, right double strand part
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2){ // G to G, right double strand part
-                                l2 += log(max(1-error2-exterm,MIN0));
+			      l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1){ // C to C, right double strand part
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other changes
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
 		//cout<<i<<" "<<nuc[reffrag[i]]<<" "<<nuc[frag[i]]<<" "<<nuc[reffrag[L-i-1]]<<" "<<nuc[frag[L-i-1]]<<" Hello l2 "<<l2<<"\n";
@@ -1627,33 +1627,33 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm = delta-4*delta*error2AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= r-1){ // G to A change, right single strand part
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= r-1){ // C to T change, right single strand part
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= r-1){ // G to G, right single strand part
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+                                l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= r-1){ // C to C, right single strand part
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= L-npos-1){ // G to A change, right double strand part, right of the nick
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= L-npos-1){ // C to T change, right double strand part, right of the nick
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= L-npos-1){ // G to G, right double strand part, right of the nick
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= L-npos-1){ // C to C, right double strand part, right of the nick
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i > L-npos-1){ // G to A, right double strand part, left of the nick
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i > L-npos-1){ // C to T, right double strand part, left of the nick
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i > L-npos-1){ // G to G, right double strand part, left of the nick
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i > L-npos-1){ // C to C, right double strand part, left of the nick
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
                         
@@ -1663,25 +1663,25 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm = delta-4*delta*error1AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3 && i<=l-1){ // C to T change, left single strand part
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i<=l-1){ // G to A change, left single strand part
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i<=l-1){ // C to C, left single strand part
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+                                l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i<=l-1){ // G to G, left single strand part
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3){ // C to T change, left double strand part
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0){ // G to A change, left double strand part
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1){ // C to C, left double strand part
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2){ // G to G, left double strand part
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other possible changes
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }
                         }
                     }
@@ -1699,25 +1699,25 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                     exterm = delta-4*delta*error1AThird;
                     if (reffrag[i] < 4 && frag[i] < 4){
                         if (reffrag[i]==1 && frag[i]==3 && i<=l-1){ // C to T change, left single strand part
-                            l2 += log(min(error1AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error1AThird+exterm_s,MAX0));
                         }else if (reffrag[i]==2 && frag[i]==0 && i<=l-1){ // G to A change, left single strand part
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[i]==1 && frag[i]==1 && i<=l-1){ // C to C, left single strand part
-                            l2 += log(max(1-error1-exterm_s,MIN0));
+                            l2 += log(std::max(1-error1-exterm_s,MIN0));
                         }else if (reffrag[i]==2 && frag[i]==2 && i<=l-1){ // G to G, left single strand part
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]==1 && frag[i]==3 && i>l-1){ // C to T change, left double strand part
-                            l2 += log(min(error1AThird+exterm,MAX0));
+                            l2 += log(std::min(error1AThird+exterm,MAX0));
                         }else if (reffrag[i]==2 && frag[i]==0 && i>l-1){ // G to A change, left double strand part
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[i]==1 && frag[i]==1 && i>l-1){ // C to C, left double strand part
-                            l2 += log(max(1-error1-exterm,MIN0));
+                            l2 += log(std::max(1-error1-exterm,MIN0));
                         }else if (reffrag[i]==2 && frag[i]==2 && i>l-1){ // G to G, left double strand part
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                            l2 += log(max(1-error1,MIN0));
+			  l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]!=frag[i]){ // All other possible changes
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }
                     }
                     
@@ -1727,25 +1727,25 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                     exterm = delta-4*delta*error2AThird;
                     if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                         if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= r-1){ // G to A change, right single strand part
-                            l2 += log(min(error2AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error2AThird+exterm_s,MAX0));
                         }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= r-1){ // C to T change, right single strand part
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= r-1){ // G to G, right single strand part
-                            l2 += log(max(1-error2-exterm_s,MIN0));
+                            l2 += log(std::max(1-error2-exterm_s,MIN0));
                         }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= r-1){ // C to C, right single strand part
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i > r-1){ // G to A change, right double strand part
-                            l2 += log(min(error2AThird+exterm,MAX0));
+                            l2 += log(std::min(error2AThird+exterm,MAX0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i > r-1){ // C to T change, right double strand part
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i > r-1){ // G to G, right double strand part
-                            l2 += log(max(1-error2-exterm,MIN0));
+                            l2 += log(std::max(1-error2-exterm,MIN0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i > r-1){ // C to C, right double strand part
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }
                     }
                 }
@@ -1771,33 +1771,33 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm = delta-4*delta*error1AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3 && i<=l-1){// C to T change, left single strand part
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i<=l-1){ // G to A change, left single strand part
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i<=l-1){ // C to C, left single strand part
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+                                l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i<=l-1){ // G to G, left single strand part
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i<=npos){ // C to T change, left double strand part before nick
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i<=npos){ // G to A change, left double strand part before nick
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i<=npos){ // C to C, left double strand part before nick
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i<=npos){ // G to G, left double strand part before nick
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i>npos){ // C to T change, left double strand part after nick
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i>npos){ // G to A change, left double strand part after nick
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i>npos){ // C to C, left double strand part after nick
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i>npos){ // G to G, left double strand part after nick
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other possible changes
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }
                         }
                         
@@ -1806,17 +1806,17 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm_s = delta_s-4*delta_s*error2AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0){ // G to A change, right single strand part
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3){ // C to T change, right single strand part
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2){ // G to G, right single strand part
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+                                l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1){ // C to C, right single strand part
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other changes
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
                     }
@@ -1833,25 +1833,25 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                     exterm = delta-4*delta*error1AThird;
                     if (reffrag[i] < 4 && frag[i] < 4){
                         if (reffrag[i]==1 && frag[i]==3 && i<=l-1){ // C to T change, left single strand part
-                            l2 += log(min(error1AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error1AThird+exterm_s,MAX0));
                         }else if (reffrag[i]==2 && frag[i]==0 && i<=l-1){ // G to A change, left single strand part
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[i]==1 && frag[i]==1 && i<=l-1){ // C to C, left single strand part
-                            l2 += log(max(1-error1-exterm_s,MIN0));
+                            l2 += log(std::max(1-error1-exterm_s,MIN0));
                         }else if (reffrag[i]==2 && frag[i]==2 && i<=l-1){ // G to G, left single strand part
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]==1 && frag[i]==3 && i>l-1){ // C to T change, left double strand part
-                            l2 += log(min(error1AThird+exterm,MAX0));
+                            l2 += log(std::min(error1AThird+exterm,MAX0));
                         }else if (reffrag[i]==2 && frag[i]==0 && i>l-1){ // G to A change, left double strand part
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[i]==1 && frag[i]==1 && i>l-1){ // C to C, left double strand part
-                            l2 += log(max(1-error1-exterm,MIN0));
+                            l2 += log(std::max(1-error1-exterm,MIN0));
                         }else if (reffrag[i]==2 && frag[i]==2 && i>l-1){ // G to G, left double strand part
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]!=frag[i]){ // All other possible changes
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }
                     }
                     
@@ -1860,17 +1860,17 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                     exterm_s = delta_s-4*delta_s*error2AThird;
                     if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                         if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= r-1){ // G to A change, right single strand part
-                            l2 += log(min(error2AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error2AThird+exterm_s,MAX0));
                         }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= r-1){ // C to T change, right single strand part
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= r-1){ // G to G, right single strand part
-                            l2 += log(max(1-error2-exterm_s,MIN0));
+                            l2 += log(std::max(1-error2-exterm_s,MIN0));
                         }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= r-1){ // C to C, right single strand part
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }
                     }
                 }
@@ -1903,33 +1903,33 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm = delta-4*delta*error2AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= r-1){ // G to A change, right single strand part
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= r-1){ // C to T change, right single strand part
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= r-1){ // G to G, right single strand part
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+                                l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= r-1){ // C to C, right single strand part
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= L-npos-1){ // G to A change, right double strand part, right of the nick
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= L-npos-1){ // C to T change, right double strand part, right of the nick
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= L-npos-1){ // G to G, right double strand part, right of the nick
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= L-npos-1){ // C to C, right double strand part, right of the nick
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i > L-npos-1){ // G to A, right double strand part, left of the nick
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i > L-npos-1){ // C to T, right double strand part, left of the nick
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i > L-npos-1){ // G to G, right double strand part, left of the nick
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i > L-npos-1){ // C to C, right double strand part, left of the nick
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
                         
@@ -1938,17 +1938,17 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                         exterm_s = delta_s-4*delta_s*error1AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3){ // C to T change, left single strand part
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0){ // G to A change, left single strand part
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1){ // C to C, left single strand part
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+                                l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2){ // G to G, left single strand part
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other possible changes
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }
                         }
                     }
@@ -1964,17 +1964,17 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                     exterm_s = delta_s-4*delta_s*error1AThird;
                     if (reffrag[i] < 4 && frag[i] < 4){
                         if (reffrag[i]==1 && frag[i]==3){ // C to T change, left single strand part
-                            l2 += log(min(error1AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error1AThird+exterm_s,MAX0));
                         }else if (reffrag[i]==2 && frag[i]==0){ // G to A change, left single strand part
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[i]==1 && frag[i]==1){ // C to C, left single strand part
-                            l2 += log(max(1-error1-exterm_s,MIN0));
+                            l2 += log(std::max(1-error1-exterm_s,MIN0));
                         }else if (reffrag[i]==2 && frag[i]==2){ // G to G, left single strand part
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[i]!=frag[i]){ // All other possible changes
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }
                     }
                     
@@ -1984,25 +1984,25 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
                     exterm = delta-4*delta*error2AThird;
                     if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                         if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i <= r-1){ // G to A change, right single strand part
-                            l2 += log(min(error2AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error2AThird+exterm_s,MAX0));
                         }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3 && i <= r-1){ // C to T change, right single strand part
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2 && i <= r-1){ // G to G, right single strand part
-                            l2 += log(max(1-error2-exterm_s,MIN0));
+                            l2 += log(std::max(1-error2-exterm_s,MIN0));
                         }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1 && i <= r-1){ // C to C, right single strand part
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i > r-1){ // G to A change, right double strand part
-                            l2 += log(min(error2AThird+exterm,MAX0));
+                            l2 += log(std::min(error2AThird+exterm,MAX0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i > r-1){ // C to T change, right double strand part
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i > r-1){ // G to G, right double strand part
-                            l2 += log(max(1-error2-exterm,MIN0));
+                            l2 += log(std::max(1-error2-exterm,MIN0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i > r-1){ // C to C, right double strand part
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }
                     }
                 }
@@ -2021,17 +2021,17 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
             exterm_s = delta_s-4*delta_s*error1AThird;
             if (reffrag[i] < 4 && frag[i] < 4){
                 if (reffrag[i]==1 && frag[i]==3){ // C to T change, left single strand part
-                    l2 += log(min(error1AThird+delta_s,MAX0));
+                    l2 += log(std::min(error1AThird+delta_s,MAX0));
                 }else if (reffrag[i]==2 && frag[i]==0){ // G to A change, left single strand part
-                    l2 += log(min(error1AThird,MAX0));
+                    l2 += log(std::min(error1AThird,MAX0));
                 }else if (reffrag[i]==1 && frag[i]==1){ // C to C, left single strand part
-                    l2 += log(max(1-error1-exterm_s,MIN0));
+                    l2 += log(std::max(1-error1-exterm_s,MIN0));
                 }else if (reffrag[i]==2 && frag[i]==2){ // G to G, left single strand part
-                    l2 += log(max(1-error1,MIN0));
+                    l2 += log(std::max(1-error1,MIN0));
                 }else if (reffrag[i]==frag[i]){ // All other possible no changes
-                    l2 += log(max(1-error1,MIN0));
+                    l2 += log(std::max(1-error1,MIN0));
                 }else if (reffrag[i]!=frag[i]){  // All other possible changes
-                    l2 += log(min(error1AThird,MAX0));
+                    l2 += log(std::min(error1AThird,MAX0));
                 }
             }
             
@@ -2040,17 +2040,17 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
             exterm_s = delta_s-4*delta_s*error2AThird;
             if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                 if (reffrag[L-i-1]==2 && frag[L-i-1]==0){ // G to A change, right single strand part
-                    l2 += log(min(error2AThird+exterm_s,MAX0));
+                    l2 += log(std::min(error2AThird+exterm_s,MAX0));
                 }else if(reffrag[L-i-1]==1 && frag[L-i-1]==3){ // C to A change, right single strand part
-                    l2 += log(min(error2AThird,MAX0));
+                    l2 += log(std::min(error2AThird,MAX0));
                 }else if(reffrag[L-i-1]==2 && frag[L-i-1]==2){ // G to G, right single strand part
-                    l2 += log(max(1-error2-exterm_s,MIN0));
+                    l2 += log(std::max(1-error2-exterm_s,MIN0));
                 }else if(reffrag[L-i-1]==1 && frag[L-i-1]==1){ // C to C, right single strand part
-                    l2 += log(max(1-error2,MIN0));
+                    l2 += log(std::max(1-error2,MIN0));
                 }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes
-                    l2 += log(max(1-error2,MIN0));
+                    l2 += log(std::max(1-error2,MIN0));
                 }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes
-                    l2 += log(min(error2AThird,MAX0));
+                    l2 += log(std::min(error2AThird,MAX0));
                 }
             }
         }
@@ -2096,33 +2096,33 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm = delta-4*delta*error1AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i<=l-1){// C to T change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i<=l-1){ // G to A change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i<=l-1){ // C to C, left single strand part, rev-comp
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+                                l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i<=l-1){ // G to G, left single strand part, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i<=npos){ // C to T change, left double strand part before nick, rev-comp
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i<=npos){ // G to A change, left double strand part before nick, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i<=npos){ // C to C, left double strand part before nick, rev-comp
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i<=npos){ // G to G, left double strand part before nick, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i>npos){ // C to T change, left double strand part after nick, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i>npos){ // G to A change, left double strand part after nick, rev-comp
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i>npos){ // C to C, left double strand part after nick, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i>npos){ // G to G, left double strand part after nick, rev-comp
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }
                         }
                         
@@ -2132,25 +2132,25 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm = delta-4*delta*error2AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3 && i <= r-1){ // G to A change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
                             }else if(reffrag[i]==2 && frag[i]==0 && i <= r-1){ // C to T change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if(reffrag[i]==1 && frag[i]==1 && i <= r-1){ // G to G, right single strand part, rev-comp
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+                                l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[i]==2 && frag[i]==2 && i <= r-1){ // C to C, right single strand part, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3){ // G to A change, right double strand part, rev-comp
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0){ // C to T change, right double strand part, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1){ // G to G, right double strand part, rev-comp
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2){ // C to C, right double strand part, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other changes, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
                     }
@@ -2171,33 +2171,33 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm = delta-4*delta*error2AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3 && i <= r-1){ // G to A change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
                             }else if(reffrag[i]==2 && frag[i]==0 && i <= r-1){ // C to T change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if(reffrag[i]==1 && frag[i]==1 && i <= r-1){ // G to G, right single strand part, rev-comp
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+                                l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[i]==2 && frag[i]==2 && i <= r-1){ // C to C, right single strand part, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i <= L-npos-1){ // G to A change, right double strand part, right of the nick, rev-comp
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i <= L-npos-1){ // C to T change, right double strand part, right of the nick, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i <= L-npos-1){ // G to G, right double strand part, right of the nick, rev-comp
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i <= L-npos-1){ // C to C, right double strand part, right of the nick, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i > L-npos-1){ // G to A, right double strand part, left of the nick, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i > L-npos-1){ // C to T, right double strand part, left of the nick, rev-comp
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i > L-npos-1){ // G to G, right double strand part, left of the nick, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i > L-npos-1){ // C to C, right double strand part, left of the nick, rev-comp
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other possible changes, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
                         
@@ -2207,25 +2207,25 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm = delta-4*delta*error1AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i<=l-1){ // C to T change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i<=l-1){ // G to A change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i<=l-1){ // C to C, left single strand part, rev-comp
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+                                l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i<=l-1){ // G to G, left single strand part, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0){ // C to T change, left double strand part, rev-comp
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3){ // G to A change, left double strand part, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2){ // C to C, left double strand part, rev-comp
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1){ // G to G, left double strand part, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                                l2 += log(min(error1AThird,MIN0));
+                                l2 += log(std::min(error1AThird,MIN0));
                             }
                         }
                     }
@@ -2245,25 +2245,25 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                     exterm = delta-4*delta*error1AThird;
                     if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                         if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i<=l-1){ // C to T change, left single strand part, rev-comp
-                            l2 += log(min(error1AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error1AThird+exterm_s,MAX0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i<=l-1){ // G to A change, left single strand part, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i<=l-1){ // C to C, left single strand part, rev-comp
-                            l2 += log(max(1-error1-exterm_s,MIN0));
+                            l2 += log(std::max(1-error1-exterm_s,MIN0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i<=l-1){ // G to G, left single strand part, rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i>l-1){ // C to T change, left double strand part, rev-comp
-                            l2 += log(min(error1AThird+exterm,MAX0));
+                            l2 += log(std::min(error1AThird+exterm,MAX0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i>l-1){ // G to A change, left double strand part, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i>l-1){ // C to C, left double strand part, rev-comp
-                            l2 += log(max(1-error1-exterm,MIN0));
+                            l2 += log(std::max(1-error1-exterm,MIN0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i>l-1){ // G to G, left double strand part,rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }
                     }
                     
@@ -2273,25 +2273,25 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                     exterm = delta-4*delta*error2AThird;
                     if (reffrag[i] < 4 && frag[i] < 4){
                         if (reffrag[i]==1 && frag[i]==3 && i <= r-1){ // G to A change, right single strand part, rev-comp
-                            l2 += log(min(error2AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error2AThird+exterm_s,MAX0));
                         }else if(reffrag[i]==2 && frag[i]==0 && i <= r-1){ // C to T change, right single strand part, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if(reffrag[i]==1 && frag[i]==1 && i <= r-1){ // G to G, right single strand part, rev-comp
-                            l2 += log(max(1-error2-exterm_s,MIN0));
+                            l2 += log(std::max(1-error2-exterm_s,MIN0));
                         }else if(reffrag[i]==2 && frag[i]==2 && i <= r-1){ // C to C, right single strand part, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]==1 && frag[i]==3 && i > r-1){ // G to A change, right double strand part, rev-comp
-                            l2 += log(min(error2AThird+exterm,MAX0));
+                            l2 += log(std::min(error2AThird+exterm,MAX0));
                         }else if (reffrag[i]==2 && frag[i]==0 && i > r-1){ // C to T change, right double strand part, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if (reffrag[i]==1 && frag[i]==1 && i > r-1){ // G to G, right double strand part, rev-comp
-                            l2 += log(max(1-error2-exterm,MIN0));
+                            l2 += log(std::max(1-error2-exterm,MIN0));
                         }else if (reffrag[i]==2 && frag[i]==2 && i > r-1){ // C to C, right double strand part, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]!=frag[i]){ // All other possible changes, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }
                     }
                 }
@@ -2321,33 +2321,33 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm = delta-4*delta*error1AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i<=l-1){ // C to T change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i<=l-1){ // G to A change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i<=l-1){ // C to C, left single strand part, rev-comp
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+                                l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i<=l-1){ // G to G, left single strand part, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i<=npos){ // C to T change, left double strand part before nick, rev-comp
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i<=npos){ // G to A change, left double strand part before nick, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i<=npos){ // C to C, left double strand part before nick, rev-comp
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i<=npos){ // G to G, left double strand part before nick, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i>npos){ // C to T change, left double strand part after nick, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i>npos){ // G to A change, left double strand part after nick, rev-comp
-                                l2 += log(min(error1AThird+exterm,MAX0));
+                                l2 += log(std::min(error1AThird+exterm,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i>npos){ // C to C, left double strand part after nick, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i>npos){ // G to G, left double strand part after nick, rev-comp
-                                l2 += log(max(1-error1-exterm,MIN0));
+                                l2 += log(std::max(1-error1-exterm,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }
                         }
                         
@@ -2356,17 +2356,17 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm_s = delta_s-4*delta_s*error2AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3){ // G to A change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
                             }else if(reffrag[i]==2 && frag[i]==0){ // C to T change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if(reffrag[i]==1 && frag[i]==1){ // G to G, right single strand part, rev-comp
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+                                l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[i]==2 && frag[i]==2){ // C to C, right single strand part, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other changes, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
                     }
@@ -2386,25 +2386,25 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                     exterm = delta-4*delta*error1AThird;
                     if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                         if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i<=l-1){ // C to T change, left single strand part, rev-comp
-                            l2 += log(min(error1AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error1AThird+exterm_s,MAX0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i<=l-1){ // G to A change, left single strand part, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i<=l-1){ // C to C, left single strand part, rev-comp
-                            l2 += log(max(1-error1-exterm_s,MIN0));
+                            l2 += log(std::max(1-error1-exterm_s,MIN0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i<=l-1){ // G to G, left single strand part, rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==0 && i>l-1){ // C to T change, left double strand part, rev-comp
-                            l2 += log(min(error1AThird+exterm,MAX0));
+                            l2 += log(std::min(error1AThird+exterm,MAX0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3 && i>l-1){ // G to A change, left double strand part, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2 && i>l-1){ // C to C, left double strand part, rev-comp
-                            l2 += log(max(1-error1-exterm,MIN0));
+                            l2 += log(std::max(1-error1-exterm,MIN0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1 && i>l-1){ // G to G, left double strand part, rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }
                     }
                     
@@ -2413,17 +2413,17 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                     exterm_s = delta_s-4*delta_s*error2AThird;
                     if (reffrag[i] < 4 && frag[i] < 4){
                         if (reffrag[i]==1 && frag[i]==3){ // G to A change, right single strand part, rev-comp
-                            l2 += log(min(error2AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error2AThird+exterm_s,MAX0));
                         }else if(reffrag[i]==2 && frag[i]==0){ // C to T change, right single strand part, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if(reffrag[i]==1 && frag[i]==1){ // G to G, right single strand part, rev-comp
-                            l2 += log(max(1-error2-exterm_s,MIN0));
+                            l2 += log(std::max(1-error2-exterm_s,MIN0));
                         }else if(reffrag[i]==2 && frag[i]==2){ // C to C, right single strand part, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]!=frag[i]){ // All other possible changes, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }
                     }
                 }
@@ -2458,33 +2458,33 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm = delta-4*delta*error2AThird;
                         if (reffrag[i] < 4 && frag[i] < 4){
                             if (reffrag[i]==1 && frag[i]==3 && i <= r-1){ // G to A change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error2AThird+exterm_s,MAX0));
                             }else if(reffrag[i]==2 && frag[i]==0 && i <= r-1){ // C to T change, right single strand part, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if(reffrag[i]==1 && frag[i]==1 && i <= r-1){ // G to G, right single strand part, rev-comp
-                                l2 += log(max(1-error2-exterm_s,MIN0));
+                                l2 += log(std::max(1-error2-exterm_s,MIN0));
                             }else if(reffrag[i]==2 && frag[i]==2 && i <= r-1){ // C to C, right single strand part, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i <= L-npos-1){ // G to A change, right double strand part, right of the nick, rev-comp
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i <= L-npos-1){ // C to T change, right double strand part, right of the nick, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i <= L-npos-1){ // G to G, right double strand part, right of the nick, rev-comp
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i <= L-npos-1){ // C to C, right double strand part, right of the nick, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==1 && frag[i]==3 && i > L-npos-1){ // G to A, right double strand part, left of the nick, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }else if (reffrag[i]==2 && frag[i]==0 && i > L-npos-1){ // C to T, right double strand part, left of the nick, rev-comp
-                                l2 += log(min(error2AThird+exterm,MAX0));
+                                l2 += log(std::min(error2AThird+exterm,MAX0));
                             }else if (reffrag[i]==1 && frag[i]==1 && i > L-npos-1){ // G to G, right double strand part, left of the nick, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]==2 && frag[i]==2 && i > L-npos-1){ // C to C, right double strand part, left of the nick, rev-comp
-                                l2 += log(max(1-error2-exterm,MIN0));
+                                l2 += log(std::max(1-error2-exterm,MIN0));
                             }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error2,MIN0));
+                                l2 += log(std::max(1-error2,MIN0));
                             }else if (reffrag[i]!=frag[i]){ // All other possible changes, rev-comp
-                                l2 += log(min(error2AThird,MAX0));
+                                l2 += log(std::min(error2AThird,MAX0));
                             }
                         }
                         
@@ -2493,17 +2493,17 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                         exterm_s = delta_s-4*delta_s*error1AThird;
                         if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                             if (reffrag[L-i-1]==2 && frag[L-i-1]==0){ // C to T change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird+exterm_s,MAX0));
+                                l2 += log(std::min(error1AThird+exterm_s,MAX0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3){ // G to A change, left single strand part, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2){ // C to C, left single strand part, rev-comp
-                                l2 += log(max(1-error1-exterm_s,MIN0));
+                                l2 += log(std::max(1-error1-exterm_s,MIN0));
                             }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1){ // G to G, left single strand part, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                                l2 += log(max(1-error1,MIN0));
+                                l2 += log(std::max(1-error1,MIN0));
                             }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                                l2 += log(min(error1AThird,MAX0));
+                                l2 += log(std::min(error1AThird,MAX0));
                             }
                         }
                     }
@@ -2524,17 +2524,17 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                     exterm_s = delta_s-4*delta_s*error1AThird;
                     if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                         if (reffrag[L-i-1]==2 && frag[L-i-1]==0){ // C to T change, left single strand part, rev-comp
-                            l2 += log(min(error1AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error1AThird+exterm_s,MAX0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3){ // G to A change, left single strand part, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2){ // C to C, left single strand part, rev-comp
-                            l2 += log(max(1-error1-exterm_s,MIN0));
+                            l2 += log(std::max(1-error1-exterm_s,MIN0));
                         }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1){ // G to G, left single strand part, rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                            l2 += log(max(1-error1,MIN0));
+                            l2 += log(std::max(1-error1,MIN0));
                         }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                            l2 += log(min(error1AThird,MAX0));
+                            l2 += log(std::min(error1AThird,MAX0));
                         }
                     }
                     
@@ -2544,25 +2544,25 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
                     exterm = delta_s-4*delta_s*error2AThird;
                     if (reffrag[i] < 4 && frag[i] < 4){
                         if (reffrag[i]==1 && frag[i]==3 && i <= r-1){ // G to A change, right single strand part, rev-comp
-                            l2 += log(min(error2AThird+exterm_s,MAX0));
+                            l2 += log(std::min(error2AThird+exterm_s,MAX0));
                         }else if(reffrag[i]==2 && frag[i]==0 && i <= r-1){ // C to T change, right single strand part, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if(reffrag[i]==1 && frag[i]==1 && i <= r-1){ // G to G, right single strand part, rev-comp
-                            l2 += log(max(1-error2-exterm_s,MIN0));
+                            l2 += log(std::max(1-error2-exterm_s,MIN0));
                         }else if(reffrag[i]==2 && frag[i]==2 && i <= r-1){ // C to C, right single strand part, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]==1 && frag[i]==3 && i > r-1){ // G to A change, right double strand part, rev-comp
-                            l2 += log(min(error2AThird+exterm,MAX0));
+                            l2 += log(std::min(error2AThird+exterm,MAX0));
                         }else if (reffrag[i]==2 && frag[i]==0 && i > r-1){ // C to T change, right double strand part, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }else if (reffrag[i]==1 && frag[i]==1 && i > r-1){ // G to G, right double strand part, rev-comp
-                            l2 += log(max(1-error2-exterm,MIN0));
+                            l2 += log(std::max(1-error2-exterm,MIN0));
                         }else if (reffrag[i]==2 && frag[i]==2 && i > r-1){ // C to C, right double strand part, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp
-                            l2 += log(max(1-error2,MIN0));
+                            l2 += log(std::max(1-error2,MIN0));
                         }else if (reffrag[i]!=frag[i]){ // All other possible changes, rev-comp
-                            l2 += log(min(error2AThird,MAX0));
+                            l2 += log(std::min(error2AThird,MAX0));
                         }
                     }
                 }
@@ -2586,17 +2586,17 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
             exterm_s = delta_s-4*delta_s*error1AThird;
             if (reffrag[L-i-1] < 4 && frag[L-i-1] < 4){
                 if (reffrag[L-i-1]==2 && frag[L-i-1]==0){ // C to T change, left single strand part, rev-comp
-                    l2 += log(min(error1AThird+exterm_s,MAX0));
+                    l2 += log(std::min(error1AThird+exterm_s,MAX0));
                 }else if (reffrag[L-i-1]==1 && frag[L-i-1]==3){ // G to A change, left single strand part, rev-comp
-                    l2 += log(min(error1AThird,MAX0));
+                    l2 += log(std::min(error1AThird,MAX0));
                 }else if (reffrag[L-i-1]==2 && frag[L-i-1]==2){ // C to C, left single strand part, rev-comp
-                    l2 += log(max(1-error1-exterm_s,MIN0));
+                    l2 += log(std::max(1-error1-exterm_s,MIN0));
                 }else if (reffrag[L-i-1]==1 && frag[L-i-1]==1){ // G to G, left single strand part, rev-comp
-                    l2 += log(max(1-error1,MIN0));
+                    l2 += log(std::max(1-error1,MIN0));
                 }else if (reffrag[L-i-1]==frag[L-i-1]){ // All other possible no changes, rev-comp
-                    l2 += log(max(1-error1,MIN0));
+                    l2 += log(std::max(1-error1,MIN0));
                 }else if (reffrag[L-i-1]!=frag[L-i-1]){ // All other possible changes, rev-comp
-                    l2 += log(min(error1AThird,MAX0));
+                    l2 += log(std::min(error1AThird,MAX0));
                 }
             }
             
@@ -2605,17 +2605,17 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
             exterm_s = delta_s-4*delta_s*error2AThird;
             if (reffrag[i] < 4 && frag[i] < 4){
                 if (reffrag[i]==1 && frag[i]==3){ // G to A change, right single strand part, rev-comp
-                    l2 += log(min(error2AThird+exterm_s,MAX0));
+                    l2 += log(std::min(error2AThird+exterm_s,MAX0));
                 }else if(reffrag[i]==2 && frag[i]==0){ // C to T change, right single strand part, rev-comp
-                    l2 += log(min(error2AThird,MAX0));
+                    l2 += log(std::min(error2AThird,MAX0));
                 }else if(reffrag[i]==1 && frag[i]==1){ // G to G, right single strand part, rev-comp
-                    l2 += log(max(1-error2-exterm_s,MIN0));
+                    l2 += log(std::max(1-error2-exterm_s,MIN0));
                 }else if(reffrag[i]==2 && frag[i]==2){ // C to C change, right single strand part, rev-comp
-                    l2 += log(max(1-error2,MIN0));
+                    l2 += log(std::max(1-error2,MIN0));
                 }else if (reffrag[i]==frag[i]){ // All other possible no changes, rev-comp
-                    l2 += log(max(1-error2,MIN0));
+                    l2 += log(std::max(1-error2,MIN0));
                 }else if (reffrag[i]!=frag[i]){ // All other possible changes, rev-comp
-                    l2 += log(min(error2AThird,MAX0));
+                    l2 += log(std::min(error2AThird,MAX0));
                 }
             }
         }

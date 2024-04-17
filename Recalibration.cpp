@@ -138,7 +138,7 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
         //fprintf(stderr,"No meaningful chromosome name is provided, therefore we will focus on all provided chromosomes!\n");
     }
     
-    uchar * indref = NULL;
+    unsigned char * indref = NULL;
     double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
     double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
     double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
@@ -190,14 +190,14 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
 	  size_t chr_len = max_site; // The maximum position considered in the bed file along this chromosome
           
 	  //faidx_seq_len(seq_ref,hdr->target_name[refId]);
-	  indref = (uchar*) malloc(chr_len*sizeof(uchar));
+	  indref = (unsigned char*) malloc(chr_len*sizeof(unsigned char));
 	  for (size_t l=0; l<chr_len; l++){
-	    indref[l] = (uchar)0;
+	    indref[l] = (unsigned char)0;
 	  }
           
 	  for (size_t l=chrom_line[refId]; l < max_line; l++){
 	    for (size_t i = bedsites[l][0]; i <= bedsites[l][1]; i++){
-	      indref[i-1] = (uchar)1; // Shift by 1 so that it is treated 0 based internally.
+	      indref[i-1] = (unsigned char)1; // Shift by 1 so that it is treated 0 based internally.
 	    }
 	  }
 	}
@@ -318,7 +318,7 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
     char refeBase, readBase;
     
     
-    uchar * indref = NULL;
+    unsigned char * indref = NULL;
     double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
     double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
     double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
@@ -532,7 +532,7 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
         //fprintf(stderr,"No meaningful chromosome name is provided, therefore we will focus on all provided chromosomes!\n");
     }
     
-    uchar * indref = NULL;
+    unsigned char * indref = NULL;
     double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
     double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
     double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
@@ -583,14 +583,14 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
                 size_t chr_len = max_site; // The maximum position considered in the bed file along this chromosome
                 
                 //faidx_seq_len(seq_ref,hdr->target_name[refId]);
-                indref = (uchar*) malloc(chr_len*sizeof(uchar));
+                indref = (unsigned char*) malloc(chr_len*sizeof(char));
                 for (size_t l=0; l<chr_len; l++){
-                    indref[l] = (uchar)0;
+                    indref[l] = (unsigned char)0;
                 }
                 
                 for (size_t l=chrom_line[refId]; l < max_line; l++){
                     for (size_t i = bedsites[l][0]; i <= bedsites[l][1]; i++){
-                        indref[i-1] = (uchar)1; // Shift by 1 so that it is treated 0 based internally.
+                        indref[i-1] = (unsigned char)1; // Shift by 1 so that it is treated 0 based internally.
                     }
                 }
             }
@@ -719,7 +719,7 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
     kstr->s=NULL;
     mypair.first = kstr;
     char refeBase, readBase;
-    uchar * indref = NULL;
+    unsigned char * indref = NULL;
     double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
     double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
     double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
@@ -849,7 +849,7 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
     kstr->s=NULL;
     mypair.first = kstr;
     char refeBase, readBase;
-    uchar * indref = NULL;
+    unsigned char * indref = NULL;
     double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
     double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
     double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;

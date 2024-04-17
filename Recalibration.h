@@ -1,20 +1,13 @@
 #ifndef RECALIBRATION_H
 #define RECALIBRATION_H
-#include <iostream>
-#include <string> // Add this line at the top of Recalibration.h
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
+
 #include <htslib/hts.h>
 #include <htslib/sam.h>
-#include <htslib/kstring.h>
+
 #include <htslib/faidx.h>
 #include <zlib.h>
-#include <cmath>
-#include <iomanip>
 
-#include <ctime>
-using namespace std ;
+
 
 //The log-likelihood for recalibration the ancient prob
 double loglike_recalibration(const double *x, char *refName,char *fname, const char* chromname, const char* bedname,int mapped_only,int se_only, int mapq, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, std::string s);
