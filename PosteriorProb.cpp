@@ -7,23 +7,23 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <string>
+
 #include <zlib.h>
 #include <cmath>
-#include <iomanip>
+
 #include <ctime>
-#include <getopt.h>
+
 
 
 #include <htslib/hts.h>
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
 #include <htslib/faidx.h>
+#include <htslib/thread_pool.h>
 
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
-#include "briggs_writer.h"
 #include "read_all_reads.h"
 #include <array>  //Rasmus
 

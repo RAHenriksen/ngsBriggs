@@ -9,7 +9,7 @@ sam_hdr_t *read_all_reads(const char *htsname, const char *bedfile,const char *r
     samFile *in=NULL;
     if(refName!=NULL){
         char *ref =(char*) malloc(10 + strlen(refName) + 1);
-        sprintf(ref, "reference=%s", refName);
+        snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
         hts_opt_add((hts_opt **)&myHtsFormat.specific,ref);
         free(ref);
     }

@@ -20,7 +20,6 @@
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
-#include "briggs_writer.h"
 #include "read_all_reads.h"
 
 #include "misc.h"

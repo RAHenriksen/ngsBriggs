@@ -3,9 +3,8 @@
 
 #include <htslib/hts.h>
 #include <htslib/sam.h>
-
 #include <htslib/faidx.h>
-#include <zlib.h>
+//#include <zlib.h>
 
 
 

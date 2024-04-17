@@ -21,7 +21,6 @@
 #include "profile.h"
 #include "bfgs.h"
 
-#include "briggs_writer.h"
 #include "read_all_reads.h"
 
 
@@ -475,7 +474,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
     //code below only relevant if using cram files
     if(refName){
         char *ref =(char*) malloc(10 + strlen(refName) + 1);
-        sprintf(ref, "reference=%s", refName);
+        snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
         hts_opt_add((hts_opt **)&dingding3->specific,ref);
         free(ref);
     }

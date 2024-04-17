@@ -20,7 +20,6 @@
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
-#include "briggs_writer.h"
 #include "read_all_reads.h"
 
 #include "misc.h"
@@ -58,7 +57,7 @@ double loglike_recalibration(const double *x, char *refName,char *fname, const c
     //code below only relevant if using cram files
     if(refName!=NULL){
         char *ref =(char*) malloc(10 + strlen(refName) + 1);
-        sprintf(ref, "reference=%s", refName);
+        snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
         hts_opt_add((hts_opt **)&dingding7->specific,ref);
         free(ref);
     }
@@ -452,7 +451,7 @@ void loglike_recalibration_grad(const double *x, double *y, char *refName,char *
     //code below only relevant if using cram files
     if(refName!=NULL){
         char *ref =(char*) malloc(10 + strlen(refName) + 1);
-        sprintf(ref, "reference=%s", refName);
+        snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
         hts_opt_add((hts_opt **)&dingding7->specific,ref);
         free(ref);
     }

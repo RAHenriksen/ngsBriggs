@@ -1,12 +1,8 @@
-#include <cstring>
 #include <cstdlib>
 #include <cstdio>
 #include <zlib.h>
 #include <cmath>
 #include <ctime>
-#include <getopt.h>
-#include <iostream>
-#include <algorithm>
 
 
 #include <htslib/hts.h>
@@ -17,7 +13,7 @@
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
-#include "briggs_writer.h"
+
 #include "read_all_reads.h"
 
 #include "misc.h"
