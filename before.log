@@ -1,0 +1,1492 @@
+	-> fasta load 
+Loading the bamfile
+The bam file Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam has been inputted successfully
+Reference is not provided, and it will be reconstructed according to the MD tags!
+mapped_only: 0
+We will focus on Chromosome chr22!
+	-> Now at Chromosome: chr22
+
+	[ALL done] cpu-time used =  0.01 sec
+	[ALL done] walltime used =  0.00 sec
+
+The misincorporting matrix is as follows:
+Dir.	Pos.	FreqCT	FreqGA
+5'	1	0.232472	0.000000
+5'	2	0.145299	0.000000
+5'	3	0.088353	0.000000
+5'	4	0.071111	0.008621
+5'	5	0.049808	0.000000
+3'	1	0.000000	0.188976
+3'	2	0.004274	0.149194
+3'	3	0.004274	0.111111
+3'	4	0.004274	0.052174
+3'	5	0.000000	0.039216
+
+The inference is under progress...
+The fragment length distribution is calculated from the bam file!
+The chosen model is non-biotin model.
+
+	[ALL done] cpu-time used =  2.6879 sec
+	[ALL done] walltime used =  2.0000 sec
+The chosen model is non-biotin model, the inferred parameters are given as follows:
+lambda: 0.348019 (0.300381,0.395657), delta: 0.008409 (0.004223,0.012595), delta_s: 0.730853 (0.595089,0.866617), nu: 0.004318 (-0.009951,0.018587), nfunctioncalls: 33 ngradientcalls: 33, llh: -4.633483.
+	-> [read_all_reads] htsname: Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam bedfile: chr22.bed
+	-> Parsing possible bedfile: chr22.bed
+ret.size(): 1000
+mynSites: 100
+mu_anc	sig_anc	mu_mod	sig_mod
+60.000000	45.000000	100.000000	45.000000
+lik[0,100]=605.903249
+lik[100,200]=593.731696
+lik[200,300]=576.227292
+lik[300,400]=561.731197
+lik[400,500]=575.352765
+lik[500,600]=577.829750
+lik[600,700]=573.036769
+lik[700,800]=571.126075
+lik[800,900]=572.369892
+lik[900,1000]=603.281844
+total lik[0,1000]: 5810.590528
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+60.000000	45.000000	100.000000	45.000000
+lik[0,100]=605.903249
+lik[100,200]=593.731696
+lik[200,300]=576.227292
+lik[300,400]=561.731197
+lik[400,500]=575.352765
+lik[500,600]=577.829750
+lik[600,700]=573.036769
+lik[700,800]=571.126075
+lik[800,900]=572.369892
+lik[900,1000]=603.281844
+total lik[0,1000]: 5810.590528
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+41.867816	50.783145	103.981004	51.030449
+lik[0,100]=603.414717
+lik[100,200]=591.151224
+lik[200,300]=574.001931
+lik[300,400]=558.696645
+lik[400,500]=573.938326
+lik[500,600]=573.359338
+lik[600,700]=571.375081
+lik[700,800]=570.194587
+lik[800,900]=569.134402
+lik[900,1000]=599.025559
+total lik[0,1000]: 5784.291810
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+31.251284	62.893690	114.621082	58.321631
+lik[0,100]=603.409060
+lik[100,200]=592.163942
+lik[200,300]=573.418533
+lik[300,400]=557.666476
+lik[400,500]=571.371474
+lik[500,600]=572.295011
+lik[600,700]=569.395610
+lik[700,800]=567.697606
+lik[800,900]=568.022217
+lik[900,1000]=599.097321
+total lik[0,1000]: 5774.537251
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	59.434363	117.781278	60.309504
+lik[0,100]=602.764613
+lik[100,200]=591.237774
+lik[200,300]=572.947131
+lik[300,400]=557.215328
+lik[400,500]=571.745937
+lik[500,600]=571.583367
+lik[600,700]=569.536491
+lik[700,800]=568.173674
+lik[800,900]=567.664806
+lik[900,1000]=598.094080
+total lik[0,1000]: 5770.963202
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.471073	127.476452	64.170974
+lik[0,100]=601.935939
+lik[100,200]=589.881985
+lik[200,300]=572.337094
+lik[300,400]=556.681946
+lik[400,500]=572.956193
+lik[500,600]=570.598124
+lik[600,700]=570.255415
+lik[700,800]=569.679130
+lik[800,900]=567.570184
+lik[900,1000]=596.552035
+total lik[0,1000]: 5768.448045
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	53.060947	133.073626	65.603497
+lik[0,100]=601.809403
+lik[100,200]=589.907787
+lik[200,300]=572.101835
+lik[300,400]=556.443407
+lik[400,500]=572.495987
+lik[500,600]=570.406916
+lik[600,700]=569.872541
+lik[700,800]=569.217974
+lik[800,900]=567.385741
+lik[900,1000]=596.496732
+total lik[0,1000]: 5766.138322
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	54.663610	149.000000	67.796350
+lik[0,100]=601.571652
+lik[100,200]=590.065502
+lik[200,300]=571.561841
+lik[300,400]=555.902729
+lik[400,500]=571.377950
+lik[500,600]=569.983840
+lik[600,700]=568.951959
+lik[700,800]=568.096590
+lik[800,900]=567.000005
+lik[900,1000]=596.431434
+total lik[0,1000]: 5760.943501
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	54.601241	149.000000	66.183390
+lik[0,100]=601.545186
+lik[100,200]=590.055857
+lik[200,300]=571.498445
+lik[300,400]=555.844438
+lik[400,500]=571.318763
+lik[500,600]=569.922059
+lik[600,700]=568.892978
+lik[700,800]=568.041021
+lik[800,900]=566.983157
+lik[900,1000]=596.387681
+total lik[0,1000]: 5760.489585
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	54.351765	149.000000	59.731547
+lik[0,100]=601.420068
+lik[100,200]=590.020217
+lik[200,300]=571.203402
+lik[300,400]=555.569593
+lik[400,500]=571.030060
+lik[500,600]=569.630557
+lik[600,700]=568.609475
+lik[700,800]=567.770889
+lik[800,900]=566.898555
+lik[900,1000]=596.188684
+total lik[0,1000]: 5758.341500
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	53.353861	149.000000	33.924178
+lik[0,100]=600.142514
+lik[100,200]=589.912297
+lik[200,300]=568.913548
+lik[300,400]=553.263347
+lik[400,500]=568.442977
+lik[500,600]=567.108289
+lik[600,700]=566.153158
+lik[700,800]=565.517496
+lik[800,900]=565.856776
+lik[900,1000]=594.706559
+total lik[0,1000]: 5740.016961
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.042102	149.000000	0.000000
+lik[0,100]=610.420763
+lik[100,200]=601.921940
+lik[200,300]=588.279885
+lik[300,400]=573.767851
+lik[400,500]=590.864065
+lik[500,600]=586.048185
+lik[600,700]=587.522039
+lik[700,800]=587.293546
+lik[800,900]=581.086414
+lik[900,1000]=610.343013
+total lik[0,1000]: 5917.547700
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	53.103989	149.000000	27.462096
+lik[0,100]=599.320059
+lik[100,200]=589.770935
+lik[200,300]=567.846760
+lik[300,400]=552.128572
+lik[400,500]=567.156550
+lik[500,600]=565.862155
+lik[600,700]=564.930279
+lik[700,800]=564.529423
+lik[800,900]=565.119567
+lik[900,1000]=594.053350
+total lik[0,1000]: 5730.717649
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.899317	149.000000	22.168951
+lik[0,100]=598.337384
+lik[100,200]=589.447719
+lik[200,300]=566.674579
+lik[300,400]=550.896492
+lik[400,500]=565.742446
+lik[500,600]=564.578568
+lik[600,700]=563.607632
+lik[700,800]=563.505206
+lik[800,900]=564.185079
+lik[900,1000]=593.418726
+total lik[0,1000]: 5720.393831
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.734215	149.000000	17.899161
+lik[0,100]=597.240385
+lik[100,200]=588.873814
+lik[200,300]=565.414176
+lik[300,400]=549.614161
+lik[400,500]=564.248650
+lik[500,600]=563.349683
+lik[600,700]=562.277011
+lik[700,800]=562.414872
+lik[800,900]=563.111695
+lik[900,1000]=592.806905
+total lik[0,1000]: 5709.351352
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.601615	149.000000	14.469907
+lik[0,100]=596.029721
+lik[100,200]=588.058840
+lik[200,300]=564.080409
+lik[300,400]=548.318969
+lik[400,500]=562.733632
+lik[500,600]=562.219960
+lik[600,700]=561.045899
+lik[700,800]=561.258903
+lik[800,900]=561.960825
+lik[900,1000]=592.121397
+total lik[0,1000]: 5697.828554
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.495991	149.000000	11.738304
+lik[0,100]=594.717766
+lik[100,200]=587.134395
+lik[200,300]=562.695402
+lik[300,400]=547.050680
+lik[400,500]=561.239504
+lik[500,600]=561.253274
+lik[600,700]=560.066274
+lik[700,800]=560.168590
+lik[800,900]=560.794122
+lik[900,1000]=591.241460
+total lik[0,1000]: 5686.361468
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.413046	149.000000	9.593216
+lik[0,100]=593.367447
+lik[100,200]=586.275314
+lik[200,300]=561.335172
+lik[300,400]=545.882027
+lik[400,500]=559.782126
+lik[500,600]=560.517634
+lik[600,700]=559.429888
+lik[700,800]=559.287418
+lik[800,900]=559.679328
+lik[900,1000]=590.177677
+total lik[0,1000]: 5675.734032
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.227574	149.000000	4.796608
+lik[0,100]=589.572638
+lik[100,200]=584.298465
+lik[200,300]=557.927021
+lik[300,400]=543.263404
+lik[400,500]=555.919656
+lik[500,600]=559.576294
+lik[600,700]=559.111851
+lik[700,800]=557.409967
+lik[800,900]=557.138008
+lik[900,1000]=587.003665
+total lik[0,1000]: 5651.220969
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	52.227574	149.000000	4.796608
+lik[0,100]=589.572638
+lik[100,200]=584.298465
+lik[200,300]=557.927021
+lik[300,400]=543.263404
+lik[400,500]=555.919656
+lik[500,600]=559.576294
+lik[600,700]=559.111851
+lik[700,800]=557.409967
+lik[800,900]=557.138008
+lik[900,1000]=587.003665
+total lik[0,1000]: 5651.220969
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	35.944282	30.000000	0.000000
+lik[0,100]=nan
+lik[100,200]=nan
+lik[200,300]=nan
+lik[300,400]=nan
+lik[400,500]=nan
+lik[500,600]=nan
+lik[600,700]=nan
+lik[700,800]=nan
+lik[800,900]=nan
+lik[900,1000]=nan
+total lik[0,1000]: nan
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	34.748833	123.080298	0.000000
+lik[0,100]=644.186618
+lik[100,200]=623.459576
+lik[200,300]=622.203519
+lik[300,400]=609.161685
+lik[400,500]=637.821606
+lik[500,600]=617.569879
+lik[600,700]=630.178138
+lik[700,800]=635.334698
+lik[800,900]=613.436652
+lik[900,1000]=635.115460
+total lik[0,1000]: 6268.467831
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	44.367596	137.344224	2.639631
+lik[0,100]=617.105768
+lik[100,200]=601.497498
+lik[200,300]=588.390306
+lik[300,400]=572.966827
+lik[400,500]=593.951538
+lik[500,600]=582.196394
+lik[600,700]=584.774793
+lik[700,800]=590.363118
+lik[800,900]=581.243613
+lik[900,1000]=610.754980
+total lik[0,1000]: 5923.244835
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	48.503962	143.478154	3.774755
+lik[0,100]=590.283978
+lik[100,200]=583.590735
+lik[200,300]=557.005534
+lik[300,400]=542.502034
+lik[400,500]=556.517392
+lik[500,600]=558.187174
+lik[600,700]=559.566633
+lik[700,800]=558.202877
+lik[800,900]=556.334174
+lik[900,1000]=586.258196
+total lik[0,1000]: 5648.448727
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	51.020612	147.210163	4.465387
+lik[0,100]=589.083121
+lik[100,200]=583.639874
+lik[200,300]=556.980688
+lik[300,400]=542.393238
+lik[400,500]=555.312412
+lik[500,600]=558.697653
+lik[600,700]=558.733170
+lik[700,800]=557.012584
+lik[800,900]=556.383636
+lik[900,1000]=586.210863
+total lik[0,1000]: 5644.447239
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	42.133940	134.367692	0.708256
+lik[0,100]=624.160990
+lik[100,200]=607.411297
+lik[200,300]=599.400775
+lik[300,400]=583.120604
+lik[400,500]=603.428815
+lik[500,600]=591.857999
+lik[600,700]=591.288669
+lik[700,800]=601.944141
+lik[800,900]=591.354726
+lik[900,1000]=617.589420
+total lik[0,1000]: 6011.557436
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	47.349093	141.904310	2.913132
+lik[0,100]=593.625669
+lik[100,200]=585.193799
+lik[200,300]=559.377281
+lik[300,400]=545.350241
+lik[400,500]=560.265353
+lik[500,600]=560.393407
+lik[600,700]=563.381440
+lik[700,800]=561.599133
+lik[800,900]=558.217675
+lik[900,1000]=588.277818
+total lik[0,1000]: 5675.681815
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	49.053665	144.367652	3.633796
+lik[0,100]=589.036294
+lik[100,200]=582.911541
+lik[200,300]=555.848549
+lik[300,400]=541.486068
+lik[400,500]=554.951182
+lik[500,600]=557.666617
+lik[600,700]=558.860935
+lik[700,800]=556.945084
+lik[800,900]=555.487283
+lik[900,1000]=585.320526
+total lik[0,1000]: 5638.514079
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	48.895353	144.660358	3.115519
+lik[0,100]=587.813792
+lik[100,200]=581.956303
+lik[200,300]=554.356252
+lik[300,400]=540.207662
+lik[400,500]=553.221304
+lik[500,600]=556.896941
+lik[600,700]=558.240427
+lik[700,800]=555.733310
+lik[800,900]=554.485590
+lik[900,1000]=584.064246
+total lik[0,1000]: 5626.975827
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	48.262105	145.831180	1.042414
+lik[0,100]=583.180527
+lik[100,200]=577.015326
+lik[200,300]=549.275775
+lik[300,400]=532.821945
+lik[400,500]=543.780488
+lik[500,600]=550.503733
+lik[600,700]=552.317969
+lik[700,800]=547.941291
+lik[800,900]=550.015949
+lik[900,1000]=577.693997
+total lik[0,1000]: 5564.547001
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	47.885378	145.237115	0.000000
+lik[0,100]=572.288675
+lik[100,200]=568.006720
+lik[200,300]=535.289974
+lik[300,400]=526.870373
+lik[400,500]=525.980753
+lik[500,600]=537.695940
+lik[600,700]=541.785770
+lik[700,800]=532.817197
+lik[800,900]=538.542657
+lik[900,1000]=566.098456
+total lik[0,1000]: 5445.376514
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	47.880623	145.237578	0.000000
+lik[0,100]=572.288007
+lik[100,200]=568.005637
+lik[200,300]=535.289358
+lik[300,400]=526.870471
+lik[400,500]=525.981186
+lik[500,600]=537.695323
+lik[600,700]=541.787295
+lik[700,800]=532.818732
+lik[800,900]=538.542671
+lik[900,1000]=566.097046
+total lik[0,1000]: 5445.375725
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	47.861604	145.239427	0.000000
+lik[0,100]=572.285346
+lik[100,200]=568.001312
+lik[200,300]=535.286903
+lik[300,400]=526.870875
+lik[400,500]=525.982928
+lik[500,600]=537.692867
+lik[600,700]=541.793412
+lik[700,800]=532.824889
+lik[800,900]=538.542737
+lik[900,1000]=566.091414
+total lik[0,1000]: 5445.372685
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	47.785526	145.246826	0.000000
+lik[0,100]=572.274868
+lik[100,200]=567.984160
+lik[200,300]=535.277242
+lik[300,400]=526.872690
+lik[400,500]=525.990099
+lik[500,600]=537.683203
+lik[600,700]=541.818140
+lik[700,800]=532.849783
+lik[800,900]=538.543193
+lik[900,1000]=566.069015
+total lik[0,1000]: 5445.362394
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.000000	47.562493	145.268517	0.000000
+lik[0,100]=572.245702
+lik[100,200]=567.935248
+lik[200,300]=535.250388
+lik[300,400]=526.879861
+lik[400,500]=526.012986
+lik[500,600]=537.656385
+lik[600,700]=541.893055
+lik[700,800]=532.925224
+lik[800,900]=538.546347
+lik[900,1000]=566.004552
+total lik[0,1000]: 5445.349748
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.025270	47.556422	145.269032	0.000000
+lik[0,100]=572.245552
+lik[100,200]=567.935138
+lik[200,300]=535.249989
+lik[300,400]=526.880016
+lik[400,500]=526.012062
+lik[500,600]=537.658287
+lik[600,700]=541.891672
+lik[700,800]=532.923252
+lik[800,900]=538.547080
+lik[900,1000]=566.006291
+total lik[0,1000]: 5445.349339
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.126350	47.532135	145.271090	0.000000
+lik[0,100]=572.244974
+lik[100,200]=567.934717
+lik[200,300]=535.248411
+lik[300,400]=526.880657
+lik[400,500]=526.008378
+lik[500,600]=537.665924
+lik[600,700]=541.886146
+lik[700,800]=532.915372
+lik[800,900]=538.550037
+lik[900,1000]=566.013279
+total lik[0,1000]: 5445.347896
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+30.927384	47.229456	145.298124	0.000000
+lik[0,100]=572.226808
+lik[100,200]=567.907951
+lik[200,300]=535.223303
+lik[300,400]=526.890429
+lik[400,500]=525.991156
+lik[500,600]=537.714956
+lik[600,700]=541.880151
+lik[700,800]=532.890730
+lik[800,900]=538.576424
+lik[900,1000]=566.038295
+total lik[0,1000]: 5445.340203
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+31.537179	46.934561	145.324963	0.000000
+lik[0,100]=572.204776
+lik[100,200]=567.873473
+lik[200,300]=535.196460
+lik[300,400]=526.900785
+lik[400,500]=525.984847
+lik[500,600]=537.746255
+lik[600,700]=541.897706
+lik[700,800]=532.893832
+lik[800,900]=538.598643
+lik[900,1000]=566.039904
+total lik[0,1000]: 5445.336682
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+31.694366	46.821388	145.335472	0.000000
+lik[0,100]=572.194239
+lik[100,200]=567.856301
+lik[200,300]=535.185018
+lik[300,400]=526.904979
+lik[400,500]=525.987231
+lik[500,600]=537.750301
+lik[600,700]=541.915211
+lik[700,800]=532.907581
+lik[800,900]=538.605319
+lik[900,1000]=566.029717
+total lik[0,1000]: 5445.335898
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+mu_anc	sig_anc	mu_mod	sig_mod
+31.677795	46.821279	145.335530	0.000000
+lik[0,100]=572.193779
+lik[100,200]=567.855438
+lik[200,300]=535.184770
+lik[300,400]=526.905005
+lik[400,500]=525.988287
+lik[500,600]=537.748499
+lik[600,700]=541.917569
+lik[700,800]=532.910347
+lik[800,900]=538.604878
+lik[900,1000]=566.027307
+total lik[0,1000]: 5445.335880
+lik_grad[0,100]
+lik_grad[100,200]
+lik_grad[200,300]
+lik_grad[300,400]
+lik_grad[400,500]
+lik_grad[500,600]
+lik_grad[600,700]
+lik_grad[700,800]
+lik_grad[800,900]
+lik_grad[900,1000]
+total lik_grad[0,1000]
+lik_hess[0,100]
+lik_hess[100,200]
+lik_hess[200,300]
+lik_hess[300,400]
+lik_hess[400,500]
+lik_hess[500,600]
+lik_hess[600,700]
+lik_hess[700,800]
+lik_hess[800,900]
+lik_hess[900,1000]
+total lik_hess[0,1000]
+mu_anc: 31.677795 (nan,nan), sigma_anc: 46.821279 (nan,nan), mu_mod: 145.335530 (nan,nan), sigma_mod: 0.000000 (nan,nan), nfunctioncalls: 596 ngradientcalls: 589, llh: -5445.335880.
+print msg mapped_only: 0
+Loading the bedfile chr22.bed ...
+No meaningful chromosome name is provided, therefore we will focus on all provided chromosomes!
+	-> Now at Chromosome: chr22
