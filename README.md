@@ -11,7 +11,7 @@ git clone https://gitlab.com/libeigen/eigen
 
 Then remember to add
 ```
-FLAGS="-I ../eigen/"
+FLAGS="-I ../eigen/ -std=c++14"
 ```
 to make commands below
 
@@ -72,3 +72,13 @@ Decontamination with epsilon
 ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam -isrecal 1 -ibed chr22.bed -chr chr22 -nthread 1
 
 ~~~~
+
+## Limitations 
+As of current release XXX ngsBriggs has the following restrictions when inferring the Briggs parameters and using these to decontaminate ancient samples. 
+
+These will be addressed in future releases.
+1) Solely utilize single-end reads. When processing ancient DNA, the aligned reads usually originate from merged trimmed fastq files representing single-end reads.
+2) Sequence reads below 30 nucleotides are discarded as the ngsBriggs utilize the deamination substitution pattern present within the first 15 basepairs (5') and last 15 baspeairs (3')
+3) Sequence reads equal to the cycle length, or potential paired-end sequence reads with an absolute TLEN value above the cycle length
+
+   

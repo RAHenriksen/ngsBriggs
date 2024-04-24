@@ -518,7 +518,7 @@ int main(int argc, char **argv){
         ncalls = 0;
         ncalls_grad = 0;
         //double lbd2[4] = {30,1e-8,30,1e-8};
-        double lbd2[4] = {30,15,30,1e-8};
+        double lbd2[4] = {30,15,30,1};
         double ubd2[4] = {(double)len_limit-1,100,(double)len_limit-1,100};
         int nbd2[4] = {2,2,2,2};
         int mynsites = tsk_reads.size()/tsk_nthreads;
