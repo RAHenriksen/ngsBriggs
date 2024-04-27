@@ -72,6 +72,9 @@ Decontamination with epsilon
 ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam -isrecal 1 -ibed chr22.bed -chr chr22 -nthread 1
 
 ~~~~
+## Details
+If recal = 0, we calculate the posterior probability (AN) solely based on deamination patterns (within 30 bp);  If recal = 1, we will also consider the length distribution when estimating AN, and A0 is the same as AN in the case recal = 0. 
+
 
 ## Limitations 
 As of current release XXX ngsBriggs has the following restrictions when inferring the Briggs parameters and using these to decontaminate ancient samples. 
