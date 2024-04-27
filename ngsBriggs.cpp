@@ -70,7 +70,6 @@ int main(int argc, char **argv){
 
     for(int i=0;i<argc;i++)
       ksprintf(&str_cli," %s",argv[0]);
-    ksprintf(&str_cli,"\n");
 
     mypars = pars_briggs(argc,argv);
 

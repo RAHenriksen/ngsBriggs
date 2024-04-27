@@ -961,6 +961,7 @@ bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, const char* chromname, co
         sam_hdr_add_pg(hdr,"metadamage_briggs","VN","1.0","CL",str_cli->s, NULL);
         assert(sam_hdr_write(out, hdr) >= 0);
     }
+
     bam1_t *b = bam_init1();
     
     int chrom_num = hdr->n_targets;
