@@ -138,7 +138,7 @@ int main(int argc, char **argv){
 
         if (fname != NULL){
             fprintf(stderr,"Loading the bamfile\n");
-            bamreader(fname,chromname,bedname,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
+            bamreader(fname,chromname,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
             //cout<<"Minimum length is "<<len_min<<"\n";
         }else if(tabname != NULL && lenname != NULL){
 	  tabreader(tabname,STRLENS,mm5p,mm3p);

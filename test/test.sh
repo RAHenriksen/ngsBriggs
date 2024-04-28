@@ -26,7 +26,9 @@ We will focus on Chromosome chr22!
 
 The misincorporting matrix is as follows:
 Dir.	Pos.	FreqCT	FreqGA
-5'	1	0.232472	0.000000
+5'	1	0.232472	0.000000case compile in
+esac
+
 5'	2	0.145299	0.000000
 5'	3	0.088353	0.000000
 5'	4	0.071111	0.008621

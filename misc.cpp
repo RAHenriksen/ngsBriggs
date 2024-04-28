@@ -232,7 +232,7 @@ int tabreader(char *tabname,int STRLENS,double** mm5p, double **mm3p){
 }
 
 
-int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number,double **mm5p,double **mm3p){
+int bamreader(char *fname, const char* chromname,faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number,double **mm5p,double **mm3p){
     char *refName = NULL;
     clock_t t=clock();
     time_t t2=time(NULL);
@@ -248,7 +248,7 @@ int bamreader(char *fname, const char* chromname,const char* bedname, faidx_t * 
         }else{
             fprintf(stderr, "Reference is not provided, and it will be reconstructed according to the MD tags!\n");
         }
-        parse_sequencingdata1(refName,fname,chromname,bedname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
+        parse_sequencingdata1(refName,fname,chromname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
     }
     
     fprintf(stderr,
@@ -455,7 +455,7 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
 
 
 //QUALITY CONTROL and LENGTH DISTRIBUTION
-void parse_sequencingdata1(char *refName,char *fname,const char* chromname, const char* bedname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number,double** mm5p, double **mm3p){
+void parse_sequencingdata1(char *refName,char *fname,const char* chromname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number,double** mm5p, double **mm3p){
     fprintf(stderr,"mapped_only: %d\n",mapped_only);
     htsFormat *dingding3 =(htsFormat*) calloc(1,sizeof(htsFormat));
 
@@ -496,48 +496,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
     int chrom_num = hdr->n_targets;
     size_t * chrom_line = (size_t*)malloc(chrom_num*(sizeof(size_t)));
     std::vector<std::array<size_t, 2> > bedsites;
-    // loading the bedfile
-    if (bedname!=NULL){
-        fprintf(stderr,"Loading the bedfile %s ...\n",bedname);
-        BGZF *fp = NULL;
-        fp = bgzf_open(bedname,"rb");
-        
-        kstring_t *kstr1 = new kstring_t;
-        kstr1->s = NULL;
-        kstr1->l = kstr1->m = 0;
-        int line=0;
-	std::string word0, word;
-        bgzf_getline(fp,'\n',kstr1);
-        for (int j=0; j<chrom_num; j++){
-            chrom_line[j] = line;
-            do{
-                //while(bgzf_getline(fp,'\n',kstr1)>0){
-	      std::istringstream iss(kstr1->s);
-                //string word0, word;
-                getline(iss,word0,'\t');
-                size_t num;
-                if  (strcmp(word0.c_str(),hdr->target_name[j])==0){
-                    line++;
-                }
-                //size_t bedsite[2];
-                std::array<size_t, 2> bedsite;
-                int idx = 1;
-                while (getline(iss,word,'\t')){
-                    //sscanf(word.c_str(), "%zu", &num);
-                    if (strcmp(word0.c_str(),hdr->target_name[j])==0){
-                        sscanf(word.c_str(), "%zu", &num);
-                        idx = 1-idx;
-                        bedsite[idx] = num;
-                        if (idx == 1){
-                            bedsites.push_back(bedsite);
-                        }
-                    }
-                }
-                //std::cout << "\n";
-            }while (strcmp(word0.c_str(),hdr->target_name[j])==0 && bgzf_getline(fp,'\n',kstr1)>0);
-        }
-    }
-    
+      
     int ret;
     int refId=-1;
     int chromId = -1;
@@ -593,33 +552,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
         if(refId==-1||refId!=b->core.tid){
             refId=b->core.tid;
             fprintf(stderr,"\t-> Now at Chromosome: %s\n",hdr->target_name[refId]);
-            if (bedname!=NULL){
-                if (indref!=NULL){
-                    free(indref);
-                }
-                //checkchrome=b->core.tid;
-                max_site = 0;
-                size_t max_line =  refId < chrom_num-1 ? chrom_line[refId+1] : bedsites.size();
-                for (size_t l=chrom_line[refId]; l < max_line; l++){
-                    if (max_site < bedsites[l][1]){
-                        max_site = bedsites[l][1]; //Assume the provided bed file is 1-based (but will treat it as 0-based internally)
-                    }
-                }
-                size_t chr_len = max_site; // The maximum position considered in the bed file along this chromosome
-                
-                //faidx_seq_len(seq_ref,hdr->target_name[refId]);
-                // Construct a logic array with 1 inside the bedfile, 0 outside the bedfile
-                indref = (unsigned char*) malloc(chr_len*sizeof(unsigned char));
-                for (size_t l=0; l<chr_len; l++){
-                    indref[l] = (unsigned char)0;
-                }
-                // The internal site position is 0-based.
-                for (size_t l=chrom_line[refId]; l < max_line; l++){
-                    for (size_t i = bedsites[l][0]; i <= bedsites[l][1]; i++){
-                        indref[i-1] = (unsigned char)1; // Shift by 1 so that it is treated 0 based internally.
-                    }
-                }
-            }
+ 
         }
         //fprintf(stderr,"readid:%s len: %d\nREAD:\t\n",bam_get_qname(b),b->core.l_qseq);
         // for(int i=0;i<b->core.l_qseq;i++)
@@ -666,26 +599,7 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, cons
                 //   std::cout<<pos<<" "<<max_site<<"\n";
                 //}
                 
-                // If the bedfile is provided, and the focal position is within the bedfile
-                if(refeBase!=4 && readBase!=4 && bedname!=NULL &&  pos < max_site && indref[pos]==1){
-                    int dist5p=cycle;
-                    int dist3p=b->core.l_qseq-1-cycle;
-                    //std::cout<<"flag "<<b->core.flag<<"\n";
-                    if( bam_is_rev(b) ){
-                        // std::cout<<"rev "<<"\t";
-                        refeBase=com[refeBase];
-                        readBase=com[readBase];
-                        //dist5p=int(al.QueryBases.size())-1-i;
-                        dist5p=int(b->core.l_qseq)-1-cycle;
-                        dist3p=cycle;
-                    }
-                    if(dist5p<MAXLENGTH)
-                        mm5p[dist5p][toIndex[refeBase][readBase]] += 1.00;
-                    if(dist3p<MAXLENGTH)
-                        mm3p[dist3p][toIndex[refeBase][readBase]] += 1.00;
-                    temp = temp + 1;
-                    // If no bedfile is provided, count all the fragments
-                }else if(refeBase!=4 && readBase!=4 && bedname==NULL){
+		if(refeBase!=4 && readBase!=4 ){
                     int dist5p=cycle;
                     int dist3p=b->core.l_qseq-1-cycle;
                     if( bam_is_rev(b) ){
