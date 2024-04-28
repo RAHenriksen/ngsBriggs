@@ -487,7 +487,7 @@ int main(int argc, char **argv){
     char *olik1 = mypars->olik; //the output nucleotide likelihood file
     const char* chromname1 = mypars->ichr;
     const char* bedname1 = mypars->ibed;
-    char * ofname1 = mypars->ohts;
+
     int isrecal = mypars->isrecal;
     
     deamRateCT = (double**) malloc((len_limit-30) * sizeof(double*));
@@ -579,7 +579,7 @@ int main(int argc, char **argv){
     kstr3->l = kstr3->m = 0;
  
     if (fname1!=NULL){
-      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,fname1,chromname1,bedname1,ofname1,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,&str_cli,deamRateCT,deamRateGA,Tol);
+      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,fname1,mypars->ohts,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,&str_cli,deamRateCT,deamRateGA,Tol);
       sam_hdr_destroy(hdr);
     }
     

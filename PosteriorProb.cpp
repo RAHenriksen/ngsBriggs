@@ -900,7 +900,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
     return post_pmd;
 }
 
-bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, const char* chromname, const char* bedname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
+bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
 {
   char nuc[6] = "ACGTN";
     fprintf(stderr,"print msg mapped_only: %d\n",mapped_only);
@@ -919,8 +919,6 @@ bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, const char* chromname, co
     kstr->s=NULL;
     mypair.first = kstr;
     samFile *in=NULL;
-    //New part check??
-    //ofname = strdup("test.bam");
     samFile *out=NULL;
     
     if (ofname!=NULL){
@@ -955,267 +953,140 @@ bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, const char* chromname, co
         fprintf(stderr,"[%s] nonexistant file: %s\n",__FUNCTION__,fname);
         exit(0);
     }
+    
     bam_hdr_t  *hdr = sam_hdr_read(in);
-    bam_hdr_t  *hdr1 = NULL;
-    if (ofname!=NULL){
-        sam_hdr_add_pg(hdr,"metadamage_briggs","VN","1.0","CL",str_cli->s, NULL);
-        assert(sam_hdr_write(out, hdr) >= 0);
-    }
-
+    sam_hdr_add_pg(hdr,"metadamage_briggs","VN","1.0","CL",str_cli->s, NULL);
+    assert(sam_hdr_write(out, hdr) >= 0);
+    
     bam1_t *b = bam_init1();
-    
-    int chrom_num = hdr->n_targets;
-    size_t * chrom_line = (size_t*)malloc(chrom_num*(sizeof(size_t)));
-    std::vector<std::array<size_t, 2> > bedsites;
-    
-    // loading the bedfile
-    if (bedname!=NULL){
-        fprintf(stderr,"Loading the bedfile %s ...\n",bedname);
-        BGZF *fp = NULL;
-        fp = bgzf_open(bedname,"rb");
         
-        kstring_t *kstr1 = new kstring_t;
-        kstr1->s = NULL;
-        kstr1->l = kstr1->m = 0;
-        int line=0;
-	std::string word0, word;
-        bgzf_getline(fp,'\n',kstr1);
-        for (int j=0; j<chrom_num; j++){
-            chrom_line[j] = line;
-            do{
-                //while(bgzf_getline(fp,'\n',kstr1)>0){
-	      std::istringstream iss(kstr1->s);
-                //string word0, word;
-                getline(iss,word0,'\t');
-                size_t num;
-                if  (strcmp(word0.c_str(),hdr->target_name[j])==0){
-                    line++;
-                }
-                //size_t bedsite[2];
-                std::array<size_t, 2> bedsite;
-                int idx = 1;
-                while (getline(iss,word,'\t')){
-                    //sscanf(word.c_str(), "%zu", &num);
-                    if (strcmp(word0.c_str(),hdr->target_name[j])==0){
-                        sscanf(word.c_str(), "%zu", &num);
-                        idx = 1-idx;
-                        bedsite[idx] = num;
-                        if (idx == 1){
-                            bedsites.push_back(bedsite);
-                        }
-                    }
-                }
-                //cout << "\n";
-            }while (strcmp(word0.c_str(),hdr->target_name[j])==0 && bgzf_getline(fp,'\n',kstr1)>0);
-        }
-    }
-    
-    
     int ret;
     int refId=-1;
     double num = 0.0;
     size_t max_site;
     nproc1 = 0;
-    int chromId=-1;
-    if (chromname!=NULL){
-        for (int j=0; j<chrom_num; j++){
-            if (!strcmp(chromname,hdr->target_name[j])){
-                chromId = j;
-                fprintf(stderr,"We will focus on Chromosome %s!\n", hdr->target_name[j]);
-            }
-        }
-    }
-    if (chromId==-1){
-        fprintf(stderr,"No meaningful chromosome name is provided, therefore we will focus on all provided chromosomes!\n");
-    }
     
     uchar * indref = NULL;
     while(((ret=sam_read1(in,hdr,b)))>0) {
-        //nproc1++;
-        //if -m was used, discard unmapped reads
-        if(mapped_only!=0){
-            if(b->core.flag&4)
-                continue;
-        }
+      if(mapped_only!=0){
+	if(b->core.flag&4)
+	  continue;
+      }
         
-        //default -a 1
-        //only use single end reads
-        //which is either single end or collapsed reads
-        //#if 0
-        if(se_only==1){
-            if(b->core.flag&1)//if paired continue
-                continue;
-        }
-        //#endif
-        if(b->core.flag>256)
-            continue; //Remove possible duplicates
+      if(se_only==1){
+	if(b->core.flag&1)//if paired continue
+	  continue;
+      }
+      //#endif
+      if(b->core.flag>256)
+	continue; //Remove possible duplicates
+      
+      // if mapq threshold is set
+      if(mapq!=-1 && b->core.qual<mapq)
+	continue;
+
+      nproc1++;
+
+      if(refId==-1||refId!=b->core.tid){
+	refId=b->core.tid;
+	fprintf(stderr,"\t-> Now at Chromosome: %s\n",hdr->target_name[refId]);
+      }
+
+      //then we simply write it to the output
+      memset(reconstructedRef,0,512);
+      memset(myread,'N',512);
+      memset(myrefe,'N',512);
+      
+      if (seq_ref != NULL){
+	wrapperwithref(b,hdr,myread,myrefe,seq_ref);
+      }else{
+	reconstructRefWithPosHTS(b,mypair,reconstructedRef);
+	wrapper(b,mypair.first->s,mypair.second,0,0,NULL,NULL,1,myread,myrefe);
+      }
+      
+      if (len_limit <=0){
+	len_limit = 512;
+      };
+
+      if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit){
+	for (int cycle=0;cycle<b->core.l_qseq;cycle++){
+	  yourqual[cycle] = -1;
+	}
+
+	for (int cycle=0;cycle<b->core.l_qseq;cycle++){
+	  refeBase = refToChar[myrefe[cycle]];
+	  readBase = refToChar[myread[cycle]];
+	  int dist5p=cycle;
+	  int dist3p=b->core.l_qseq-1-cycle;
+	  //cout<<"flag "<<b->core.flag<<"\n";
+	  if( bam_is_rev(b) ){
+	    // cout<<"rev "<<"\t";
+	    refeBase=com[refeBase];
+	    readBase=com[readBase];
+	    //dist5p=int(al.QueryBases.size())-1-i;
+	    dist5p=int(b->core.l_qseq)-1-cycle;
+	    dist3p=cycle;
+	  }
+	  yourread[dist5p] = readBase;
+	  yourrefe[dist5p] = refeBase;
+	  yourqual[dist5p] = bam_get_qual(b)[cycle];
+	}
         
-        // if mapq threshold is set
-        if(mapq!=-1 && b->core.qual<mapq)
-            continue;
-        if (chromId==-1||chromId==b->core.tid){
-            nproc1++;
-        }else if (chromId!=b->core.tid){
-            continue;
-        }
-        if(refId==-1||refId!=b->core.tid){
-            refId=b->core.tid;
-            fprintf(stderr,"\t-> Now at Chromosome: %s\n",hdr->target_name[refId]);
-	    //cout<<"hello "<<bam_get_qname(b)<<" "<<refId<<"\n";
-            if (bedname!=NULL){
-		//cout<<"hello1 "<<"\n";
-                /*Check this in the future!
-		//if (indref!=NULL){
-                //    free(indref);
-                //}
-		*/
-		//cout<<"hello2 "<<"\n";
-                //checkchrome=b->core.tid;
-                max_site = 0;
-		//cout<<"refID= "<<refId<<"\n";
-                size_t max_line =  refId < chrom_num-1 ? chrom_line[refId+1] : bedsites.size();
-		//cout<<chrom_line[refId]<<" "<<max_line<<"\n";
-                for (size_t l=chrom_line[refId]; l < max_line; l++){
-                    if (max_site < bedsites[l][1]){
-                        max_site = bedsites[l][1]; //Assume the provided bed file is 1-based (but will treat it as 0-based internally)
-                    }
-                }
-                //cout<<"nuc_llikcheckpoint1\n";
-                size_t chr_len = max_site; // The maximum position considered in the bed file along this chromosome
-                
-                //faidx_seq_len(seq_ref,hdr->target_name[refId]);
-                indref = (uchar*) malloc(chr_len*sizeof(uchar));
-                for (size_t l=0; l<chr_len; l++){
-                    indref[l] = (uchar)0;
-                }
-                
-                for (size_t l=chrom_line[refId]; l < max_line; l++){
-                    for (size_t i = bedsites[l][0]; i <= bedsites[l][1]; i++){
-                        indref[i-1] = (uchar)1; // Shift by 1 so that it is treated 0 based internally.
-                    }
-                }
-            }
-        }
-        //cout<<"nuc_llikt6est\n";
-        //then we simply write it to the output
-        memset(reconstructedRef,0,512);
-        memset(myread,'N',512);
-        memset(myrefe,'N',512);
-        
-        if (seq_ref != NULL){
-            wrapperwithref(b,hdr,myread,myrefe,seq_ref);
-        }else{
-            reconstructRefWithPosHTS(b,mypair,reconstructedRef);
-            wrapper(b,mypair.first->s,mypair.second,0,0,NULL,NULL,1,myread,myrefe);
-        }
-        
-        if (len_limit <=0){
-            len_limit = 512;
-        };
-        //cout << b->core.l_qseq << "Test nuc_llik\n";
-        if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit){
-            for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                yourqual[cycle] = -1;
-            }
-            //cout << b->core.l_qseq << "\n";
-            int isbedfrag = 0;
-            for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                refeBase = refToChar[myrefe[cycle]];
-                readBase = refToChar[myread[cycle]];
-                size_t pos = b->core.pos+cycle;
-                
-                //                cout << (int)refeBase << " " << (int)readBase<<" "<<pos<<" "<<max_site<<"\n";
-                if(refeBase!=4 && readBase!=4 && bedname!=NULL &&  pos < max_site && indref[pos]==1){ //check whether the fragment has intersection with the bed file
-                    isbedfrag += 1;
-                    //                    if (cycle==0){cout<<"nuc_llik6\t";}
-                    //                    cout<<refeBase+0<<"\t";
-                    //                    if (cycle==b->core.l_qseq){cout<<"\n";}
-                }else if(refeBase!=4 && readBase!=4 && bedname==NULL){
-                    isbedfrag += 1;
-                }
-            }
-            if (isbedfrag > 0){
-                for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                    refeBase = refToChar[myrefe[cycle]];
-                    readBase = refToChar[myread[cycle]];
-                    int dist5p=cycle;
-                    int dist3p=b->core.l_qseq-1-cycle;
-                    //cout<<"flag "<<b->core.flag<<"\n";
-                    if( bam_is_rev(b) ){
-                        // cout<<"rev "<<"\t";
-                        refeBase=com[refeBase];
-                        readBase=com[readBase];
-                        //dist5p=int(al.QueryBases.size())-1-i;
-                        dist5p=int(b->core.l_qseq)-1-cycle;
-                        dist3p=cycle;
-                    }
-                    yourread[dist5p] = readBase;
-                    yourrefe[dist5p] = refeBase;
-                    yourqual[dist5p] = bam_get_qual(b)[cycle];
-                }
-                
+	
+	double PostAncProb1 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 0, len_limit, len_min,Tol);
+	double PostAncProb2 = 0;
+	
+	if (isrecal==1) {
+	  PostAncProb2 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 1, len_limit, len_min,Tol);
+	}
+	
+	double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model,Tol);
+	//cout << "length 0" << " " << b->core.l_qseq << "\n";
 
-                double PostAncProb1 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 0, len_limit, len_min,Tol);
-                double PostAncProb2 = 0;
+#if 0
+	// Read Name
+	std::cout << bam_get_qname(b) << "\t";
+	cout << bam_aux_get(b,"FL") << "\t";
+	for (int cycle=0;cycle<b->core.l_qseq;cycle++)
+	  std::cout<<nuc[(int)refToChar[myread[cycle]]];
+	std::cout<<"\t";
+	cout << "length 2" << b->core.l_qseq << "\n";
+	for (int cycle=0;cycle<b->core.l_qseq;cycle++)
+	  std::cout<<nuc[(int)refToChar[myrefe[cycle]]];
+	std::cout<<"\t";
+	
+	for (int cycle=0;cycle<b->core.l_qseq;cycle++)
+	  std::cout<<(char)(bam_get_qual(b)[cycle]+33);
+	if (isrecal==1)
+	  std::cout<<"\t"<<"AO:f:"<<PostAncProb1<<"\t"<<"AN:f:"<<PostAncProb2<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
+	else
+	  std::cout<<"\t"<<"AN:f:"<<PostAncProb1<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
+#endif
+	//Bam output is the bam file orientation
+	if (isrecal==1){
+	  bam_aux_update_float(b,"AO",PostAncProb1);
+	  bam_aux_update_float(b,"AN",PostAncProb2);
+	}else{
+	  bam_aux_update_float(b,"AN",PostAncProb1);
+	}
+	bam_aux_update_float(b,"PD",PostPMDProb);
+	
+	assert(sam_write1(out, hdr, b)>=0);
+      }
+      num += 1.0; //number of intersected reads.
+      //cout<<"Number is "<<num<<"\n";
 
-                if (isrecal==1) {
-		  PostAncProb2 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 1, len_limit, len_min,Tol);
-		}
-   
-                double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model,Tol);
-                //cout << "length 0" << " " << b->core.l_qseq << "\n";
-                if (ofname == NULL){
-                    // Read Name
-		  std::cout << bam_get_qname(b) << "\t";
-                    //cout << bam_aux_get(b,"FL") << "\t";
-                    for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-		      std::cout<<nuc[(int)refToChar[myread[cycle]]];
-                    }
-		    std::cout<<"\t";
-                    //cout << "length 2" << b->core.l_qseq << "\n";
-                    for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-		      std::cout<<nuc[(int)refToChar[myrefe[cycle]]];
-                    }
-		    std::cout<<"\t";
-
-                    for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-		      std::cout<<(char)(bam_get_qual(b)[cycle]+33);
-                    }
-                    if (isrecal==1){
-		      std::cout<<"\t"<<"AO:f:"<<PostAncProb1<<"\t"<<"AN:f:"<<PostAncProb2<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
-                    }else{
-		      std::cout<<"\t"<<"AN:f:"<<PostAncProb1<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
-                    }
-                }else{
-                    //Bam output is the bam file orientation
-                    if (isrecal==1){
-                        bam_aux_update_float(b,"AO",PostAncProb1);
-                        bam_aux_update_float(b,"AN",PostAncProb2);
-                    }else{
-                        bam_aux_update_float(b,"AN",PostAncProb1);
-                    }
-                    bam_aux_update_float(b,"PD",PostPMDProb);
-
-                    assert(sam_write1(out, hdr, b)>=0);
-                }
-                num += 1.0; //number of intersected reads.
-		//cout<<"Number is "<<num<<"\n";
-            }
-        }
     }
-
+    
     if (ofname != NULL)
-        assert(sam_close(out)==0);
+      assert(sam_close(out)==0);
     hts_opt_free((hts_opt *)dingding6->specific);
     free(dingding6);
-    //    free(ofname);
-    //    assert(sam_close(out)==0);
-    bedsites.clear();
-    bedsites.shrink_to_fit();
+    
     bam_destroy1(b);
     hts_opt_free((hts_opt *)dingding5->specific);
     free(dingding5);
-    //sam_hdr_destroy(hdr);
+    
     assert(sam_close(in)==0);
  
     return hdr;
