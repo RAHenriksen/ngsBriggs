@@ -417,39 +417,9 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
             deamRateCT[L-30][30-n-1] = (p1_l+p3_r)/2*delta; //Lateral increments 2 for C to T (3') and G to A (5')
             deamRateGA[L-30][n] = deamRateCT[L-30][n];
             deamRateGA[L-30][30-n-1] = deamRateCT[L-30][30-n-1];
-            //freqCT1 += (p3_l*delta+p4_l*delta_s)*f;
-            //freqGA1 += (p1_r*delta+p2_r*delta_s)*f;
-            // freqCT2 += (p3_r*delta)*f;
-            // freqGA2 += (p1_l*delta)*f;
-            // freqCT1 += dd1;
-            // freqCT2 += dd2;
+    
         }
-        //        freqCT1 = (1-eps)*freqCT1;
-        //        freqCT2 = (1-eps)*freqCT2;
-        //        double freqGA1 = freqCT1;
-        //        double freqGA2 = freqCT2;
-        //        double freqCT3 = freqCT1*(1-seqError[n]) + (1-freqCT1)*seqError[n]/3;
-        //        double freqCC3 = (1-freqCT1)*(1-seqError[n]) + freqCT1*seqError[n]/3;
-        //        double freqCT4 = freqCT2*(1-seqError[2*MAXLENGTH-1-n]) + (1-freqCT2)*seqError[2*MAXLENGTH-1-n]/3;
-        //        double freqCC4 = (1-freqCT2)*(1-seqError[2*MAXLENGTH-1-n]) + freqCT2*seqError[2*MAXLENGTH-1-n]/3;
-        //        double freqGA3 = freqGA1*(1-seqError[2*MAXLENGTH-1-n]) + (1-freqGA1)*seqError[2*MAXLENGTH-1-n]/3;
-        //        double freqGG3 = (1-freqGA1)*(1-seqError[2*MAXLENGTH-1-n]) + freqGA1*seqError[2*MAXLENGTH-1-n]/3;
-        //        double freqGA4 = freqGA2*(1-seqError[n]) + (1-freqGA2)*seqError[n]/3;
-        //        double freqGG4 = (1-freqGA2)*(1-seqError[n]) + freqGA2*seqError[n]/3;
-        //        double freq[8], count[8];
-        //        freq[0] = freqCT3; freq[1] = freqCC3; freq[2] = freqCT4; freq[3] = freqCC4;
-        //        freq[4] = freqGA3; freq[5] = freqGG3; freq[6] = freqGA4; freq[7] = freqGG4;
-        //        count[0] = scaleCT[n]*freqCT[n]; count[1] = scaleCT[n]*(1-freqCT[n]);
-        //        count[2] = scaleCT[2*MAXLENGTH-1-n]*freqCT[2*MAXLENGTH-1-n]; count[3] = scaleCT[2*MAXLENGTH-1-n]*(1-freqCT[2*MAXLENGTH-1-n]);
-        //        count[4] = scaleGA[n]*freqGA[n]; count[5] = scaleGA[n]*(1-freqGA[n]);
-        //        count[6] = scaleGA[2*MAXLENGTH-1-n]*freqGA[2*MAXLENGTH-1-n]; count[7] = scaleGA[2*MAXLENGTH-1-n]*(1-freqGA[2*MAXLENGTH-1-n]);
-        //        for (int j=0;j<8;j++){
-        //            if (freq[j]>0){
-        //                ll += count[j]*log(freq[j]);
-        //            }
-        //            // Consider freq[j] > 1
-        //        }
-        //        ll += scaleCT[n]*(freqCT[n]*log(freqCT3)+(1-freqCT[n])*log(freqCC3))+scaleCT[2*MAXLENGTH-1-n]*(freqCT[2*MAXLENGTH-1-n]*log(freqCT4)+(1-freqCT[2*MAXLENGTH-1-n])*log(freqCC4))+scaleGA[n]*(freqGA[n]*log(freqGA3)+(1-freqGA[n])*log(freqGG3))+scaleGA[2*MAXLENGTH-1-n]*(freqGA[2*MAXLENGTH-1-n]*log(freqGA4)+(1-freqGA[2*MAXLENGTH-1-n])*log(freqGG4));
+
     }
 }
 
