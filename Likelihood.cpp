@@ -20,7 +20,6 @@
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
-#include "read_all_reads.h"
 
 #include "misc.h"
 #include "Recalibration.h"
@@ -1380,7 +1379,7 @@ double like_master(const double *xs,const void *){
     fprintf(stderr,"%f\t%f\t%f\t%f\n",xs[0],xs[1],xs[2],xs[3]);
     pthread_t thd[nThreads];
     for(size_t i=0;i<nThreads;i++){
-        int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
+        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_slave,(void*) i);
         if(rc)
             fprintf(stderr,"Error creating thread\n");
         
@@ -1407,7 +1406,7 @@ void like_grad_master(const double *xs,double *y,const void *){
     pthread_t thd[nThreads];
     for(size_t i=0;i<nThreads;i++){
         //int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
-        int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_grad_slave,(void*) i);
+        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_grad_slave,(void*) i);
         if(rc)
             fprintf(stderr,"Error creating thread\n");
         
@@ -1440,7 +1439,7 @@ void like_hess_master(const double *xs,double **y){
     pthread_t thd[nThreads];
     for(size_t i=0;i<nThreads;i++){
         //int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
-        int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_hess_slave,(void*) i);
+        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_hess_slave,(void*) i);
         if(rc)
             fprintf(stderr,"Error creating thread\n");
         

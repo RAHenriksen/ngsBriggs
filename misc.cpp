@@ -20,12 +20,9 @@
 
 #include "profile.h"
 #include "bfgs.h"
-
-#include "read_all_reads.h"
-
-
 #include "misc.h"
 #include "ngsBriggs.h"
+
 #define PI M_PI
 
 

@@ -24,14 +24,12 @@
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
-#include "read_all_reads.h"
 #include <array>  //Rasmus
 
 #include "misc.h"
 #include "Recalibration.h"
 #include "ngsBriggs.h"
 #include "Likelihood.h"
-
 #include "PosteriorProb.h"
 
 typedef unsigned char uchar;

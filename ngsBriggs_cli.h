@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
-#include "HelpPage.h"
 
 void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, const char* filename);
 

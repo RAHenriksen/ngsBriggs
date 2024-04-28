@@ -24,6 +24,37 @@
 #include "ngsBriggs.h"
 #include "bdamagereader.h"
 
+int HelpPage(FILE *fp){
+    fprintf(fp,"\t-> ./ngsBriggs -bam -tab -ref -bed -len -chr -ibam -iref -ibed -ichr -obam -otab -oinf -olen -model -eps -isrecal -olik -nthreads\n");
+    fprintf(fp,"\t-> -bam: The bam file for inference;\n");
+    fprintf(fp,"\t-> -tab: The table file for inference;\n");
+    fprintf(fp,"\t-> -ref: The reference file for inference;\n");
+    fprintf(fp,"\t-> -bed: The bed file (1-based) for inference;\n");
+    fprintf(fp,"\t-> -len: The length mass probability distribution file for inference;\n");
+    fprintf(fp,"\t-> -chr: The focal chromosome for inference;\n");
+    fprintf(fp,"\t-> -ibam: The bam file for ancient strand fishing;\n");
+    fprintf(fp,"\t-> -iref: The reference file for ancient strand fishing;\n");
+    fprintf(fp,"\t-> -ibed: The bed file (1-based) for ancient strand fishing;\n");
+    fprintf(fp,"\t-> -ichr: The focal chromosome for ancient strand fishing;\n");
+    fprintf(fp,"\t-> -obam: The output bam file name;\n");
+    fprintf(fp,"\t-> -otab: The output table file name;\n");
+    fprintf(fp,"\t-> -oinf: The output inferred parameters file name;\n");
+    fprintf(fp,"\t-> -olen: The output length mass probability distribution file name;\n");
+    fprintf(fp,"\t-> -model: Specifying the model, either b (the biotin model) or nb (the non-biotin model);\n");
+    fprintf(fp,"\t-> -eps: The overall modern contamination rate, the value should be within the interval [0,1);\n");
+    fprintf(fp,"\t-> -isrecal: Choose 1 if recalibration based on length is needed, otherwise 0 (default);\n");
+    fprintf(fp,"\t-> -olik: The output nucleotide likelihood file;\n");
+    fprintf(fp,"\t-> -nthreads: Choose the number of threads to speed up the recalibration process.\n");
+    fprintf(fp,"\t-> -bdamage: The mismatch matrix in bdamage format for metagenomic framework.\n");
+    fprintf(fp,"\t-> -rlens: The read length distributions for metagenomic framework.\n");
+    fprintf(fp,"\t-> Examples.\n");
+    fprintf(fp,"\t-> ./ngsbriggs -model nb -bdamage Chr22_024_36_68_0097.bdamage.gz -rlens Chr22_024_36_68_0097.rlens.gz\n");
+    fprintf(fp,"\t-> ./ngsbriggs -tab mismatch2.txt -len len.txt -model nb\n");
+    fprintf(fp,"\t-> ./ngsbriggs -bam Chr22_024_36_68_0097.sorted.MD.bam -ref chr22.fa -model nb\n");
+    exit(1);
+  return 0;
+}
+
 // definining all global variables used across multiple scripts
 
 int nproc1 = 0;//number of reads processed maybe not used
@@ -512,7 +543,7 @@ int main(int argc, char **argv){
     if (fname1!=NULL && isrecal == 1){
         //tsk start
         std::vector<bam1_t*> tsk_reads;
-        hdr = read_all_reads(fname1,bedname1,refName,tsk_reads);
+        hdr = read_all_reads(fname1,refName,tsk_reads);
         //tsk stop
         ncalls = 0;
         ncalls_grad = 0;
@@ -550,7 +581,7 @@ int main(int argc, char **argv){
         my_tsk_struct[tsk_nthreads-1].to = tsk_reads.size();
         double withgrad3;
         if(tsk_nthreads==1)
-            withgrad3 = findmax_bfgs(4,distparam,&my_tsk_struct[0],tsk_All_loglike_recalibration,tsk_All_loglike_recalibration_grad,lbd2,ubd2,nbd2,-1);
+            withgrad3 = findmax_bfgs(4,distparam,&my_tsk_struct[0],tsk_all_loglike_recalibration,tsk_all_loglike_recalibration_grad,lbd2,ubd2,nbd2,-1);
         else{
             //withgrad3 = findmax_bfgs(4,distparam,NULL,like_master,tsk_All_loglike_recalibration_grad,lbd2,ubd2,nbd2,-1);
             withgrad3 = findmax_bfgs(4,distparam,NULL,like_master,like_grad_master,lbd2,ubd2,nbd2,-1);
