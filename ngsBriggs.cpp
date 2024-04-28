@@ -108,12 +108,10 @@ int main(int argc, char **argv){
     tsk_nthreads = mypars->nthread;
     my_tsk_struct = new tsk_struct[tsk_nthreads];
     assert(mypars);
-    char* fname = mypars->hts;
+    //    char* fname = mypars->hts;
     char* tabname = mypars->tab;
     const char* fastafile = mypars->ref;
     const char* lenname = mypars->len;
-    const char* bedname = mypars->bed;
-    const char* chromname = mypars->chr;
     char* model = mypars->model; // takes a value of b or nb.
     Contam_eps = mypars->eps; // Modern contamination rate \in [0,1)
     int len_limit = 150;
@@ -127,11 +125,11 @@ int main(int argc, char **argv){
     fprintf(stderr,"\t-> fasta load \n");
     
     int inference_type = 0;
-    if ((fname != NULL && tabname != NULL && bdamage != NULL) || (fname == NULL && tabname == NULL && bdamage == NULL)){
+    if ((mypars->hts != NULL && tabname != NULL && bdamage != NULL) || (mypars->hts == NULL && tabname == NULL && bdamage == NULL)){
         fprintf(stdout,"Please provide either a bamfile or a table!\n");
         return 0;
     }
-    else if (fname != NULL){
+    else if (mypars->hts != NULL){
         inference_type = 1;
     }
     else if(tabname != NULL && lenname != NULL){
@@ -167,9 +165,9 @@ int main(int argc, char **argv){
         
         
 
-        if (fname != NULL){
+        if (mypars->hts != NULL){
             fprintf(stderr,"Loading the bamfile\n");
-            bamreader(fname,chromname,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
+            bamreader(mypars->hts,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
             //cout<<"Minimum length is "<<len_min<<"\n";
         }else if(tabname != NULL && lenname != NULL){
 	  tabreader(tabname,STRLENS,mm5p,mm3p);
@@ -515,10 +513,6 @@ int main(int argc, char **argv){
     int se_only = 1;
     len_limit = 150;
     char *fname1 = mypars->ihts; //the file needs to be recalibrated
-    char *olik1 = mypars->olik; //the output nucleotide likelihood file
-    const char* chromname1 = mypars->ichr;
-    const char* bedname1 = mypars->ibed;
-
     int isrecal = mypars->isrecal;
     
     deamRateCT = (double**) malloc((len_limit-30) * sizeof(double*));
@@ -600,7 +594,7 @@ int main(int argc, char **argv){
         sam_hdr_destroy(hdr);
     }
     //fprintf(stderr,"BRANCH 2000!\n");fflush(stderr);
-    if ((fname1==NULL) && (olik1!=NULL)){
+    if (fname1==NULL){
         fprintf(stdout,"Please provide bam file to calculate nucleotide likelihoods!\n");
         return 0;
     }
@@ -610,7 +604,7 @@ int main(int argc, char **argv){
     kstr3->l = kstr3->m = 0;
  
     if (fname1!=NULL){
-      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,fname1,mypars->ohts,olik1,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,&str_cli,deamRateCT,deamRateGA,Tol);
+      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,mypars->hts,mypars->ohts,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,&str_cli,deamRateCT,deamRateGA,Tol);
       sam_hdr_destroy(hdr);
     }
     

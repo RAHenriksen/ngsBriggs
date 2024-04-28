@@ -27,18 +27,12 @@ using namespace std;
 argStruct *pars_briggs(int argc,char ** argv){
     argStruct *Briggspars = new argStruct;
 
-    Briggspars->chr = NULL;
     Briggspars->hts = NULL;
-    //strdup("NewBamOutSort2.bam");
     Briggspars->tab = NULL;
     Briggspars->ref = NULL;
     Briggspars->len = NULL;
-    //strdup("/willerslev/users-shared/science-snm-willerslev-wql443/scratch/reference_files/Human/hg19canon.fa");
-    Briggspars->bed = NULL;
-    Briggspars->ichr = NULL;
     Briggspars->ihts = NULL;
     Briggspars->iref = NULL;
-    Briggspars->ibed = NULL;
     Briggspars->ohts = NULL;
     Briggspars->otab = NULL;
     Briggspars->oinf = NULL;
@@ -63,27 +57,17 @@ argStruct *pars_briggs(int argc,char ** argv){
         else if(strcasecmp("-ref",*argv)==0){
             Briggspars->ref=strdup(*(++argv));
         }
-        else if(strcasecmp("-bed",*argv)==0){
-            Briggspars->bed=strdup(*(++argv));
-        }
+     
         else if(strcasecmp("-len",*argv)==0){
             Briggspars->len=strdup(*(++argv));
         }
-        else if(strcasecmp("-chr",*argv)==0){
-            Briggspars->chr=strdup(*(++argv));
-        }
-        else if(strcasecmp("-ibam",*argv)==0){
+	else if(strcasecmp("-ibam",*argv)==0){
             Briggspars->ihts=strdup(*(++argv));
         }
         else if(strcasecmp("-iref",*argv)==0){
             Briggspars->iref=strdup(*(++argv));
         }
-        else if(strcasecmp("-ibed",*argv)==0){
-            Briggspars->ibed=strdup(*(++argv));
-        }
-        else if(strcasecmp("-ichr",*argv)==0){
-            Briggspars->ichr=strdup(*(++argv));
-        }
+      
         else if(strcasecmp("-obam",*argv)==0){
             Briggspars->ohts=strdup(*(++argv));
         }
@@ -127,16 +111,12 @@ argStruct *pars_briggs(int argc,char ** argv){
 }
 
 void argStruct_destroy(argStruct *Briggspars){
-    free(Briggspars->chr);
     free(Briggspars->hts);
     free(Briggspars->tab);
     free(Briggspars->ref);
     free(Briggspars->len);
-    free(Briggspars->bed);
-    free(Briggspars->ichr);
     free(Briggspars->ihts);
     free(Briggspars->iref);
-    free(Briggspars->ibed);
     free(Briggspars->ohts);
     free(Briggspars->otab);
     free(Briggspars->oinf);

@@ -229,7 +229,7 @@ int tabreader(char *tabname,int STRLENS,double** mm5p, double **mm3p){
 }
 
 
-int bamreader(char *fname, const char* chromname,faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number,double **mm5p,double **mm3p){
+int bamreader(char *fname,faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number,double **mm5p,double **mm3p){
     char *refName = NULL;
     clock_t t=clock();
     time_t t2=time(NULL);
@@ -245,7 +245,7 @@ int bamreader(char *fname, const char* chromname,faidx_t * seq_ref, int len_limi
         }else{
             fprintf(stderr, "Reference is not provided, and it will be reconstructed according to the MD tags!\n");
         }
-        parse_sequencingdata1(refName,fname,chromname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
+        parse_sequencingdata1(refName,fname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
     }
     
     fprintf(stderr,
@@ -422,8 +422,8 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
 
 
 //QUALITY CONTROL and LENGTH DISTRIBUTION
-void parse_sequencingdata1(char *refName,char *fname,const char* chromname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number,double** mm5p, double **mm3p){
-    fprintf(stderr,"mapped_only: %d\n",mapped_only);
+void parse_sequencingdata1(char *refName,char *fname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number,double** mm5p, double **mm3p){
+  //    fprintf(stderr,"mapped_only: %d\n",mapped_only);
     htsFormat *dingding3 =(htsFormat*) calloc(1,sizeof(htsFormat));
 
     char reconstructedRef[512];
@@ -460,24 +460,9 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, int 
     
     bam1_t *b = bam_init1();
     
-    int chrom_num = hdr->n_targets;
-    size_t * chrom_line = (size_t*)malloc(chrom_num*(sizeof(size_t)));
-    std::vector<std::array<size_t, 2> > bedsites;
-      
     int ret;
     int refId=-1;
-    int chromId = -1;
-    if (chromname!=NULL){
-        for (int j=0; j<chrom_num; j++){
-            if (!strcmp(chromname,hdr->target_name[j])){
-                chromId = j;
-                fprintf(stderr,"We will focus on Chromosome %s!\n", hdr->target_name[j]);
-            }
-        }
-    }
-    if (chromId==-1){
-        fprintf(stderr,"No meaningful chromosome name is provided, therefore we will focus on all provided chromosomes!\n");
-    }
+
     unsigned char * indref = NULL;
     double Frag_len_count[512];
     for (int j=0;j<512;j++){
@@ -508,26 +493,9 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, int 
         // if mapq threshold is set
         if(mapq!=-1 && b->core.qual<mapq)
             continue;
-        
-        //Only count the sites belongs to a specific chromosome
-        if (chromId==-1||chromId==b->core.tid){
-            nproc1++;
-        }else if (chromId!=b->core.tid){
-            continue;
-        }
-        
-        if(refId==-1||refId!=b->core.tid){
-            refId=b->core.tid;
-            fprintf(stderr,"\t-> Now at Chromosome: %s\n",hdr->target_name[refId]);
- 
-        }
-        //fprintf(stderr,"readid:%s len: %d\nREAD:\t\n",bam_get_qname(b),b->core.l_qseq);
-        // for(int i=0;i<b->core.l_qseq;i++)
-        // fprintf(stderr,"%c",seq_nt16_str[bam_seqi(bam_get_seq(b),i)]);
-        //fprintf(stderr,"\nQSCOre: \n");
-        //for(int i=0;i<b->core.l_qseq;i++)
-        //  fprintf(stderr,"%c",33+bam_get_qual(b)[i]);
-        
+
+	nproc1++;
+	        
         //then we simply write it to the output
         memset(reconstructedRef,0,512);
         memset(myread,'N',512);
@@ -606,15 +574,11 @@ void parse_sequencingdata1(char *refName,char *fname,const char* chromname, int 
     if (indref!=NULL){
         free(indref);
     }
-    bedsites.clear();
-    bedsites.shrink_to_fit();
+   
     bam_destroy1(b);
     hts_opt_free((hts_opt *)dingding3->specific);
     free(dingding3);
     sam_hdr_destroy(hdr);
     sam_close(in);
-    //free(fname);
-    
 }
 
-//STOP HERE

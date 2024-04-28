@@ -898,7 +898,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
     return post_pmd;
 }
 
-bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, char* ofname, char* olik, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
+bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
 {
   char nuc[6] = "ACGTN";
     fprintf(stderr,"print msg mapped_only: %d\n",mapped_only);
@@ -943,12 +943,12 @@ bam_hdr_t* calc_pp_pmd_prob(char *refName,char *fname, char* ofname, char* olik,
         hts_opt_add((hts_opt **)&dingding5->specific,ref);
         free(ref);
     }
-    if(strstr(fname,".cram")!=NULL && refName==NULL){
+    if(strstr(ifname,".cram")!=NULL && refName==NULL){
         fprintf(stderr,"\t-> cram file requires reference with -T FILE.fa \n");
         exit(0);
     }
-    if((in=sam_open_format(fname,"r",dingding5))==NULL ){
-        fprintf(stderr,"[%s] nonexistant file: %s\n",__FUNCTION__,fname);
+    if((in=sam_open_format(ifname,"r",dingding5))==NULL ){
+        fprintf(stderr,"[%s] nonexistant file: %s\n",__FUNCTION__,ifname);
         exit(0);
     }
     

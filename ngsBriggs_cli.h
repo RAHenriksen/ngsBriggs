@@ -12,12 +12,8 @@ typedef struct{
   char *tab; // mismatch table input 
   char *len; // length distribution file, mass probability distribution, not the cdf
   char *ref;  // input reference file
-  char *bed; // input bed file
-  char *chr; // chromosome name
   char *ihts; // bam/cram/sam for inference
   char *iref; // reference file for inference
-  char *ibed; // bed file for inference
-  char *ichr; // chromosome name for inference
   char *ohts; // bam/cram/sam output
   char *otab; // mismatch table output
   char *oinf; // model parameter output

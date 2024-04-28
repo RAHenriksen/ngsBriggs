@@ -73,3 +73,28 @@ a6097a9e953c012b99124efb4371743a  -
 karensvaneborg@imac ngsBriggs % samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|md5sum
 dffc345f6a0d0f6786950270b786b3b1  -
 karensvaneborg@imac ngsBriggs % 
+
+
+
+##new version
+time ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam -isrecal 1 -nthread 8
+#./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -ep  1652.89s user 4.60s system 754% cpu 3:39.59 total
+#samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|md5sum
+#dffc345f6a0d0f6786950270b786b3b1  -
+
+
+time ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam -isrecal 0 -nthread 8
+#./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -ep  8.57s user 0.01s system 99% cpu 8.600 total
+#samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|md5sum
+#a6097a9e953c012b99124efb4371743a  -
+
+time ./ngsbriggs -model nb -bdamage Chr22_024_36_68_0097.bdamage.gz -rlens Chr22_024_36_68_0097.rlens.gz 2>&1|grep  lambda|md5sum
+#ff00321026e0479f4e5121f01ce95232  -
+#./ngsbriggs -model nb -bdamage Chr22_024_36_68_0097.bdamage.gz -rlens  2>&1  0.57s user 0.01s system 99% cpu 0.575 total
+#grep lambda  0.00s user 0.00s system 0% cpu 0.575 total
+#md5sum  0.00s user 0.00s system 0% cpu 0.574 total
+#karensvaneborg@imac ngsBriggs % 
+
+time ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.bam -ref chr22.fa -eps 0.1 -model nb 2>&1|grep lambda|md5sum         
+#7c70930ec2f1349a52f42973f5b0bcb3  -
+#./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.bam -ref chr22.fa -eps   0.56s user 0.02s system 79% cpu 0.734 total

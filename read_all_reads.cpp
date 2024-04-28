@@ -24,7 +24,6 @@ sam_hdr_t *read_all_reads(const char *htsname,const char *refName,std::vector<ba
     
     bam1_t *b = bam_init1();
     while(sam_read1(in,hdr,b)>=0){
-      fprintf(stderr,"adsfadsfadsf\n");
       ret.push_back(b);
       b= bam_init1();
     }
