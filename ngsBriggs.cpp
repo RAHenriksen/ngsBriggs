@@ -4,7 +4,6 @@
 #include <cmath>
 #include <ctime>
 
-
 #include <htslib/hts.h>
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
@@ -12,10 +11,8 @@
 
 #include "profile.h"
 #include "bfgs.h"
-#include "htslib/bgzf.h"
 
 #include "read_all_reads.h"
-
 #include "misc.h"
 #include "Recalibration.h"
 #include "Likelihood.h"
@@ -24,18 +21,14 @@
 #include "ngsBriggs.h"
 #include "bdamagereader.h"
 
-int HelpPage(FILE *fp){
-    fprintf(fp,"\t-> ./ngsBriggs -bam -tab -ref -bed -len -chr -ibam -iref -ibed -ichr -obam -otab -oinf -olen -model -eps -isrecal -olik -nthreads\n");
+int helppage(FILE *fp){
+    fprintf(fp,"\t-> ./ngsBriggs -bam -tab -ref -len -ibam -iref -obam -otab -oinf -olen -model -eps -isrecal -olik -nthreads\n");
     fprintf(fp,"\t-> -bam: The bam file for inference;\n");
     fprintf(fp,"\t-> -tab: The table file for inference;\n");
     fprintf(fp,"\t-> -ref: The reference file for inference;\n");
-    fprintf(fp,"\t-> -bed: The bed file (1-based) for inference;\n");
     fprintf(fp,"\t-> -len: The length mass probability distribution file for inference;\n");
-    fprintf(fp,"\t-> -chr: The focal chromosome for inference;\n");
     fprintf(fp,"\t-> -ibam: The bam file for ancient strand fishing;\n");
     fprintf(fp,"\t-> -iref: The reference file for ancient strand fishing;\n");
-    fprintf(fp,"\t-> -ibed: The bed file (1-based) for ancient strand fishing;\n");
-    fprintf(fp,"\t-> -ichr: The focal chromosome for ancient strand fishing;\n");
     fprintf(fp,"\t-> -obam: The output bam file name;\n");
     fprintf(fp,"\t-> -otab: The output table file name;\n");
     fprintf(fp,"\t-> -oinf: The output inferred parameters file name;\n");
@@ -91,7 +84,7 @@ int main(int argc, char **argv){
   
   argStruct *mypars = NULL;
    if(argc==1||(argc==2&&(strcasecmp(argv[1],"--help")==0||strcasecmp(argv[1],"-h")==0))){
-     HelpPage(stderr);
+     helppage(stderr);
      return 0;
    }
 

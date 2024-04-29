@@ -520,7 +520,7 @@ void parse_sequencingdata1(char *refName,char *fname, int mapped_only,int se_onl
         // If the fragment length is within the interval [30,len_limit)
         if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit){
             len_min = (b->core.l_qseq > len_min ? len_min : b->core.l_qseq);
-            //Using the global length distribution to mimic the local distribution (if bed file if provided), and this might lead to some biases and can be fixed by counting the length distribution cycle position wisely, but I am lazy for now.
+            //Using the global length distribution to mimic the local distribution, and this might lead to some biases and can be fixed by counting the length distribution cycle position wisely, but I am lazy for now.
             Frag_len_count[b->core.l_qseq] = Frag_len_count[b->core.l_qseq] + 1.00;
             num = num + 1.00;
             

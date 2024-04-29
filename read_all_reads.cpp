@@ -3,8 +3,7 @@
 #include "read_all_reads.h"
 
 sam_hdr_t *read_all_reads(const char *htsname,const char *refName,std::vector<bam1_t*> &ret){
-  // fprintf(stderr,"\t-> [%s] htsname: %s bedfile: %s\n",__FUNCTION__,htsname,bedfile);
-    htsFormat myHtsFormat;
+  htsFormat myHtsFormat;
     samFile *in=NULL;
     if(refName!=NULL){
         char *ref =(char*) malloc(10 + strlen(refName) + 1);
