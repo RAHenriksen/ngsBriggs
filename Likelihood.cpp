@@ -1370,7 +1370,7 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
 
 
 double like_master(const double *xs,const void *){
-    //  fprintf(stderr,"like_master\n");
+  fprintf(stderr,"[%s] like_master\n",__FUNCTION__);
     int nThreads = tsk_nthreads;
     for(int i=0;i<nThreads;i++)
         for(int ii=0;ii<4;ii++)
@@ -1389,10 +1389,10 @@ double like_master(const double *xs,const void *){
     
     double res=0;
     for(int i=0;i<nThreads;i++){
-        fprintf(stderr,"lik[%d,%d]=%f\n",my_tsk_struct[i].from,my_tsk_struct[i].to,my_tsk_struct[i].llh_result);
+      fprintf(stderr,"[%s] lik[%d,%d]=%f\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to,my_tsk_struct[i].llh_result);
         res += my_tsk_struct[i].llh_result;
     }
-    fprintf(stderr,"total lik[%d,%d]: %f\n",my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to,res);
+    fprintf(stderr,"[%s] total lik[%d,%d]: %f\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to,res);
     
     return res;
 }
@@ -1418,12 +1418,12 @@ void like_grad_master(const double *xs,double *y,const void *){
         y[j] = 0;
     }
     for(int i=0;i<nThreads;i++){
-        fprintf(stderr,"lik_grad[%d,%d]\n",my_tsk_struct[i].from,my_tsk_struct[i].to);
+      fprintf(stderr,"[%s] lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to);
         for (int j=0;j<4;j++){
             y[j] += my_tsk_struct[i].llh_result_grad[j];
         }
     }
-    fprintf(stderr,"total lik_grad[%d,%d]\n",my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
+    fprintf(stderr,"[%s] total lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
     //cout<<y[0]<<"\t"<<y[1]<<"\t"<<y[2]<<"\t"<<y[3]<<"\n";
 }
 // Check until here.

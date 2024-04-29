@@ -1,5 +1,3 @@
-
-
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
@@ -7,12 +5,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
 #include <zlib.h>
 #include <cmath>
-
 #include <ctime>
-
 
 
 #include <htslib/hts.h>
@@ -20,11 +15,8 @@
 #include <htslib/kstring.h>
 #include <htslib/faidx.h>
 #include <htslib/thread_pool.h>
-
 #include "profile.h"
 #include "bfgs.h"
-#include "htslib/bgzf.h"
-#include <array>  //Rasmus
 
 #include "misc.h"
 #include "Recalibration.h"
@@ -900,6 +892,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
 
 bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
 {
+  //  exit(0);
   char nuc[6] = "ACGTN";
     fprintf(stderr,"print msg mapped_only: %d\n",mapped_only);
     htsFormat *dingding5 =(htsFormat*) calloc(1,sizeof(htsFormat));

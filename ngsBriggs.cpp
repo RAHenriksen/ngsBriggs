@@ -91,12 +91,9 @@ int main(int argc, char **argv){
 
    kstring_t str_cli; str_cli.s=NULL;str_cli.l=str_cli.m=0;
    ksprintf(&str_cli,"./ngsBriggs");;
-
-
-    for(int i=0;i<argc;i++)
-      ksprintf(&str_cli," %s",argv[0]);
-
-    mypars = pars_briggs(argc,argv);
+   for(int i=0;i<argc;i++)
+     ksprintf(&str_cli," %s",argv[0]);
+   mypars = pars_briggs(argc,argv);
 
 
     tsk_nthreads = mypars->nthread;
