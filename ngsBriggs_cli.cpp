@@ -25,81 +25,81 @@
 using namespace std;
 
 argStruct *pars_briggs(int argc,char ** argv){
-    argStruct *Briggspars = new argStruct;
+    argStruct *pars = new argStruct;
 
-    Briggspars->hts = NULL;
-    Briggspars->tab = NULL;
-    Briggspars->ref = NULL;
-    Briggspars->len = NULL;
-    Briggspars->ihts = NULL;
-    Briggspars->iref = NULL;
-    Briggspars->ohts = NULL;
-    Briggspars->otab = NULL;
-    Briggspars->oinf = NULL;
-    Briggspars->olen = NULL;
-    Briggspars->model = NULL;
-    Briggspars->olik = NULL;
-    Briggspars->eps = 0;
-    Briggspars->isrecal = 0;
-    Briggspars->nthread = 1;
-    Briggspars->bdamage = NULL;
-    Briggspars->rlens = NULL;
+    pars->hts = NULL;
+    pars->tab = NULL;
+    pars->ref = NULL;
+    pars->len = NULL;
+    pars->ihts = NULL;
+    pars->iref = NULL;
+    pars->ohts = NULL;
+    pars->otab = NULL;
+    pars->oinf = NULL;
+    pars->olen = NULL;
+    pars->model = NULL;
+    pars->olik = NULL;
+    pars->eps = 0;
+    pars->dorecal = 0;
+    pars->nthread = 1;
+    pars->bdamage = NULL;
+    pars->rlens = NULL;
 
 
     ++argv;
     while(*argv){
         if(strcasecmp("-bam",*argv)==0){
-            Briggspars->hts=strdup(*(++argv));
+            pars->hts=strdup(*(++argv));
         }
         else if(strcasecmp("-tab",*argv)==0){
-            Briggspars->tab=strdup(*(++argv));
+            pars->tab=strdup(*(++argv));
         }
         else if(strcasecmp("-ref",*argv)==0){
-            Briggspars->ref=strdup(*(++argv));
+            pars->ref=strdup(*(++argv));
         }
      
         else if(strcasecmp("-len",*argv)==0){
-            Briggspars->len=strdup(*(++argv));
+            pars->len=strdup(*(++argv));
         }
 	else if(strcasecmp("-ibam",*argv)==0){
-            Briggspars->ihts=strdup(*(++argv));
+            pars->ihts=strdup(*(++argv));
         }
         else if(strcasecmp("-iref",*argv)==0){
-            Briggspars->iref=strdup(*(++argv));
+            pars->iref=strdup(*(++argv));
         }
       
         else if(strcasecmp("-obam",*argv)==0){
-            Briggspars->ohts=strdup(*(++argv));
+            pars->ohts=strdup(*(++argv));
         }
         else if(strcasecmp("-otab",*argv)==0){
-            Briggspars->otab=strdup(*(++argv));
+            pars->otab=strdup(*(++argv));
         }
         else if(strcasecmp("-oinf",*argv)==0){
-            Briggspars->oinf=strdup(*(++argv));
+            pars->oinf=strdup(*(++argv));
         }
         else if(strcasecmp("-olen",*argv)==0){
-            Briggspars->olen=strdup(*(++argv));
+            pars->olen=strdup(*(++argv));
         }
         else if(strcasecmp("-model",*argv)==0){
-            Briggspars->model=strdup(*(++argv));
+            pars->model=strdup(*(++argv));
         }
         else if(strcasecmp("-olik",*argv)==0){
-            Briggspars->olik=strdup(*(++argv));
+            pars->olik=strdup(*(++argv));
         }
         else if(strcasecmp("-eps",*argv)==0){
-            Briggspars->eps=atof(*(++argv));
+            pars->eps=atof(*(++argv));
         }
         else if(strcasecmp("-isrecal",*argv)==0){
-            Briggspars->isrecal=atoi(*(++argv));
+            pars->dorecal=atoi(*(++argv));
         }
         else if(strcasecmp("-nthread",*argv)==0){
-            Briggspars->nthread=atoi(*(++argv));
+            pars->nthread=atoi(*(++argv));
         }
         else if(strcasecmp("-bdamage",*argv)==0){
-            Briggspars->bdamage=strdup(*(++argv));
+            pars->bdamage=strdup(*(++argv));
         }
         else if(strcasecmp("-rlens",*argv)==0){
-            Briggspars->rlens=strdup(*(++argv));
+            pars->rlens=strdup(*(++argv));
         }
         else{
             fprintf(stderr,"Unrecognized input option %s, see ngsBriggs help page\n\n",*(argv));
@@ -107,23 +107,23 @@ argStruct *pars_briggs(int argc,char ** argv){
         }
         ++argv;
     }
-    return Briggspars;
+    return pars;
 }
 
-void argStruct_destroy(argStruct *Briggspars){
-    free(Briggspars->hts);
-    free(Briggspars->tab);
-    free(Briggspars->ref);
-    free(Briggspars->len);
-    free(Briggspars->ihts);
-    free(Briggspars->iref);
-    free(Briggspars->ohts);
-    free(Briggspars->otab);
-    free(Briggspars->oinf);
-    free(Briggspars->olen);
-    free(Briggspars->model);
-    free(Briggspars->olik);
-    free(Briggspars->bdamage);
-    free(Briggspars->rlens);
-    delete(Briggspars);
+void argStruct_destroy(argStruct *pars){
+    free(pars->hts);
+    free(pars->tab);
+    free(pars->ref);
+    free(pars->len);
+    free(pars->ihts);
+    free(pars->iref);
+    free(pars->ohts);
+    free(pars->otab);
+    free(pars->oinf);
+    free(pars->olen);
+    free(pars->model);
+    free(pars->olik);
+    free(pars->bdamage);
+    free(pars->rlens);
+    delete(pars);
 }

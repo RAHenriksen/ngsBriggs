@@ -505,16 +505,14 @@ int main(int argc, char **argv){
     int mapped_only = 0;
     int se_only = 1;
     len_limit = 150;
-    char *fname1 = mypars->ihts; //the file needs to be recalibrated
-    int isrecal = mypars->isrecal;
-    
+
     deamRateCT = (double**) malloc((len_limit-30) * sizeof(double*));
     deamRateGA = (double**) malloc((len_limit-30) * sizeof(double*));
     for (int i = 0; i < (len_limit-30); i++){
         deamRateCT[i] =(double *) malloc(30 * sizeof(double));
         deamRateGA[i] =(double *) malloc(30 * sizeof(double));
     }
-    if (isrecal>=0){
+    if (mypars->dorecal>=0){
         if (!strcasecmp("b",model)){
 	  CaldeamRate_b(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA);
         }else if (!strcasecmp("nb",model)){
@@ -527,10 +525,10 @@ int main(int argc, char **argv){
     //    fprintf(stderr,"fname1: %s fname2: %s\n",fname1,fname2);
     
     sam_hdr_t *hdr;
-    if (fname1!=NULL && isrecal == 1){
+    if (mypars->ihts!=NULL && mypars->dorecal){
         //tsk start
         std::vector<bam1_t*> tsk_reads;
-        hdr = read_all_reads(fname1,refName,tsk_reads);
+        hdr = read_all_reads(mypars->ihts,refName,tsk_reads);
         //tsk stop
         ncalls = 0;
         ncalls_grad = 0;
@@ -587,7 +585,7 @@ int main(int argc, char **argv){
         sam_hdr_destroy(hdr);
     }
     //fprintf(stderr,"BRANCH 2000!\n");fflush(stderr);
-    if (fname1==NULL){
+    if (mypars->ihts==NULL){
         fprintf(stdout,"Please provide bam file to calculate nucleotide likelihoods!\n");
         return 0;
     }
@@ -596,8 +594,8 @@ int main(int argc, char **argv){
     kstr3->s = NULL;
     kstr3->l = kstr3->m = 0;
  
-    if (fname1!=NULL){
-      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,mypars->hts,mypars->ohts,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], isrecal,&str_cli,deamRateCT,deamRateGA,Tol);
+    if (mypars->ihts!=NULL){
+      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,mypars->hts,mypars->ohts,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], mypars->dorecal,&str_cli,deamRateCT,deamRateGA,Tol);
       sam_hdr_destroy(hdr);
     }
     

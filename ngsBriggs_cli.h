@@ -21,7 +21,7 @@ typedef struct{
   char *model; // model specific, either b or nb
   char *olik; // output nucleotide likelihood file
   double eps; // contamination rate provided by external software
-  int isrecal; // should we recalibrate the PD with the information of length as well as PMD model
+  int dorecal; // should we recalibrate the PD with the information of length as well as PMD model
   // I also want to add output the recalibrated genotype likelihood option.
   int nthread;
   char *bdamage; // length distribution file, mass probability distribution, not the cdf
