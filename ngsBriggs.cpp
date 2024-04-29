@@ -11,7 +11,6 @@
 
 #include "profile.h"
 #include "bfgs.h"
-
 #include "read_all_reads.h"
 #include "misc.h"
 #include "Recalibration.h"
@@ -20,6 +19,17 @@
 #include "ngsBriggs_cli.h"
 #include "ngsBriggs.h"
 #include "bdamagereader.h"
+
+
+// definining all global variables used across multiple scripts
+
+int nproc1 = 0;//number of reads processed maybe not used
+double l_check = 15;
+int ncalls =0;
+int ncalls_grad =0;
+tsk_struct *my_tsk_struct = NULL;
+
+int tsk_nthreads = -1;
 
 int helppage(FILE *fp){
     fprintf(fp,"\t-> ./ngsBriggs -bam -tab -ref -len -ibam -iref -obam -otab -oinf -olen -model -eps -isrecal -olik -nthreads\n");
@@ -48,15 +58,6 @@ int helppage(FILE *fp){
   return 0;
 }
 
-// definining all global variables used across multiple scripts
-
-int nproc1 = 0;//number of reads processed maybe not used
-double l_check = 15;
-int ncalls =0;
-int ncalls_grad =0;
-tsk_struct *my_tsk_struct = NULL;
-
-int tsk_nthreads = -1;
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
@@ -101,7 +102,7 @@ int main(int argc, char **argv){
     tsk_nthreads = mypars->nthread;
     my_tsk_struct = new tsk_struct[tsk_nthreads];
     assert(mypars);
-    //    char* fname = mypars->hts;
+    char* fname = mypars->hts;
     char* tabname = mypars->tab;
     const char* fastafile = mypars->ref;
     const char* lenname = mypars->len;
@@ -395,11 +396,7 @@ int main(int argc, char **argv){
         stdvec2[i] = sqrt(z2[i][i]/maxall);
     }
     
-    fprintf(stderr,
-            "\n"
-            "\t[ALL done] cpu-time used =  %.4f sec\n"
-            "\t[ALL done] walltime used =  %.4f sec\n"
-            ,(float)(clock() - t) / CLOCKS_PER_SEC, (float)(time(NULL) - t2));
+    fprintf(stderr,"\n\t[ALL done] cpu-time used =  %.4f sec\n\t[ALL done] walltime used =  %.4f sec\n",(float)(clock() - t) / CLOCKS_PER_SEC, (float)(time(NULL) - t2));
     if (model != NULL){
         if (!strcasecmp("b",model)){
             fprintf(stderr,"%s","The chosen model is a biotin model, ");
@@ -522,7 +519,6 @@ int main(int argc, char **argv){
     }
 
     double distparam[4] = {60,45,100,45};
-    //    fprintf(stderr,"fname1: %s fname2: %s\n",fname1,fname2);
     
     sam_hdr_t *hdr;
     if (mypars->ihts!=NULL && mypars->dorecal){
@@ -629,10 +625,6 @@ int main(int argc, char **argv){
 
     // check deallocation of my_tsk_struct values
     delete my_tsk_struct;
-
-//    if(hdr){
-//        sam_hdr_destroy(hdr);
-//    }
     return 0;
 }
 

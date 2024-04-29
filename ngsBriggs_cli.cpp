@@ -1,28 +1,8 @@
-
+#include <cstdio>
 #include <cstring>
 #include <cstdlib>
-#include <cstdio>
-#include <htslib/hts.h>
-#include <htslib/sam.h>
-#include <htslib/kstring.h>
-#include <htslib/faidx.h>
-#include <zlib.h>
-#include <cmath>
-#include <iomanip>
-#include <ctime>
-#include <getopt.h>
-#include <iostream>
-#include <array>  //Rasmus
 
-#include "misc.h"
-#include "Recalibration.h"
-#include "Likelihood.h"
-#include "PosteriorProb.h"
 #include "ngsBriggs_cli.h"
-#include "ngsBriggs.h"
-
-#define PI acos(-1)
-using namespace std;
 
 argStruct *pars_briggs(int argc,char ** argv){
     argStruct *pars = new argStruct;

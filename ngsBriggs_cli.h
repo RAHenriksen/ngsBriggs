@@ -1,10 +1,5 @@
 #ifndef NGSBRIGGSCLI_H
 #define NGSBRIGGSCLI_H
-#include <cstdlib>
-#include <ctime>
-#include <cstring>
-
-void FragArrayReader(int len_limit, int& number, int*& Length, double *& Freq, const char* filename);
 
 typedef struct{
   //filenames
