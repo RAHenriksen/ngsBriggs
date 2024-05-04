@@ -1471,7 +1471,7 @@ void like_hess_master(const double *xs,double **y){
     }
 }
 
-double ErrorLik(char reffrag[], char frag[], int L, int seqError[]){
+double ErrorLik(char reffrag[], char frag[], int L, uint8_t seqError[]){
     double l1 = 0;
 
     for (int i=0; i<l_check;i++){
@@ -1518,7 +1518,7 @@ double ErrorLik(char reffrag[], char frag[], int L, int seqError[]){
 
 // Calculate the observation likelihood based on the Ancient model/ biotin model
 // additive mode -> multiplicity model + speed up
-double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol){
+double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[],double Tol){
     double l_pmd=0; //Likelihood
     double p = 0;
     // To change the additive effects to multiplicative effects
@@ -2060,7 +2060,7 @@ double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta,
 
 // The function below is for calculating likelihood of the reverse-complementary strand of the "biotin model" strand, the name is just for simplicity.
 // additive -> mulplicative
-double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol){
+double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[],double Tol){
     double l_pmd=0; // Likelihood
     double p = 0; // Accumulated prob of (l,r)
     double exterm_s = 0;

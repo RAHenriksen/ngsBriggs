@@ -7,7 +7,7 @@ sam_hdr_t * read_all_reads(const char *htsname,const char *refName,std::vector<b
 typedef struct{
   char *read;
   char *ref;
-  char *qual;
+  uint8_t *qual;
   int len;
 }asite;
 

@@ -116,7 +116,8 @@ sam_hdr_t *read_all_reads(const char *htsname,const char *refName,faidx_t *seq_r
       asite as={NULL,NULL,NULL,0};
       as.read = strndup(yourread,b->core.l_qseq);
       as.ref = strndup(yourrefe,b->core.l_qseq);
-      as.qual = strndup(yourqual,b->core.l_qseq);
+      as.qual = new uint8_t[b->core.l_qseq];
+      as.qual =(uint8_t *) memcpy(as.qual,yourqual,b->core.l_qseq);
       as.len = b->core.l_qseq;
       ret.push_back(as);
     

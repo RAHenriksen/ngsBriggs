@@ -81,10 +81,10 @@ void like_grad_master(const double *xs,double *y,const void *);
 
 void like_hess_master(const double *xs,double **y);
 
-double ErrorLik(char reffrag[], char frag[], int L, int seqError[]);
+double ErrorLik(char reffrag[], char frag[], int L, uint8_t seqError[]);
 
-double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol);
+double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[],double Tol);
 
-double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, int seqError[],double Tol);
+double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t  seqError[],double Tol);
 
 #endif

@@ -40,7 +40,7 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
     char myrefe[512];
     char yourread[512];
     char yourrefe[512];
-    int  yourqual[512];
+    uint8_t  yourqual[512];
     std::pair< kstring_t*, std::vector<int> >  mypair;
     kstring_t *kstr =new kstring_t;
     kstr->l=kstr->m=0;
@@ -84,7 +84,7 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
         //	fprintf(stderr,"ll\t[%d]\t[%d]\t%f\tin2\t %d %d\n",threadid,i,ll,b->core.l_qseq,len_limit);
         if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit){
             for (int cycle=0;cycle<b->core.l_qseq;cycle++){
-                yourqual[cycle] = -1;
+                yourqual[cycle] = 254;
             }
             
             for (int cycle=0;cycle<b->core.l_qseq;cycle++){
@@ -113,11 +113,8 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
             if (!strcasecmp("b",model)){
 	      l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
             }else if(!strcasecmp("nb",model)){
-                //cout<<"liklik "<<bam_get_qname(b)<<"\n";
 	      l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
-                //cout<<"l_anc "<<l_anc<<"\n";
-                //cout<<"Check nuc_llik "<<PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)<<" "<<PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual)<<"\n";
-            }else{
+	    }else{
                 fprintf(stderr,"Please specify a deamination model for further calculations.\n");
                 return -1;
             }
@@ -125,12 +122,8 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
             double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
             double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
             double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
-     //cout<<"liklik "<<bam_get_qname(b)<<" "<<l_anc<<" "<<l_err<<" "<<eps<<" "<<NormalINC(y_max1, y_min1, x_max1, x_min1)<<" "<<NormalINC(y_max2, y_min2, x_max2, x_min2)<<" "<<l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps<<" "<<log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps)<<"\n";
-	     ll += log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
-            //    fprintf(stderr,"ll\t[%d]\t[%d]\t%f\tyourread:%s\tyourref:%s\n",threadid,i,ll,yourread,yourrefe);
-            //	    break;
-            //cout<<"nuc_lliknuc_llik_check_name "<<bam_get_qname(b)<<" "<<ll<<"\n";
-        }
+	    ll += log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
+	}
         
     }
     return -ll;
@@ -171,7 +164,7 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
     char myrefe[512];
     char yourread[512];
     char yourrefe[512];
-    int  yourqual[512];
+    uint8_t  yourqual[512];
     std::pair< kstring_t*, std::vector<int> >  mypair;
     kstring_t *kstr =new kstring_t;
     kstr->l=kstr->m=0;
@@ -209,7 +202,7 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
         if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit) {
             
             for (int cycle=0;cycle<b->core.l_qseq;cycle++)
-                yourqual[cycle] = -1;
+                yourqual[cycle] = 254;
             
             for (int cycle=0;cycle<b->core.l_qseq;cycle++){
                 refeBase = refToChar[myrefe[cycle]];
@@ -301,7 +294,7 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
     char myrefe[512];
     char yourread[512];
     char yourrefe[512];
-    int  yourqual[512];
+    uint8_t  yourqual[512];
     std::pair< kstring_t*, std::vector<int> >  mypair;
     kstring_t *kstr =new kstring_t;
     kstr->l=kstr->m=0;
@@ -339,7 +332,7 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
         if (b->core.l_qseq>=30 && b->core.l_qseq<len_limit) {
             
             for (int cycle=0;cycle<b->core.l_qseq;cycle++)
-                yourqual[cycle] = -1;
+                yourqual[cycle] = 254;
             
             for (int cycle=0;cycle<b->core.l_qseq;cycle++){
                 refeBase = refToChar[myrefe[cycle]];
