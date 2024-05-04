@@ -1,0 +1,22 @@
+karensvaneborg@imac ngsBriggs % samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|md5sum
+a6097a9e953c012b99124efb4371743a  -
+karensvaneborg@imac ngsBriggs % grep -i isrecal test/test.sh
+karensvaneborg@imac ngsBriggs % 
+karensvaneborg@imac ngsBriggs % for i in test/*.bam;do echo $i;samtools view $i|md5sum;done
+test/2_Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam
+a6097a9e953c012b99124efb4371743a  -
+test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam
+dffc345f6a0d0f6786950270b786b3b1  -
+karensvaneborg@imac ngsBriggs % for i in *.bam;do echo $i;samtools view $i|md5sum;done            
+Chr22_024_36_68_0097.sorted.MD.bam
+b1e576d2a619788ecc593e72cb0e430c  -
+Chr22_024_36_68_0097_eps10.sorted.MD.bam
+e68f8c477131bd38dfd25438b2bdf899  -
+Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam
+daebc3a9c74110fa948b72e8e87b25c1  -
+Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+a6097a9e953c012b99124efb4371743a  -
+Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+dffc345f6a0d0f6786950270b786b3b1  -
+karensvaneborg@imac ngsBriggs % git mv test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+karensvaneborg@imac ngsBriggs % git mv test/2_Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
