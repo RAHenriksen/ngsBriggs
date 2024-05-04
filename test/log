@@ -20,3 +20,31 @@ Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
 dffc345f6a0d0f6786950270b786b3b1  -
 karensvaneborg@imac ngsBriggs % git mv test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
 karensvaneborg@imac ngsBriggs % git mv test/2_Chr22_024_36_68_0097_eps10.sorted.MD.scores.bam test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+
+
+
+fvr124@SUN1024817 ngsBriggs % for i in *.r*.bam;do echo $i;samtools view $i|grep -v "T0_RID298_S1_chr22:47986627-47986695_length:69_mod0000"|md5sum;done
+Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+de3e1785b0922bbfce7bff1246dd4009  -
+Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+16a0157940d0a6df147ea3c6f72e677d  -
+fvr124@SUN1024817 ngsBriggs % for i in test/*.r*.bam;do echo $i;samtools view $i|grep -v "T0_RID298_S1_chr22:47986627-47986695_length:69_mod0000"|md5sum;done
+test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+de3e1785b0922bbfce7bff1246dd4009  -
+test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+16a0157940d0a6df147ea3c6f72e677d  -
+fvr124@SUN1024817 ngsBriggs %
+
+
+
+
+fvr124@SUN1024817 ngsBriggs % for i in *.r*.bam test/*.r*.bam;do echo $i;samtools view $i|grep -v "T0_RID298_S1_chr22:47986627-47986695_length:69_mod0000"|md5sum;done
+Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+de3e1785b0922bbfce7bff1246dd4009  -
+Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+16a0157940d0a6df147ea3c6f72e677d  -
+test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+de3e1785b0922bbfce7bff1246dd4009  -
+test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+16a0157940d0a6df147ea3c6f72e677d  -
+fvr124@SUN1024817 ngsBriggs % 

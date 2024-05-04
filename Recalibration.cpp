@@ -60,7 +60,7 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
         to = reads->size();
     }
     //    fprintf(stderr,"from: %d to:%d\n",from,to);
-    for(int i=from;i<to;i++){
+    for(int i=from;i<to;i++) {
         //   fprintf(stderr,"ll\t[%d]\t[%d]\t%f\tin\n",threadid,i,ll);
         bam1_t *b = (*reads)[i];
         //then we simply write it to the output
