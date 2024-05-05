@@ -4,13 +4,18 @@
 #include <htslib/sam.h>
 #include <htslib/faidx.h>
 
+#include "read_all_reads.h"
+
 extern double PhredError[255];
 extern double PhredErrorAThird[255];
 extern int tsk_nthreads;
 
 
 typedef struct{
-    std::vector<bam1_t*> *reads;
+  #if 0
+  std::vector<bam1_t*> *reads;
+  #endif
+  std::vector<asite> *reads;
     sam_hdr_t *hdr;
     faidx_t *seq_ref;
     int len_limit;

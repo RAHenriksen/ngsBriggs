@@ -520,10 +520,13 @@ int main(int argc, char **argv){
     sam_hdr_t *hdr,*hdr2;
     if (mypars->ihts!=NULL && mypars->dorecal){
         //tsk start
-        std::vector<bam1_t*> tsk_reads;
-	std::vector<asite> tsk_reads2;
-        hdr = read_all_reads(mypars->ihts,refName,tsk_reads);
-	hdr2 = read_all_reads(mypars->ihts,refName,seq_ref,tsk_reads2,len_min);
+      #if 0
+      std::vector<bam1_t*> tsk_reads;
+	hdr = read_all_reads(mypars->ihts,refName,tsk_reads);
+#endif
+	std::vector<asite> tsk_reads;
+      	hdr = read_all_reads(mypars->ihts,refName,seq_ref,tsk_reads,len_limit);
+	
         //tsk stop
         ncalls = 0;
         ncalls_grad = 0;

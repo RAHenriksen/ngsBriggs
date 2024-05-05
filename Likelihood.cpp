@@ -1375,8 +1375,8 @@ double like_master(const double *xs,const void *){
     for(int i=0;i<nThreads;i++)
         for(int ii=0;ii<4;ii++)
             my_tsk_struct[i].x[ii] = xs[ii];
-    fprintf(stderr,"mu_anc\tsig_anc\tmu_mod\tsig_mod\n");
-    fprintf(stderr,"%f\t%f\t%f\t%f\n",xs[0],xs[1],xs[2],xs[3]);
+    //fprintf(stderr,"mu_anc\tsig_anc\tmu_mod\tsig_mod\n");
+    //fprintf(stderr,"%f\t%f\t%f\t%f\n",xs[0],xs[1],xs[2],xs[3]);
     pthread_t thd[nThreads];
     for(size_t i=0;i<nThreads;i++){
         int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_slave,(void*) i);
@@ -1393,7 +1393,7 @@ double like_master(const double *xs,const void *){
         res += my_tsk_struct[i].llh_result;
     }
     fprintf(stderr,"[%s] total lik[%d,%d]: %f\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to,res);
-    
+    // exit(0);
     return res;
 }
 
@@ -1473,7 +1473,8 @@ void like_hess_master(const double *xs,double **y){
 
 double ErrorLik(char reffrag[], char frag[], int L, uint8_t seqError[]){
     double l1 = 0;
-
+    for(int i=0;0&&i<L;i++)
+      fprintf(stderr,"[%d] %d\n",i,seqError[i]);
     for (int i=0; i<l_check;i++){
         //cout<<nuc[(int)reffrag[L-i-1]];
         if (reffrag[i]<4 && frag[i]<4){
@@ -1513,12 +1514,19 @@ double ErrorLik(char reffrag[], char frag[], int L, uint8_t seqError[]){
         }
         //cout<<"Position "<<"L-i-1 "<<nuc[(int)reffrag[L-i-1]]<<nuc[(int)frag[L-i-1]]<<" "<<seqError[L-i-1]<<" "<<l1;
     }
+    //    fprintf(stderr,"LEN: %d l1: %f\n",L,l1); exit(0);
     return exp(l1);
 }
 
 // Calculate the observation likelihood based on the Ancient model/ biotin model
 // additive mode -> multiplicity model + speed up
 double PMDLik_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[],double Tol){
+#if 0
+  for(int i=0;i<L;i++){
+    fprintf(stderr,"%d) reffrag: %d frag: %d L:%d lambda: %f delta: %f delata_s: %f nv: %f seqerr: %d tol: %e\n",i,reffrag[i],frag[i],L,lambda,delta,delta_s,nv,(int) seqError[i],Tol);
+  }
+  exit(0);
+#endif
     double l_pmd=0; //Likelihood
     double p = 0;
     // To change the additive effects to multiplicative effects

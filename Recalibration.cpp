@@ -24,9 +24,10 @@
 #include "misc.h"
 #include "Likelihood.h"
 #include "ngsBriggs.h"
+#include "read_all_reads.h"
 
 extern tsk_struct *my_tsk_struct;
-
+#if 0
 //The log-likelihood for recalibration the ancient probs
 double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,int threadid,double Tol){
     //  fprintf(stderr,"(%f,%f,%f,%f) seq_ref: %p\n",x[0],x[1],x[2],x[3],seq_ref);
@@ -128,6 +129,49 @@ double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,i
     }
     return -ll;
 }
+#endif
+
+//The log-likelihood for recalibration the ancient probs
+double tsk_loglike_recalibration(const double *x, std::vector<asite> *reads,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,int threadid,double Tol){
+  //fprintf(stderr,"(%f,%f,%f,%f) seq_ref: %p from: %d to:%d\n\n",x[0],x[1],x[2],x[3],seq_ref,from,to);
+    double anc_mu = x[0];
+    double anc_si = x[1];
+    double mod_mu = x[2];
+    double mod_si = x[3];
+    double ll = 0;
+   
+    double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
+    double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
+    double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
+    double x_min2 = ((double)len_min-0.5-mod_mu)/mod_si;
+    if(from==-1||to==-1){
+        from =0;
+        to = reads->size();
+    }
+   
+    for(int i=from;i<to;i++) {
+       
+      char *yourrefe = (*reads)[i].ref;
+      char *yourread = (*reads)[i].read;
+      uint8_t *yourqual = (*reads)[i].qual;
+      int L = (*reads)[i].len;
+	double l_anc;
+	double l_err = ErrorLik(yourrefe, yourread, L, yourqual);
+	if (!strcasecmp("b",model)){
+	  l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
+	}else if(!strcasecmp("nb",model)){
+	  l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
+	}
+	//	fprintf(stderr,"l_anc: %f\n",l_anc);	exit(0);
+	double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+	double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+	double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+	double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+	ll += log(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
+	
+    }
+    return -ll;
+}
 
 double tsk_all_loglike_recalibration(const double *x, const void *dats){
     //  fprintf(stderr,"[%s]\n",__FUNCTION__);
@@ -146,7 +190,7 @@ void *tsk_all_loglike_recalibration_slave(void *dats){
     
     pthread_exit(NULL);
 }
-
+#if 0 
 void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1_t*> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
     htsFormat *dingding7 =(htsFormat*) calloc(1,sizeof(htsFormat));
@@ -256,6 +300,55 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<bam1
         //    fprintf(stderr,"---read[%d]----\n",nproc1);
     }
 }
+#endif
+
+void tsk_loglike_recalibration_grad(const double *x, double *y, std::vector<asite> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
+  
+    double anc_mu = x[0];
+    double anc_si = x[1];
+    double mod_mu = x[2];
+    double mod_si = x[3];
+    y[0] = 0;
+    y[1] = 0;
+    y[2] = 0;
+    y[3] = 0;
+    double ll = 0;
+  
+    double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
+    double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
+    double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
+    double x_min2 = ((double)len_min-0.5-mod_mu)/mod_si;
+    if(1||from==-1||to==-1){//fix this uncomment out.
+        from = 0;
+        to = reads->size();
+    }
+    //    fprintf(stderr,"from: %d to:%d\n",from,to):qw
+    for(int i=from;i<to;i++){
+        
+      char *yourrefe = (*reads)[i].ref;
+      char *yourread = (*reads)[i].read;
+      uint8_t *yourqual = (*reads)[i].qual;
+      
+      double l_anc, l_err;
+      int L = (*reads)[i].len;
+      l_err = ErrorLik(yourrefe, yourread, L, yourqual);
+      if (!strcasecmp("b",model)){
+	l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
+      }else if(!strcasecmp("nb",model)){
+	l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
+      }
+      double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+      double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+      double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+      double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+      
+      
+      y[0] -= l_anc*(1-eps)*NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
+      y[1] -= l_anc*(1-eps)*NormalINC_grad_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
+      y[2] -= l_err*eps*NormalINC_grad_mu(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
+      y[3] -= l_err*eps*NormalINC_grad_si(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/(l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps);
+    }
+}
 
 void tsk_all_loglike_recalibration_grad(const double *x, double *y,const void *dats){
     ncalls_grad++;
@@ -276,6 +369,7 @@ void *tsk_all_loglike_recalibration_grad_slave(void *dats){
     pthread_exit(NULL);
 }
 
+#if 0 
 void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam1_t*> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
     htsFormat *dingding7 =(htsFormat*) calloc(1,sizeof(htsFormat));
@@ -384,6 +478,71 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<bam
         }
         //    fprintf(stderr,"\nmyread:\n%.*s\nmyReference:\n%.*s\n",b->core.l_qseq,myread,b->core.l_qseq,myrefe);
         //    fprintf(stderr,"---read[%d]----\n",nproc1);
+    }
+    y[1][0] = y[0][1];
+    y[3][2] = y[2][3];
+    y[2][0] = y[0][2];
+    y[3][0] = y[0][3];
+    y[2][1] = y[1][2];
+    y[3][1] = y[1][3];
+}
+
+#endif
+
+void tsk_loglike_recalibration_hess(const double *x, double **y, std::vector<asite> *reads,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
+    //fprintf(stderr,"[%s]\n",__FUNCTION__);
+    
+    double anc_mu = x[0];
+    double anc_si = x[1];
+    double mod_mu = x[2];
+    double mod_si = x[3];
+    for(int i=0; i<3; i++){
+        for(int j=0; j<3; j++){
+            y[i][j] = 0;
+        }
+    }
+    
+    double x_max1 = ((double)len_limit-1+0.5-anc_mu)/anc_si;
+    double x_min1 = ((double)len_min-0.5-anc_mu)/anc_si;
+    double x_max2 = ((double)len_limit-1+0.5-mod_mu)/mod_si;
+    double x_min2 = ((double)len_min-0.5-mod_mu)/mod_si;
+    if(1||from==-1||to==-1){//fix this uncomment out.
+        from = 0;
+        to = reads->size();
+    }
+    //    fprintf(stderr,"from: %d to:%d\n",from,to)
+    for(int i=from;i<to;i++){
+      char *yourrefe = (*reads)[i].ref;
+      char *yourread = (*reads)[i].read;
+      uint8_t *yourqual = (*reads)[i].qual;
+      int L = (*reads)[i].len;
+      double l_anc, l_err;
+
+      l_err = ErrorLik(yourrefe, yourread, L, yourqual);
+      if (!strcasecmp("b",model)){
+	l_anc = PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on biotin model
+      }else if(!strcasecmp("nb",model)){
+	l_anc = 0.5*PMDLik_b(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol)+0.5*PMDLik_nb(yourrefe, yourread, L, lambda, delta, delta_s, nv, yourqual,Tol); // Ancient Likelihood based on non-biotin model
+      }
+      double y_max1 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-anc_mu)/anc_si;
+      double y_min1 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-anc_mu)/anc_si;
+      double y_max2 = (std::min((double)len_limit-1,std::max((double)len_min,(double)L))+0.5-mod_mu)/mod_si;
+      double y_min2 = (std::max((double)len_min,std::min((double)len_limit-1,(double)L))-0.5-mod_mu)/mod_si;
+      
+      double denom = l_anc*NormalINC(y_max1, y_min1, x_max1, x_min1)*(1-eps)+l_err*NormalINC(y_max2, y_min2, x_max2, x_min2)*eps;
+      y[0][0] += l_anc*(1-eps)*NormalINC_hess_mu2(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/denom - pow(l_anc*(1-eps)*NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/denom,2);
+      y[2][2] += l_err*eps*NormalINC_hess_mu2(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/denom - pow(l_err*eps*NormalINC_grad_mu(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/denom,2);
+      y[1][1] += l_anc*(1-eps)*NormalINC_hess_si2(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/denom - pow(l_anc*(1-eps)*NormalINC_grad_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/denom,2);
+      y[3][3] += l_err*eps*NormalINC_hess_si2(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/denom - pow(l_err*eps*NormalINC_grad_si(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/denom,2);
+      y[0][1] += l_anc*(1-eps)*NormalINC_hess_mu_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/denom - l_anc*(1-eps)*NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)*l_anc*(1-eps)*NormalINC_grad_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)/pow(denom,2);
+      y[2][3] += l_err*eps*NormalINC_hess_mu_si(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/denom - l_err*eps*NormalINC_grad_mu(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)*l_err*eps*NormalINC_grad_si(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/pow(denom,2);
+      y[0][2] += - l_anc*(1-eps)*NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)*l_err*eps*NormalINC_grad_mu(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/pow(denom,2);
+      y[0][3] += - l_anc*(1-eps)*NormalINC_grad_mu(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)*l_err*eps*NormalINC_grad_si(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/pow(denom,2);
+      y[1][2] += - l_anc*(1-eps)*NormalINC_grad_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)*l_err*eps*NormalINC_grad_mu(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/pow(denom,2);
+      y[1][3] += - l_anc*(1-eps)*NormalINC_grad_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)*l_err*eps*NormalINC_grad_si(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/pow(denom,2);
+    
+    //    fprintf(stderr,"\nmyread:\n%.*s\nmyReference:\n%.*s\n",b->core.l_qseq,myread,b->core.l_qseq,myrefe);
+    //    fprintf(stderr,"---read[%d]----\n",nproc1);
     }
     y[1][0] = y[0][1];
     y[3][2] = y[2][3];
