@@ -98,3 +98,16 @@ time ./ngsbriggs -model nb -bdamage Chr22_024_36_68_0097.bdamage.gz -rlens Chr22
 time ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.bam -ref chr22.fa -eps 0.1 -model nb 2>&1|grep lambda|md5sum         
 #7c70930ec2f1349a52f42973f5b0bcb3  -
 #./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.bam -ref chr22.fa -eps   0.56s user 0.02s system 79% cpu 0.734 total
+
+
+####10may
+time ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam -isrecal 0 -nthread 8
+
+
+fvr124@SUN1024817 ngsBriggs % md5sum *.bam test/*.bam|grep scores
+2f84a18c83fb5b49d70d84ae4eea31bd  Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+a1e9a1bfd7aea09f4cafb906e778399c  Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+2f84a18c83fb5b49d70d84ae4eea31bd  test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
+a1e9a1bfd7aea09f4cafb906e778399c  test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
+fvr124@SUN1024817 ngsBriggs %
+

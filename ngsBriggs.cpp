@@ -4,6 +4,7 @@
 #include <cmath>
 #include <ctime>
 
+#include <htslib/bgzf.h>
 #include <htslib/hts.h>
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
@@ -95,7 +96,6 @@ int main(int argc, char **argv){
      ksprintf(&str_cli," %s",argv[0]);
    mypars = pars_briggs(argc,argv);
 
-
     tsk_nthreads = mypars->nthread;
     my_tsk_struct = new tsk_struct[tsk_nthreads];
     assert(mypars);
@@ -103,7 +103,7 @@ int main(int argc, char **argv){
     char* tabname = mypars->tab;
     const char* fastafile = mypars->ref;
     const char* lenname = mypars->len;
-    char* model = mypars->model; // takes a value of b or nb.
+    int model = mypars->model; // takes a value of zero or one zero=biotin one=non biotin
     Contam_eps = mypars->eps; // Modern contamination rate \in [0,1)
     int len_limit = 150;
     
@@ -371,41 +371,26 @@ int main(int argc, char **argv){
     wo.Bin_Frag_freq = Bin_Frag_freq;
     wo.Contam_eps = Contam_eps;
     
-    if (model != NULL){
-        if (!strcasecmp("b",model)){
-	  fprintf(stderr,"%s\n","The chosen model is a biotin model.");
-	  withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,b_loglike_complex3_full,b_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
-            loglike_complex3_hessian_full_b(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
-        }else if(!strcasecmp("nb",model)){
-	  fprintf(stderr,"%s\n","The chosen model is non-biotin model.");
-            withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,nb_loglike_complex3_full,nb_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
-            loglike_complex3_hessian_full_nb(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
-        }else{
-            fprintf(stderr,"Please provide a meaningful deamination model for further calculations.\n");
-            return -1;
-        }
-    }else{
-        fprintf(stderr,"Please provide a deamination model for further calculations.\n");
-        return -1;
+    if (model==0){
+      fprintf(stderr,"%s\n","The chosen model is a biotin model.");
+      withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,b_loglike_complex3_full,b_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
+      loglike_complex3_hessian_full_b(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
+    }else if(model==1){
+      fprintf(stderr,"%s\n","The chosen model is non-biotin model.");
+      withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,nb_loglike_complex3_full,nb_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
+      loglike_complex3_hessian_full_nb(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
     }
+    
     double stdvec2[4];
     for (int i=0;i<4;i++){
         stdvec2[i] = sqrt(z2[i][i]/maxall);
     }
     
     fprintf(stderr,"\n\t[ALL done] cpu-time used =  %.4f sec\n\t[ALL done] walltime used =  %.4f sec\n",(float)(clock() - t) / CLOCKS_PER_SEC, (float)(time(NULL) - t2));
-    if (model != NULL){
-        if (!strcasecmp("b",model)){
-            fprintf(stderr,"%s","The chosen model is a biotin model, ");
-        }else if(!strcasecmp("nb",model)){
-            fprintf(stderr,"%s","The chosen model is non-biotin model, ");
-        }else{
-            fprintf(stderr,"Please provide a meaningful deamination model for further calculations.\n");
-            return -1;
-        }
-    }else{
-        fprintf(stderr,"Please provide a deamination model for further calculations.\n");
-        return -1;
+    if (model==0){
+      fprintf(stderr,"%s","The chosen model is a biotin model, ");
+    }else if(model==1){
+      fprintf(stderr,"%s","The chosen model is non-biotin model, ");
     }
     fprintf(stderr,"the inferred parameters are given as follows:\n");
     fprintf(stderr,"lambda: %f (%f,%f), delta: %f (%f,%f), delta_s: %f (%f,%f), nu: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", invec2[0], invec2[0]-1.96*stdvec2[0], invec2[0]+1.96*stdvec2[0] , invec2[1], invec2[1]-1.96*stdvec2[1], invec2[1]+1.96*stdvec2[1], invec2[2], invec2[2]-1.96*stdvec2[2], invec2[2]+1.96*stdvec2[2], invec2[3], invec2[3]-1.96*stdvec2[3], invec2[3]+1.96*stdvec2[3], ncalls,ncalls_grad, withgrad2);
@@ -472,19 +457,11 @@ int main(int argc, char **argv){
         kstring_t *kstr = new kstring_t;
         kstr->s = NULL;
         kstr->l = kstr->m = 0;
-        if (model != NULL){
-            if (!strcasecmp("b",model)){
-                ksprintf(kstr,"%s","The chosen model is a biotin model, ");
-            }else if(!strcasecmp("nb",model)){
-                ksprintf(kstr,"%s","The chosen model is non-biotin model, ");
-            }else{
-                fprintf(stderr,"Please provide a meaningful deamination model for further calculations.\n");
-                return -1;
-            }
-        }else{
-            fprintf(stderr,"Please provide a deamination model for further calculations.\n");
-            return -1;
-        }
+	if (model==0){
+	  ksprintf(kstr,"%s","The chosen model is a biotin model, ");
+	}else if(model==1){
+	  ksprintf(kstr,"%s","The chosen model is non-biotin model, ");
+	}
         ksprintf(kstr,"the inferred parameters are given as follows:\n");
         ksprintf(kstr,"lambda: %f (%f,%f), delta: %f (%f,%f), delta_s: %f (%f,%f), nu: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", invec2[0], invec2[0]-1.96*stdvec2[0], invec2[0]+1.96*stdvec2[0] , invec2[1], invec2[1]-1.96*stdvec2[1], invec2[1]+1.96*stdvec2[1], invec2[2], invec2[2]-1.96*stdvec2[2], invec2[2]+1.96*stdvec2[2], invec2[3], invec2[3]-1.96*stdvec2[3], invec2[3]+1.96*stdvec2[3], ncalls,ncalls_grad, withgrad2);
 	//my_bgzf_write(fp,kstr->s,kstr->l);
@@ -507,9 +484,9 @@ int main(int argc, char **argv){
         deamRateGA[i] =(double *) malloc(30 * sizeof(double));
     }
     if (mypars->dorecal>=0){
-        if (!strcasecmp("b",model)){
+        if (model==0){
 	  CaldeamRate_b(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA);
-        }else if (!strcasecmp("nb",model)){
+        }else if (model==1){
 	  CaldeamRate_nb(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA);
         }
 
@@ -517,15 +494,27 @@ int main(int argc, char **argv){
 
     double distparam[4] = {60,45,100,45};
     
-    sam_hdr_t *hdr,*hdr2;
     if (mypars->ihts!=NULL && mypars->dorecal){
-        //tsk start
-      #if 0
-      std::vector<bam1_t*> tsk_reads;
-	hdr = read_all_reads(mypars->ihts,refName,tsk_reads);
-#endif
-	std::vector<asite> tsk_reads;
-      	hdr = read_all_reads(mypars->ihts,refName,seq_ref,tsk_reads,len_limit);
+      //tsk start
+      htsFormat myHtsFormat;
+      samFile *in=NULL;
+      if(refName!=NULL){
+	char *ref =(char*) malloc(10 + strlen(refName) + 1);
+	snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
+	hts_opt_add((hts_opt **)&myHtsFormat.specific,ref);
+	free(ref);
+      }
+      if(strstr(mypars->ihts,".cram")!=NULL && refName==NULL){
+	fprintf(stderr,"\t-> cram file requires reference with -T FILE.fa \n");
+	exit(0);
+      }
+      if((in=sam_open(mypars->ihts,"r"))==NULL ){
+	fprintf(stderr,"[%s] nonexistant file: %s\n",__FUNCTION__,mypars->ihts);
+	exit(0);
+      }
+      bam_hdr_t  *hdr = sam_hdr_read(in);
+      int ndim = 0;
+      double **mat = read_all_reads(in,hdr,seq_ref,len_limit,invec2[0],invec2[1],invec2[2],invec2[3],Tol,ndim,model);
 	
         //tsk stop
         ncalls = 0;
@@ -534,11 +523,12 @@ int main(int argc, char **argv){
         double lbd2[4] = {30,15,30,1};
         double ubd2[4] = {(double)len_limit-1,100,(double)len_limit-1,100};
         int nbd2[4] = {2,2,2,2};
-        int mynsites = tsk_reads.size()/tsk_nthreads;
+        int mynsites = ndim/tsk_nthreads;
         fprintf(stderr,"mynSites: %d\n",mynsites);
         for(int ii=0;ii<tsk_nthreads;ii++){
             my_tsk_struct[ii].from = my_tsk_struct[ii].to = -1;
-            my_tsk_struct[ii].reads = &tsk_reads;
+	    //            my_tsk_struct[ii].reads = &tsk_reads;
+	    my_tsk_struct[ii].mat = mat;
             my_tsk_struct[ii].hdr = hdr;
             my_tsk_struct[ii].seq_ref = seq_ref;
             my_tsk_struct[ii].len_limit = len_limit;
@@ -561,7 +551,7 @@ int main(int argc, char **argv){
             my_tsk_struct[ii].from = ii==0?0:my_tsk_struct[ii-1].to;
             my_tsk_struct[ii].to =   my_tsk_struct[ii].from+mynsites;
         }
-        my_tsk_struct[tsk_nthreads-1].to = tsk_reads.size();
+        my_tsk_struct[tsk_nthreads-1].to = ndim;
         double withgrad3;
         if(tsk_nthreads==1)
             withgrad3 = findmax_bfgs(4,distparam,&my_tsk_struct[0],tsk_all_loglike_recalibration,tsk_all_loglike_recalibration_grad,lbd2,ubd2,nbd2,-1);

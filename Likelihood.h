@@ -12,15 +12,11 @@ extern int tsk_nthreads;
 
 
 typedef struct{
-  #if 0
-  std::vector<bam1_t*> *reads;
-  #endif
-  std::vector<asite> *reads;
     sam_hdr_t *hdr;
     faidx_t *seq_ref;
     int len_limit;
     int len_min;
-    char *model;
+    int model;
     double eps;
     double lambda;
     double delta;
@@ -34,6 +30,7 @@ typedef struct{
     double **llh_result_hess; //Add the hessian matrix feature
     int threadid;
     double Tol;
+    double **mat;
 }tsk_struct;
 
 

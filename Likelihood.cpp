@@ -1370,7 +1370,8 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
 
 
 double like_master(const double *xs,const void *){
-  fprintf(stderr,"[%s] like_master\n",__FUNCTION__);
+  fprintf(stderr,"[%s] like_master: (%f,%f,%f,%f) \n",__FUNCTION__,xs[0],xs[1],xs[2],xs[3]);
+  //  fprintf(stderr,"[%s] like_master\n",__FUNCTION__);
     int nThreads = tsk_nthreads;
     for(int i=0;i<nThreads;i++)
         for(int ii=0;ii<4;ii++)
@@ -1398,6 +1399,7 @@ double like_master(const double *xs,const void *){
 }
 
 void like_grad_master(const double *xs,double *y,const void *){
+  //  fprintf(stderr,"[%s] like_master: (%f,%f,%f,%f) \n",__FUNCTION__,xs[0],xs[1],xs[2],xs[3]);
     //  fprintf(stderr,"like_master\n");
     int nThreads = tsk_nthreads;
     for(int i=0;i<nThreads;i++)
@@ -1418,12 +1420,12 @@ void like_grad_master(const double *xs,double *y,const void *){
         y[j] = 0;
     }
     for(int i=0;i<nThreads;i++){
-      fprintf(stderr,"[%s] lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to);
+      //    fprintf(stderr,"[%s] lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to);
         for (int j=0;j<4;j++){
             y[j] += my_tsk_struct[i].llh_result_grad[j];
         }
     }
-    fprintf(stderr,"[%s] total lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
+    //  fprintf(stderr,"[%s] total lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
     //cout<<y[0]<<"\t"<<y[1]<<"\t"<<y[2]<<"\t"<<y[3]<<"\n";
 }
 // Check until here.
@@ -1453,7 +1455,7 @@ void like_hess_master(const double *xs,double **y){
         }
     }
     for(int i=0;i<nThreads;i++){
-        fprintf(stderr,"lik_hess[%d,%d]\n",my_tsk_struct[i].from,my_tsk_struct[i].to);
+      //   fprintf(stderr,"lik_hess[%d,%d]\n",my_tsk_struct[i].from,my_tsk_struct[i].to);
         for (int j=0;j<4;j++){
             for (int k=0;k<4;k++){
                 A(j,k) += my_tsk_struct[i].llh_result_hess[j][k];
@@ -1462,7 +1464,7 @@ void like_hess_master(const double *xs,double **y){
         }
     }
     //cout<<A<<"\n";
-    fprintf(stderr,"total lik_hess[%d,%d]\n",my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
+    //   fprintf(stderr,"total lik_hess[%d,%d]\n",my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
     B = -A.inverse();
     for (int i=0;i<4;i++){
         for (int j=0;j<4;j++){

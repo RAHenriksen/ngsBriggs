@@ -6,10 +6,8 @@
 #include <htslib/faidx.h>
 
 #include "read_all_reads.h"
-#if 0
-double tsk_loglike_recalibration(const double *x, std::vector<bam1_t *> *reads,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,int threadid);
-#endif
-double tsk_loglike_recalibration(const double *x, std::vector<asite> &reads,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,int threadid);
+
+double tsk_loglike_recalibration(const double *x,double **mat,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv,int threadid);
 
 double all_loglike_recalibration(const double *x, const void *);
 double tsk_all_loglike_recalibration(const double *x, const void *dats);

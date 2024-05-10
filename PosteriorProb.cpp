@@ -822,7 +822,7 @@ double NoPMDGivenAnc_nb(char reffrag[], char frag[], int L, double lambda, doubl
 }
 
 // The function below is for calculating the posterior prob of being ancient
-double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], char* model, double eps, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, int len_limit, int len_min,double Tol){
+double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], int model, double eps, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, int len_limit, int len_min,double Tol){
     double l_err = ErrorLik(reffrag, frag,  L,  seqError); // Modern Likelihood/Only Sequencing-error Likelihood
     double prior_anc = 1-eps;
     double post_anc;
@@ -840,20 +840,17 @@ double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, 
         l_anc_l = NormalINC(y_max1, y_min1, x_max1, x_min1);
         l_err_l = NormalINC(y_max2, y_min2, x_max2, x_min2);
     }
-    if (!strcasecmp("b",model)){
+    if (model==0){
       double l_anc_b = PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol); // Ancient Likelihood based on biotin model
         post_anc = prior_anc * l_anc_b * l_anc_l/(prior_anc * l_anc_b * l_anc_l+ (1-prior_anc) * l_err * l_err_l);
 	//double test = exp(-10);
         //cout<<prior_anc<<" "<<l_anc_b<<" "<<l_anc_l<<" "<<prior_anc * l_anc_b * l_anc_l<<" "<<test<<"Lei Lei Lei\n";
-    }else if(!strcasecmp("nb",model)){
+    }else if(model==1){
       double l_anc_nb = 0.5*PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol)+0.5*PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol); // Ancient Likelihood based on non-biotin model
         //        cout << "l_anc_nb is "<<l_anc_nb<<"\n";
         //        cout << "PMDLik_b is "<<PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError)<<"\n";
         //        cout << "PMDLik_nb is "<<PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError)<<"\n";
         post_anc = prior_anc * l_anc_nb * l_anc_l/(prior_anc * l_anc_nb * l_anc_l + (1-prior_anc) * l_err * l_err_l);
-    }else{
-        fprintf(stderr,"Please specify a deamination model for further calculations.\n");
-        return -1;
     }
     if (post_anc < 0){
         post_anc = 0;
@@ -865,22 +862,19 @@ double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, 
 
 
 // The function below is for calculating the posterior prob of being damaged given ancient
-double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], char* model,double Tol){
+double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], int model,double Tol){
     double l_err = ErrorLik(reffrag, frag,  L,  seqError); // Modern Likelihood/Only Sequencing-error Likelihood
     //double prior_pmd = 0.25+0.5*lambda/(1-pow(1-lambda,L-1))*(1-pow((1-lambda)*(1-delta_s/4)/(1-delta/4),L-1))/(1-(1-lambda)*(1-delta_s/4)/(1-delta/4))+0.25*pow(lambda,2)/pow(1-pow(1-lambda,L-1),2)*(1-pow((1-lambda)*(1-delta_s/4)/(1-delta/4),L-1))/pow(1-(1-lambda)*(1-delta_s/4)/(1-delta/4),2)-0.25*pow(lambda,2)/pow(1-pow(1-lambda,L-1),2)*(L-1)*pow((1-lambda)*(1-delta_s/4)/(1-delta/4),L-1)/(1-(1-lambda)*(1-delta_s/4)/(1-delta/4));
     //prior_pmd = 1 - prior_pmd * pow(1-delta,L)/(0.75+0.25*(1-pow(1-lambda,L-1)-(L-1)*lambda*pow(1-lambda,L-1))/pow(1-pow(1-lambda,L-1),2));
     double post_pmd;
-    if (!strcasecmp("b",model)){
+    if (model==0){
       double l_anc_b = PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol);
       double np_pmd_anc_b = NoPMDGivenAnc_b(reffrag, frag, L, lambda, delta, delta_s, nv,Tol);
         post_pmd = 1-np_pmd_anc_b*l_err/l_anc_b;
-    }else if(!strcasecmp("nb",model)){
+    }else if(model==1){
       double l_anc_nb = 0.5*PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol) + 0.5*PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol);
       double np_pmd_anc_nb = 0.5*NoPMDGivenAnc_b(reffrag, frag, L, lambda, delta, delta_s, nv,Tol)+0.5*NoPMDGivenAnc_nb(reffrag, frag, L, lambda, delta, delta_s, nv,Tol);
         post_pmd = 1-np_pmd_anc_nb*l_err/l_anc_nb;
-    }else{
-        fprintf(stderr,"Please specify a deamination model for further calculations.\n");
-        return -1;
     }
     if (post_pmd < 0){
         post_pmd = 0;
@@ -890,7 +884,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
     return post_pmd;
 }
 
-bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, char * model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
+bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, int model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
 {
   //  exit(0);
   char nuc[6] = "ACGTN";

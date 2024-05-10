@@ -14,4 +14,6 @@ typedef struct{
 }asite;
 
 sam_hdr_t * read_all_reads(const char *htsname,const char *refName, faidx_t *seq_ref,std::vector<asite> &ret,int len_limit);
+
+double **read_all_reads(samFile *in,sam_hdr_t *hdr,faidx_t *seq_ref,int len_limit,double lambda,double delta,double delta_s,double nv,double Tol,int &ndim,int model);
 #endif

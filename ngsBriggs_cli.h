@@ -13,7 +13,7 @@ typedef struct{
   char *otab; // mismatch table output
   char *oinf; // model parameter output
   char *olen; // fragment len dist output
-  char *model; // model specific, either b or nb
+  int model; // model specific, either zero or one. zero=b one=nb
   char *olik; // output nucleotide likelihood file
   double eps; // contamination rate provided by external software
   int dorecal; // should we recalibrate the PD with the information of length as well as PMD model

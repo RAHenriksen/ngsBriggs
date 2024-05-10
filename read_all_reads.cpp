@@ -1,66 +1,17 @@
+#include <cassert>
+
 #include <htslib/bgzf.h>
 
+#include "Likelihood.h"
 #include "read_all_reads.h"
 #include "profile.h"
 #include "misc.h"
 #include "ngsBriggs.h"
 
-char *talloc(char *ori,int len){
-  char *des = (char*) malloc(len);
-  des =(char*) memcpy(des,ori,len);
-  return des;
-}
 
-sam_hdr_t *read_all_reads(const char *htsname,const char *refName,std::vector<bam1_t*> &ret){
-  htsFormat myHtsFormat;
-    samFile *in=NULL;
-    if(refName!=NULL){
-        char *ref =(char*) malloc(10 + strlen(refName) + 1);
-        snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
-        hts_opt_add((hts_opt **)&myHtsFormat.specific,ref);
-        free(ref);
-    }
-    if(strstr(htsname,".cram")!=NULL && refName==NULL){
-        fprintf(stderr,"\t-> cram file requires reference with -T FILE.fa \n");
-        exit(0);
-    }
-    if((in=sam_open(htsname,"r"))==NULL ){
-        fprintf(stderr,"[%s] nonexistant file: %s\n",__FUNCTION__,htsname);
-        exit(0);
-    }
-    bam_hdr_t  *hdr = sam_hdr_read(in);
-    
-    bam1_t *b = bam_init1();
-    while(sam_read1(in,hdr,b)>=0){
-      ret.push_back(b);
-      b= bam_init1();
-    }
-    bam_destroy1(b);
-
-    fprintf(stderr,"[%s] ret.size(): %lu\n",__FUNCTION__,ret.size());
-    return hdr;
-}
-
-sam_hdr_t *read_all_reads(const char *htsname,const char *refName,faidx_t *seq_ref,std::vector<asite> &ret,int len_limit){
-  //  fprintf(stderr,"len_limit: %d\n",len_limit);exit(0);
-  htsFormat myHtsFormat;
-  samFile *in=NULL;
-  if(refName!=NULL){
-    char *ref =(char*) malloc(10 + strlen(refName) + 1);
-    snprintf(ref,10 + strlen(refName) + 1, "reference=%s", refName);
-    hts_opt_add((hts_opt **)&myHtsFormat.specific,ref);
-    free(ref);
-  }
-  if(strstr(htsname,".cram")!=NULL && refName==NULL){
-    fprintf(stderr,"\t-> cram file requires reference with -T FILE.fa \n");
-    exit(0);
-  }
-  if((in=sam_open(htsname,"r"))==NULL ){
-    fprintf(stderr,"[%s] nonexistant file: %s\n",__FUNCTION__,htsname);
-    exit(0);
-  }
-    bam_hdr_t  *hdr = sam_hdr_read(in);
-    char reconstructedRef[512];
+double **read_all_reads(samFile *in,sam_hdr_t *hdr,faidx_t *seq_ref,int len_limit,double lambda,double delta,double delta_s,double nv,double Tol,int &ndim, int model){
+ 
+  char reconstructedRef[512];
     char myread[512];
     char myrefe[512];
     char yourread[512];
@@ -75,6 +26,7 @@ sam_hdr_t *read_all_reads(const char *htsname,const char *refName,faidx_t *seq_r
     if (len_limit <=0){
       len_limit = 512;
     };
+    std::vector<double> vec;
     bam1_t *b = bam_init1();
     while(sam_read1(in,hdr,b)>=0) {
       memset(reconstructedRef,0,512);
@@ -123,17 +75,32 @@ sam_hdr_t *read_all_reads(const char *htsname,const char *refName,faidx_t *seq_r
 	  fprintf(stderr,"rrr: %d %d \n",yourread[dist5p] ,yourrefe[dist5p]);
 	//}
       }
-      asite as={NULL,NULL,NULL,0};
-      as.read =talloc(yourread,b->core.l_qseq);
-      as.ref = talloc(yourrefe,b->core.l_qseq);
-      as.qual = new uint8_t[b->core.l_qseq];
-      as.qual =(uint8_t *) memcpy(as.qual,yourqual,b->core.l_qseq);
-      as.len = b->core.l_qseq;
-      ret.push_back(as);
+      double l_err = ErrorLik(yourrefe, yourread, b->core.l_qseq, yourqual);
+      double l_anc = PMDLik_b(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol);
+      //  fprintf(stderr,"pmdlik_b: %f nb: %f model: %d\n",PMDLik_b(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol),PMDLik_nb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol),model);
+
+      if(model==1)
+	l_anc = 0.5*l_anc + 0.5*PMDLik_nb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol);
+      //   fprintf(stderr,"lanc: %f\n",l_anc);exit(0);
+      vec.push_back(l_err);
+      vec.push_back(l_anc);
+      vec.push_back(b->core.l_qseq);
     }
     bam_destroy1(b);
-    fprintf(stderr,"[%s] ret.size(): %lu\n",__FUNCTION__,ret.size());
-    return hdr;
+    fprintf(stderr,"[%s] vec.size(): %lu\n",__FUNCTION__,vec.size());
+    assert((vec.size() % 3)==0);//should be divisible by 3
+    double **ret = new double*[3];
+    ret[0] = new double[vec.size()/3];
+    ret[1] = new double[vec.size()/3];
+    ret[2] = new double[vec.size()/3];
+    int at =0;
+    for(size_t i=0;i<vec.size();i+=3){
+      ret[0][at] = vec[i];//l_err
+      ret[1][at] = vec[i+1];//l_anc
+      ret[2][at++] = vec[i+2];//l_anc
+    }
+    ndim = vec.size()/3;
+    return ret;
 }
 
 

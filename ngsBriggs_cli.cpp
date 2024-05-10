@@ -17,7 +17,7 @@ argStruct *pars_briggs(int argc,char ** argv){
     pars->otab = NULL;
     pars->oinf = NULL;
     pars->olen = NULL;
-    pars->model = NULL;
+    pars->model = 1;
     pars->olik = NULL;
     pars->eps = 0;
     pars->dorecal = 0;
@@ -61,7 +61,15 @@ argStruct *pars_briggs(int argc,char ** argv){
             pars->olen=strdup(*(++argv));
         }
         else if(strcasecmp("-model",*argv)==0){
-            pars->model=strdup(*(++argv));
+	  ++argv;
+	  if(strcasecmp(*argv,"b")==0)
+	    pars->model=0;
+	  else if(strcasecmp(*argv,"nb")==0)
+	    pars->model=1;
+	  else{
+	    fprintf(stderr,"\t-> Unknown option: \'%s\'\n",*argv);
+	    exit(0);
+	  }
         }
         else if(strcasecmp("-olik",*argv)==0){
             pars->olik=strdup(*(++argv));
@@ -87,6 +95,7 @@ argStruct *pars_briggs(int argc,char ** argv){
         }
         ++argv;
     }
+
     return pars;
 }
 
@@ -101,7 +110,6 @@ void argStruct_destroy(argStruct *pars){
     free(pars->otab);
     free(pars->oinf);
     free(pars->olen);
-    free(pars->model);
     free(pars->olik);
     free(pars->bdamage);
     free(pars->rlens);
