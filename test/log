@@ -47,4 +47,17 @@ test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam
 de3e1785b0922bbfce7bff1246dd4009  -
 test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
 16a0157940d0a6df147ea3c6f72e677d  -
-fvr124@SUN1024817 ngsBriggs % 
+fvr124@SUN1024817 ngsBriggs %
+
+
+may11
+ for i in  *scores*.bam test/*bam;do samtools view $i|grep -v "T0_RID298_S1_chr22:47986627-47986695_length:69_mod0000" |md5sum;done
+
+
+karensvaneborg@imac ngsBriggs % for i in  *scores*.bam test/*bam;do samtools view $i|grep -v "T0_RID298_S1_chr22:47986627-47986695_length:69_mod0000" |md5sum;done
+de3e1785b0922bbfce7bff1246dd4009  -
+e090c4c2c00cea8492c12b74176633a9  -
+de3e1785b0922bbfce7bff1246dd4009  -
+e090c4c2c00cea8492c12b74176633a9  -
+karensvaneborg@imac ngsBriggs % 
+
