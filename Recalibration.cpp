@@ -2,19 +2,6 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
-#include <sstream>
-#include <string>
-
-#include <htslib/hts.h>
-#include <htslib/sam.h>
-#include <htslib/kstring.h>
-#include <htslib/faidx.h>
-#include <zlib.h>
-#include <cmath>
-#include <iomanip>
-#include <ctime>
-#include <getopt.h>
-#include <iostream>
 
 #include "profile.h"
 #include "bfgs.h"
@@ -28,7 +15,7 @@
 extern tsk_struct *my_tsk_struct;
 
 //The log-likelihood for recalibration the ancient probs
-double tsk_loglike_recalibration(const double *x, double **mat,int from,int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, double eps, double lambda, double delta, double delta_s, double nv,int threadid,double Tol){
+double tsk_loglike_recalibration(const double *x, double **mat,int from,int to,int len_limit, int len_min, double eps){
   //fprintf(stderr,"(%f,%f,%f,%f) seq_ref: %p from: %d to:%d\n\n",x[0],x[1],x[2],x[3],seq_ref,from,to);
     double anc_mu = x[0];
     double anc_si = x[1];
@@ -66,7 +53,7 @@ double tsk_all_loglike_recalibration(const double *x, const void *dats){
     //  fprintf(stderr,"[%s]\n",__FUNCTION__);
     ncalls++;
     tsk_struct *ts = (tsk_struct *) dats;
-    double check = tsk_loglike_recalibration(x, ts->mat,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->len_min, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid,ts->Tol);
+    double check = tsk_loglike_recalibration(x, ts->mat,ts->from,ts->to, ts->len_limit, ts->len_min, ts->eps);
     //  fprintf(stderr,"[%s]: total like: %f\n",__FUNCTION__,check);
     return check;
 }
@@ -75,13 +62,13 @@ void *tsk_all_loglike_recalibration_slave(void *dats){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
     ncalls++;
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
-    ts->llh_result = tsk_loglike_recalibration(ts->x, ts->mat,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->len_min, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid,ts->Tol);
+    ts->llh_result = tsk_loglike_recalibration(ts->x, ts->mat,ts->from,ts->to, ts->len_limit, ts->len_min, ts->eps);
     
     pthread_exit(NULL);
 }
 
 
-void tsk_loglike_recalibration_grad(const double *x, double *y, double **mat,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
+void tsk_loglike_recalibration_grad(const double *x, double *y, double **mat,int from, int to,int len_limit, int len_min, double eps){
   
     double anc_mu = x[0];
     double anc_si = x[1];
@@ -122,7 +109,7 @@ void tsk_all_loglike_recalibration_grad(const double *x, double *y,const void *d
     ncalls_grad++;
     //tsk_struct *ts = &my_tsk_struct[0];//assuming single thread
     tsk_struct *ts = (tsk_struct *) dats;//assuming multiple threads
-    tsk_loglike_recalibration_grad(x,y,ts->mat,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv,ts->Tol);
+    tsk_loglike_recalibration_grad(x,y,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps);
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
 }
 
@@ -132,12 +119,12 @@ void *tsk_all_loglike_recalibration_grad_slave(void *dats){
     ncalls_grad++;
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
     //ts->llh_grad_result;
-    tsk_loglike_recalibration_grad(ts->x,ts->llh_result_grad,ts->mat,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv,ts->Tol);
+    tsk_loglike_recalibration_grad(ts->x,ts->llh_result_grad,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps);
     //ts->llh_result = tsk_loglike_recalibration(ts->x, ts->reads,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->model, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid);
     pthread_exit(NULL);
 }
 
-void tsk_loglike_recalibration_hess(const double *x, double **y, double **mat,int from, int to,sam_hdr_t *hdr, faidx_t *seq_ref,int len_limit, int len_min, double eps, double lambda, double delta, double delta_s, double nv,double Tol){
+void tsk_loglike_recalibration_hess(const double *x, double **y, double **mat,int from, int to,int len_limit, int len_min, double eps){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
     
     double anc_mu = x[0];
@@ -193,6 +180,6 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, double **mat,in
 
 void *tsk_all_loglike_recalibration_hess_slave(void *dats){
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
-    tsk_loglike_recalibration_hess(ts->x,ts->llh_result_hess,ts->mat,ts->from,ts->to,ts->hdr,ts->seq_ref,ts->len_limit, ts->len_min,ts->eps,ts->lambda,ts->delta,ts->delta_s,ts->nv,ts->Tol);
+    tsk_loglike_recalibration_hess(ts->x,ts->llh_result_hess,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps);
     pthread_exit(NULL);
 }

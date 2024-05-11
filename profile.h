@@ -2,6 +2,8 @@
 #include <vector>
 #include <map>
 
+#include <htslib/sam.h>
+#include <htslib/kstring.h>
 
 
 #define bam_is_sec(b)         (((b)->core.flag&BAM_FSECONDARY)        != 0)
