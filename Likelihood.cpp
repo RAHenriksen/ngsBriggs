@@ -22,7 +22,7 @@
 #include "htslib/bgzf.h"
 
 #include "misc.h"
-#include "Recalibration.h"
+#include "recalibration.h"
 #include "ngsBriggs.h"
 #include "PosteriorProb.h"
 

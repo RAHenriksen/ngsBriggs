@@ -19,7 +19,7 @@
 #include "bfgs.h"
 
 #include "misc.h"
-#include "Recalibration.h"
+#include "recalibration.h"
 #include "ngsBriggs.h"
 #include "Likelihood.h"
 #include "PosteriorProb.h"

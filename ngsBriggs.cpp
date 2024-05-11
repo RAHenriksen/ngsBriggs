@@ -14,7 +14,7 @@
 #include "bfgs.h"
 #include "read_all_reads.h"
 #include "misc.h"
-#include "Recalibration.h"
+#include "recalibration.h"
 #include "Likelihood.h"
 #include "PosteriorProb.h"
 #include "ngsBriggs_cli.h"
