@@ -2,27 +2,19 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
-#include <fstream>
-#include <sstream>
-#include <iostream>
 #include <zlib.h>
 #include <cmath>
-#include <ctime>
 
-
+#include <htslib/thread_pool.h>
 #include <htslib/hts.h>
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
 #include <htslib/faidx.h>
-#include <htslib/thread_pool.h>
-#include "profile.h"
-#include "bfgs.h"
-
-#include "misc.h"
-#include "recalibration.h"
 #include "ngsBriggs.h"
 #include "likelihood.h"
 #include "PosteriorProb.h"
+#include "misc.h"
+#include "profile.h"
 
 typedef unsigned char uchar;
 
