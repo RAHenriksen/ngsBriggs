@@ -32,33 +32,6 @@ tsk_struct *my_tsk_struct = NULL;
 
 int tsk_nthreads = -1;
 
-int helppage(FILE *fp){
-    fprintf(fp,"\t-> ./ngsBriggs -bam -tab -ref -len -ibam -iref -obam -otab -oinf -olen -model -eps -isrecal -olik -nthreads\n");
-    fprintf(fp,"\t-> -bam: The bam file for inference;\n");
-    fprintf(fp,"\t-> -tab: The table file for inference;\n");
-    fprintf(fp,"\t-> -ref: The reference file for inference;\n");
-    fprintf(fp,"\t-> -len: The length mass probability distribution file for inference;\n");
-    fprintf(fp,"\t-> -ibam: The bam file for ancient strand fishing;\n");
-    fprintf(fp,"\t-> -iref: The reference file for ancient strand fishing;\n");
-    fprintf(fp,"\t-> -obam: The output bam file name;\n");
-    fprintf(fp,"\t-> -otab: The output table file name;\n");
-    fprintf(fp,"\t-> -oinf: The output inferred parameters file name;\n");
-    fprintf(fp,"\t-> -olen: The output length mass probability distribution file name;\n");
-    fprintf(fp,"\t-> -model: Specifying the model, either b (the biotin model) or nb (the non-biotin model);\n");
-    fprintf(fp,"\t-> -eps: The overall modern contamination rate, the value should be within the interval [0,1);\n");
-    fprintf(fp,"\t-> -isrecal: Choose 1 if recalibration based on length is needed, otherwise 0 (default);\n");
-    fprintf(fp,"\t-> -olik: The output nucleotide likelihood file;\n");
-    fprintf(fp,"\t-> -nthreads: Choose the number of threads to speed up the recalibration process.\n");
-    fprintf(fp,"\t-> -bdamage: The mismatch matrix in bdamage format for metagenomic framework.\n");
-    fprintf(fp,"\t-> -rlens: The read length distributions for metagenomic framework.\n");
-    fprintf(fp,"\t-> Examples.\n");
-    fprintf(fp,"\t-> ./ngsbriggs -model nb -bdamage Chr22_024_36_68_0097.bdamage.gz -rlens Chr22_024_36_68_0097.rlens.gz\n");
-    fprintf(fp,"\t-> ./ngsbriggs -tab mismatch2.txt -len len.txt -model nb\n");
-    fprintf(fp,"\t-> ./ngsbriggs -bam Chr22_024_36_68_0097.sorted.MD.bam -ref chr22.fa -model nb\n");
-    exit(1);
-  return 0;
-}
-
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
@@ -174,47 +147,41 @@ int main(int argc, char **argv){
 
         
         for (int i=0; i<MAXLENGTH;i++){
-        // Double-check this part
-        // scaleCT[i] = mm5p[i][5]+mm5p[i][7];
-        scaleCT[i] = mm5p[i][4]+mm5p[i][5]+mm5p[i][6]+mm5p[i][7];
-        // scaleCT[2*MAXLENGTH-1-i] = mm3p[i][5]+mm3p[i][7];
-        scaleCT[2*MAXLENGTH-1-i] = mm3p[i][4]+mm3p[i][5]+mm3p[i][6]+mm3p[i][7];
-        // scaleGA[i] = mm3p[i][8]+mm3p[i][10];
-        scaleGA[i] = mm3p[i][8]+mm3p[i][9]+mm3p[i][10]+mm3p[i][11];
-        // scaleGA[2*MAXLENGTH-1-i] = mm5p[i][8]+mm5p[i][10];
-        scaleGA[2*MAXLENGTH-1-i] = mm5p[i][8]+mm5p[i][9]+mm5p[i][10]+mm5p[i][11];
+          scaleCT[i] = mm5p[i][4]+mm5p[i][5]+mm5p[i][6]+mm5p[i][7];
+	  scaleCT[2*MAXLENGTH-1-i] = mm3p[i][4]+mm3p[i][5]+mm3p[i][6]+mm3p[i][7];
+	  scaleGA[i] = mm3p[i][8]+mm3p[i][9]+mm3p[i][10]+mm3p[i][11];
+	  scaleGA[2*MAXLENGTH-1-i] = mm5p[i][8]+mm5p[i][9]+mm5p[i][10]+mm5p[i][11];
         
-        // Overall sequencing errors are position specific, estimated by 1 - [N(AA)+N(TT)]/[N(AA)+N(AC)+N(AG)+N(AT)+N(TA)+N(TC)+N(TG)+N(TT)]
-        seqError[i] = 1 - (mm5p[i][0]+mm5p[i][15])/(mm5p[i][0]+mm5p[i][1]+mm5p[i][2]+mm5p[i][3]+mm5p[i][12]+mm5p[i][13]+mm5p[i][14]+mm5p[i][15]);
-        seqError[2*MAXLENGTH-1-i] = 1 - (mm3p[i][0]+mm3p[i][15])/(mm3p[i][0]+mm3p[i][1]+mm3p[i][2]+mm3p[i][3]+mm3p[i][12]+mm3p[i][13]+mm3p[i][14]+mm3p[i][15]);
-        //cout << "Error "<<seqError[i]<<" "<<seqError[2*MAXLENGTH-1-i]<<"\n";
-        freqCT[i] = mm5p[i][7]/scaleCT[i];
-        freqCT[2*MAXLENGTH-1-i] = mm3p[i][7]/scaleCT[2*MAXLENGTH-1-i];
-        freqGA[i] = mm3p[i][8]/scaleGA[i];
-        freqGA[2*MAXLENGTH-1-i] = mm5p[i][8]/scaleGA[2*MAXLENGTH-1-i];
-        max5 = std::max(max5,std::max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
-        max3 = std::max(max3,std::max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
+	  // Overall sequencing errors are position specific, estimated by 1 - [N(AA)+N(TT)]/[N(AA)+N(AC)+N(AG)+N(AT)+N(TA)+N(TC)+N(TG)+N(TT)]
+	  seqError[i] = 1 - (mm5p[i][0]+mm5p[i][15])/(mm5p[i][0]+mm5p[i][1]+mm5p[i][2]+mm5p[i][3]+mm5p[i][12]+mm5p[i][13]+mm5p[i][14]+mm5p[i][15]);
+	  seqError[2*MAXLENGTH-1-i] = 1 - (mm3p[i][0]+mm3p[i][15])/(mm3p[i][0]+mm3p[i][1]+mm3p[i][2]+mm3p[i][3]+mm3p[i][12]+mm3p[i][13]+mm3p[i][14]+mm3p[i][15]);
+	  //cout << "Error "<<seqError[i]<<" "<<seqError[2*MAXLENGTH-1-i]<<"\n";
+	  freqCT[i] = mm5p[i][7]/scaleCT[i];
+	  freqCT[2*MAXLENGTH-1-i] = mm3p[i][7]/scaleCT[2*MAXLENGTH-1-i];
+	  freqGA[i] = mm3p[i][8]/scaleGA[i];
+	  freqGA[2*MAXLENGTH-1-i] = mm5p[i][8]/scaleGA[2*MAXLENGTH-1-i];
+	  max5 = std::max(max5,std::max(scaleCT[i],scaleCT[2*MAXLENGTH-1-i]));
+	  max3 = std::max(max3,std::max(scaleGA[i],scaleGA[2*MAXLENGTH-1-i]));
         }
         maxall = std::max(max5,max3);
-        //    cout<<"max5 is "<<max5<<", max3 is "<<max3<<".\n";
+
         for (int i=0; i<MAXLENGTH;i++){
-            scaleCT[i] = scaleCT[i]/maxall;
-            scaleGA[i] = scaleGA[i]/maxall;
-            scaleCT[2*MAXLENGTH-1-i] = scaleCT[2*MAXLENGTH-1-i]/maxall;
-            scaleGA[2*MAXLENGTH-1-i] = scaleGA[2*MAXLENGTH-1-i]/maxall;
-            //cout<<scaleCT[i]<<" "<<scaleGA[i]<<"\n";
-        }
+	  scaleCT[i] = scaleCT[i]/maxall;
+	  scaleGA[i] = scaleGA[i]/maxall;
+	  scaleCT[2*MAXLENGTH-1-i] = scaleCT[2*MAXLENGTH-1-i]/maxall;
+	  scaleGA[2*MAXLENGTH-1-i] = scaleGA[2*MAXLENGTH-1-i]/maxall;
+	}
         
         
         fprintf(stderr,"\nThe misincorporting matrix is as follows:\n");
         fprintf(stderr,"Dir.\tPos.\tFreqCT\tFreqGA\n");
         for (int i=0; i<5;i++){	// 
-            fprintf(stderr,"5'\t%d\t",i+1);
-            fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
+	  fprintf(stderr,"5'\t%d\t",i+1);
+	  fprintf(stderr,"%f\t%f\n",freqCT[i],freqGA[2*MAXLENGTH-1-i]);
         }
         for (int i=0; i<5;i++){
-            fprintf(stderr,"3'\t%d\t",i+1);
-            fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
+	  fprintf(stderr,"3'\t%d\t",i+1);
+	  fprintf(stderr,"%f\t%f\n",freqCT[2*MAXLENGTH-1-i],freqGA[i]);
         }
     }
     else if(inference_type == 3){
@@ -527,7 +494,6 @@ int main(int argc, char **argv){
         fprintf(stderr,"mynSites: %d\n",mynsites);
         for(int ii=0;ii<tsk_nthreads;ii++){
             my_tsk_struct[ii].from = my_tsk_struct[ii].to = -1;
-	    //            my_tsk_struct[ii].reads = &tsk_reads;
 	    my_tsk_struct[ii].mat = mat;
 	    my_tsk_struct[ii].len_limit = len_limit;
             my_tsk_struct[ii].len_min = len_min;
@@ -547,14 +513,13 @@ int main(int argc, char **argv){
         double withgrad3;
         if(tsk_nthreads==1)
             withgrad3 = findmax_bfgs(4,distparam,&my_tsk_struct[0],tsk_all_loglike_recalibration,tsk_all_loglike_recalibration_grad,lbd2,ubd2,nbd2,-1);
-        else{
-            //withgrad3 = findmax_bfgs(4,distparam,NULL,like_master,tsk_All_loglike_recalibration_grad,lbd2,ubd2,nbd2,-1);
-            withgrad3 = findmax_bfgs(4,distparam,NULL,like_master,like_grad_master,lbd2,ubd2,nbd2,-1);
-        }
+        else
+	  withgrad3 = findmax_bfgs(4,distparam,NULL,like_master,like_grad_master,lbd2,ubd2,nbd2,-1);
+
         double **covpar = new double* [4];
-        for (int i=0;i<4;i++){
-            covpar[i] = new double[4];
-        }
+        for (int i=0;i<4;i++)
+	  covpar[i] = new double[4];
+        
         like_hess_master(distparam,covpar);
         double stdpar[4];
         for (int i=0;i<4;i++){
@@ -564,7 +529,7 @@ int main(int argc, char **argv){
         fprintf(stderr,"mu_anc: %f (%f,%f), sigma_anc: %f (%f,%f), mu_mod: %f (%f,%f), sigma_mod: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", distparam[0], distparam[0]-1.96*stdpar[0], distparam[0]+1.96*stdpar[0], distparam[1], distparam[1]-1.96*stdpar[1], distparam[1]+1.96*stdpar[1], distparam[2], distparam[2]-1.96*stdpar[2], distparam[2]+1.96*stdpar[2], distparam[3], distparam[3]-1.96*stdpar[3], distparam[3]+1.96*stdpar[3], ncalls,ncalls_grad, withgrad3);
         sam_hdr_destroy(hdr);
     }
-    //fprintf(stderr,"BRANCH 2000!\n");fflush(stderr);
+
     if (mypars->ihts==NULL){
         fprintf(stdout,"Please provide bam file to calculate nucleotide likelihoods!\n");
         return 0;

@@ -125,3 +125,7 @@ fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.s
 fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f15|cut -f3 -d:) <(samtools view test/old/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f15|cut -f3 -d:)|awk '{print $1-$2}'|datamash range 1
 0
 fvr124@SUN1024817 ngsBriggs % 
+
+time ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam -isrecal 0 -nthread 8 ;time ./ngsbriggs -bam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -model nb -eps 0.1 -ibam Chr22_024_36_68_0097_eps10.sorted.MD.coord.bam -obam Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam -isrecal 1 -nthread 8
+
+for i in *.r*.bam test/*.r*.bam;do echo $i;samtools view $i|grep -v "T0_RID298_S1_chr22:47986627-47986695_length:69_mod0000"|md5sum;done

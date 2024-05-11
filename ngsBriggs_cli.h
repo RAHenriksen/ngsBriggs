@@ -1,6 +1,6 @@
 #ifndef NGSBRIGGSCLI_H
 #define NGSBRIGGSCLI_H
-
+int helppage(FILE *fp);
 typedef struct{
   //filenames
   char *hts; // bam/cram/sam input to count the mismatch table for inference
