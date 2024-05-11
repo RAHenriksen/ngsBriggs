@@ -12,25 +12,17 @@ extern int tsk_nthreads;
 
 
 typedef struct{
-    sam_hdr_t *hdr;
-    faidx_t *seq_ref;
-    int len_limit;
-    int len_min;
-    int model;
-    double eps;
-    double lambda;
-    double delta;
-    double delta_s;
-    double nv;
-    int from;
-    int to;
-    double llh_result;
-    double *x;
-    double *llh_result_grad; //Add the gradient feature
-    double **llh_result_hess; //Add the hessian matrix feature
-    int threadid;
-    double Tol;
-    double **mat;
+  int len_limit;
+  int len_min;
+  double eps;
+  int from;
+  int to;
+  double llh_result;
+  double *x;
+  double *llh_result_grad; //Add the gradient feature
+  double **llh_result_hess; //Add the hessian matrix feature
+  int threadid;
+  double **mat;
 }tsk_struct;
 
 

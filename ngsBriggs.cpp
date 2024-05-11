@@ -529,21 +529,13 @@ int main(int argc, char **argv){
             my_tsk_struct[ii].from = my_tsk_struct[ii].to = -1;
 	    //            my_tsk_struct[ii].reads = &tsk_reads;
 	    my_tsk_struct[ii].mat = mat;
-            my_tsk_struct[ii].hdr = hdr;
-            my_tsk_struct[ii].seq_ref = seq_ref;
-            my_tsk_struct[ii].len_limit = len_limit;
+	    my_tsk_struct[ii].len_limit = len_limit;
             my_tsk_struct[ii].len_min = len_min;
-            my_tsk_struct[ii].model = model;
-            my_tsk_struct[ii].eps = Contam_eps;
-            my_tsk_struct[ii].lambda = invec2[0];
-            my_tsk_struct[ii].delta = invec2[1];
-            my_tsk_struct[ii].delta_s = invec2[2];
-            my_tsk_struct[ii].nv = invec2[3];
-            my_tsk_struct[ii].x = new double [4];
+	    my_tsk_struct[ii].eps = Contam_eps;
+	    my_tsk_struct[ii].x = new double [4];
             my_tsk_struct[ii].llh_result_grad = new double [4];
             my_tsk_struct[ii].llh_result_hess = new double* [4];
-	    my_tsk_struct[ii].Tol = Tol;
-            for(int i=0;i<4;i++){
+	    for(int i=0;i<4;i++){
                 my_tsk_struct[ii].x[i] = distparam[i];
                 my_tsk_struct[ii].llh_result_hess[i] = new double [4];
             }

@@ -111,3 +111,17 @@ a1e9a1bfd7aea09f4cafb906e778399c  Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1
 a1e9a1bfd7aea09f4cafb906e778399c  test/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam
 fvr124@SUN1024817 ngsBriggs %
 
+
+fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|cut -f15|cut -f3 -d:) <(samtools view test/old/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|cut -f15|cut -f3 -d:)|awk '{print $1-$2}'|datamash range 1
+0
+fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|cut -f16|cut -f3 -d:) <(samtools view test/old/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|cut -f16|cut -f3 -d:)|awk '{print $1-$2}'|datamash range 1
+3.2e-05
+fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|cut -f17|cut -f3 -d:) <(samtools view test/old/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r1.bam|cut -f17|cut -f3 -d:)|awk '{print $1-$2}'|datamash range 1
+1e-11
+fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f17|cut -f3 -d:) <(samtools view test/old/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f17|cut -f3 -d:)|awk '{print $1-$2}'|datamash range 1
+0
+fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f16|cut -f3 -d:) <(samtools view test/old/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f16|cut -f3 -d:)|awk '{print $1-$2}'|datamash range 1
+1e-11
+fvr124@SUN1024817 ngsBriggs % paste <(samtools view Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f15|cut -f3 -d:) <(samtools view test/old/Chr22_024_36_68_0097_eps10.sorted.MD.scores.r0.bam|cut -f15|cut -f3 -d:)|awk '{print $1-$2}'|datamash range 1
+0
+fvr124@SUN1024817 ngsBriggs % 
