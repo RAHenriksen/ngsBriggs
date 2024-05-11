@@ -16,7 +16,7 @@
 #include "misc.h"
 #include "recalibration.h"
 #include "likelihood.h"
-#include "PosteriorProb.h"
+#include "pp.h"
 #include "ngsBriggs_cli.h"
 #include "ngsBriggs.h"
 #include "bdamagereader.h"
@@ -24,7 +24,7 @@
 
 // definining all global variables used across multiple scripts
 
-double l_check = 15;
+
 tsk_struct *my_tsk_struct = NULL;
 
 int tsk_nthreads = -1;
@@ -32,7 +32,7 @@ int tsk_nthreads = -1;
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
-
+  double l_check = 15;
   double** mm5p, **mm3p;
   double Tol = 1.0E-8; // Tolerance
   double **deamRateCT;
@@ -475,7 +475,7 @@ int main(int argc, char **argv){
       }
       bam_hdr_t  *hdr = sam_hdr_read(in);
       int ndim = 0;
-      double **mat = read_all_reads(in,hdr,seq_ref,len_limit,invec2[0],invec2[1],invec2[2],invec2[3],Tol,ndim,model);
+      double **mat = read_all_reads(in,hdr,seq_ref,len_limit,invec2[0],invec2[1],invec2[2],invec2[3],Tol,ndim,model,l_check);
 	
         //tsk stop
       //double lbd2[4] = {30,1e-8,30,1e-8};
@@ -533,7 +533,7 @@ int main(int argc, char **argv){
     kstr3->l = kstr3->m = 0;
  
     if (mypars->ihts!=NULL){
-      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,mypars->hts,mypars->ohts,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], mypars->dorecal,&str_cli,deamRateCT,deamRateGA,Tol);
+      bam_hdr_t* hdr = calc_pp_pmd_prob(refName,mypars->hts,mypars->ohts,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,model,Contam_eps,invec2[0],invec2[1],invec2[2],invec2[3],distparam[0],distparam[1],distparam[2], distparam[3], mypars->dorecal,&str_cli,deamRateCT,deamRateGA,Tol,l_check);
       sam_hdr_destroy(hdr);
     }
     

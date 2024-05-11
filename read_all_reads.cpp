@@ -10,7 +10,7 @@
 #include "misc.h"
 
 
-double **read_all_reads(samFile *in,sam_hdr_t *hdr,faidx_t *seq_ref,int len_limit,double lambda,double delta,double delta_s,double nv,double Tol,int &ndim, int model){
+double **read_all_reads(samFile *in,sam_hdr_t *hdr,faidx_t *seq_ref,int len_limit,double lambda,double delta,double delta_s,double nv,double Tol,int &ndim, int model,int l_check){
  
   char reconstructedRef[512];
     char myread[512];
@@ -76,12 +76,12 @@ double **read_all_reads(samFile *in,sam_hdr_t *hdr,faidx_t *seq_ref,int len_limi
 	  fprintf(stderr,"rrr: %d %d \n",yourread[dist5p] ,yourrefe[dist5p]);
 	//}
       }
-      double l_err = ErrorLik(yourrefe, yourread, b->core.l_qseq, yourqual);
-      double l_anc = PMDLik_b(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol);
+      double l_err = ErrorLik(yourrefe, yourread, b->core.l_qseq, yourqual,l_check);
+      double l_anc = PMDLik_b(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol,l_check);
       //  fprintf(stderr,"pmdlik_b: %f nb: %f model: %d\n",PMDLik_b(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol),PMDLik_nb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol),model);
 
       if(model==1)
-	l_anc = 0.5*l_anc + 0.5*PMDLik_nb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol);
+	l_anc = 0.5*l_anc + 0.5*PMDLik_nb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual,Tol,l_check);
       //   fprintf(stderr,"lanc: %f\n",l_anc);exit(0);
       vec.push_back(l_err);
       vec.push_back(l_anc);

@@ -8,5 +8,5 @@
 #include <htslib/sam.h>
 #include <htslib/faidx.h>
 
-double **read_all_reads(samFile *in,sam_hdr_t *hdr,faidx_t *seq_ref,int len_limit,double lambda,double delta,double delta_s,double nv,double Tol,int &ndim,int model);
+double **read_all_reads(samFile *in,sam_hdr_t *hdr,faidx_t *seq_ref,int len_limit,double lambda,double delta,double delta_s,double nv,double Tol,int &ndim,int model,int l_check);
 #endif

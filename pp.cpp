@@ -12,14 +12,14 @@
 #include <htslib/faidx.h>
 #include "ngsBriggs.h"
 #include "likelihood.h"
-#include "PosteriorProb.h"
+#include "pp.h"
 #include "misc.h"
 #include "profile.h"
 
 typedef unsigned char uchar;
 
 
-double NoPMDGivenAnc_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv,double Tol){
+double NoPMDGivenAnc_b(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv,double Tol,int l_check){
     double np_pmd_anc=0; // probability of no pmd given ancient
     double p = 0;
     //Investigate each possible left and right 5' overhang pair with (l,r) <= l_check (15)
@@ -402,7 +402,7 @@ double NoPMDGivenAnc_b(char reffrag[], char frag[], int L, double lambda, double
 }
 
 
-double NoPMDGivenAnc_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv,double Tol){
+double NoPMDGivenAnc_nb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv,double Tol,int l_check){
     double np_pmd_anc=0; // Likelihood
     double p = 0; // Accumulated prob of (l,r)
     //Investigate each possible left and right 5' overhang pair with (l,r) <= l_check (15)
@@ -814,8 +814,8 @@ double NoPMDGivenAnc_nb(char reffrag[], char frag[], int L, double lambda, doubl
 }
 
 // The function below is for calculating the posterior prob of being ancient
-double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], int model, double eps, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, int len_limit, int len_min,double Tol){
-    double l_err = ErrorLik(reffrag, frag,  L,  seqError); // Modern Likelihood/Only Sequencing-error Likelihood
+double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], int model, double eps, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, int len_limit, int len_min,double Tol,int l_check){
+  double l_err = ErrorLik(reffrag, frag,  L,  seqError,l_check); // Modern Likelihood/Only Sequencing-error Likelihood
     double prior_anc = 1-eps;
     double post_anc;
     double l_anc_l = 1;
@@ -833,12 +833,12 @@ double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, 
         l_err_l = NormalINC(y_max2, y_min2, x_max2, x_min2);
     }
     if (model==0){
-      double l_anc_b = PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol); // Ancient Likelihood based on biotin model
+      double l_anc_b = PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol,l_check); // Ancient Likelihood based on biotin model
         post_anc = prior_anc * l_anc_b * l_anc_l/(prior_anc * l_anc_b * l_anc_l+ (1-prior_anc) * l_err * l_err_l);
 	//double test = exp(-10);
         //cout<<prior_anc<<" "<<l_anc_b<<" "<<l_anc_l<<" "<<prior_anc * l_anc_b * l_anc_l<<" "<<test<<"Lei Lei Lei\n";
     }else if(model==1){
-      double l_anc_nb = 0.5*PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol)+0.5*PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol); // Ancient Likelihood based on non-biotin model
+      double l_anc_nb = 0.5*PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol,l_check)+0.5*PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol,l_check); // Ancient Likelihood based on non-biotin model
         //        cout << "l_anc_nb is "<<l_anc_nb<<"\n";
         //        cout << "PMDLik_b is "<<PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError)<<"\n";
         //        cout << "PMDLik_nb is "<<PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError)<<"\n";
@@ -854,18 +854,18 @@ double AncProb(char reffrag[], char frag[], int L, double lambda, double delta, 
 
 
 // The function below is for calculating the posterior prob of being damaged given ancient
-double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], int model,double Tol){
-    double l_err = ErrorLik(reffrag, frag,  L,  seqError); // Modern Likelihood/Only Sequencing-error Likelihood
+double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, double delta_s, double nv, uint8_t seqError[], int model,double Tol,int l_check){
+  double l_err = ErrorLik(reffrag, frag,  L,  seqError,l_check); // Modern Likelihood/Only Sequencing-error Likelihood
     //double prior_pmd = 0.25+0.5*lambda/(1-pow(1-lambda,L-1))*(1-pow((1-lambda)*(1-delta_s/4)/(1-delta/4),L-1))/(1-(1-lambda)*(1-delta_s/4)/(1-delta/4))+0.25*pow(lambda,2)/pow(1-pow(1-lambda,L-1),2)*(1-pow((1-lambda)*(1-delta_s/4)/(1-delta/4),L-1))/pow(1-(1-lambda)*(1-delta_s/4)/(1-delta/4),2)-0.25*pow(lambda,2)/pow(1-pow(1-lambda,L-1),2)*(L-1)*pow((1-lambda)*(1-delta_s/4)/(1-delta/4),L-1)/(1-(1-lambda)*(1-delta_s/4)/(1-delta/4));
     //prior_pmd = 1 - prior_pmd * pow(1-delta,L)/(0.75+0.25*(1-pow(1-lambda,L-1)-(L-1)*lambda*pow(1-lambda,L-1))/pow(1-pow(1-lambda,L-1),2));
     double post_pmd;
     if (model==0){
-      double l_anc_b = PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol);
-      double np_pmd_anc_b = NoPMDGivenAnc_b(reffrag, frag, L, lambda, delta, delta_s, nv,Tol);
+      double l_anc_b = PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol,l_check);
+      double np_pmd_anc_b = NoPMDGivenAnc_b(reffrag, frag, L, lambda, delta, delta_s, nv,Tol,l_check);
         post_pmd = 1-np_pmd_anc_b*l_err/l_anc_b;
     }else if(model==1){
-      double l_anc_nb = 0.5*PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol) + 0.5*PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol);
-      double np_pmd_anc_nb = 0.5*NoPMDGivenAnc_b(reffrag, frag, L, lambda, delta, delta_s, nv,Tol)+0.5*NoPMDGivenAnc_nb(reffrag, frag, L, lambda, delta, delta_s, nv,Tol);
+      double l_anc_nb = 0.5*PMDLik_b(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol,l_check) + 0.5*PMDLik_nb(reffrag, frag, L, lambda, delta, delta_s, nv, seqError,Tol,l_check);
+      double np_pmd_anc_nb = 0.5*NoPMDGivenAnc_b(reffrag, frag, L, lambda, delta, delta_s, nv,Tol,l_check)+0.5*NoPMDGivenAnc_nb(reffrag, frag, L, lambda, delta, delta_s, nv,Tol,l_check);
         post_pmd = 1-np_pmd_anc_nb*l_err/l_anc_nb;
     }
     if (post_pmd < 0){
@@ -876,7 +876,7 @@ double PMDProb(char reffrag[], char frag[], int L, double lambda, double delta, 
     return post_pmd;
 }
 
-bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, int model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol)
+bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped_only,int se_only, int mapq, faidx_t *seq_ref, int len_limit, int len_min, int model, double eps, double lambda, double delta, double delta_s, double nv, double anc_mu, double anc_si, double mod_mu, double mod_si, int isrecal, kstring_t *str_cli,double **deamRateCT,double **deamRateGA,double Tol,int l_check)
 {
   //  exit(0);
   char nuc[6] = "ACGTN";
@@ -1010,35 +1010,16 @@ bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped
 	}
         
 	
-	double PostAncProb1 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 0, len_limit, len_min,Tol);
+	double PostAncProb1 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 0, len_limit, len_min,Tol,l_check);
 	double PostAncProb2 = 0;
 	
 	if (isrecal==1) {
-	  PostAncProb2 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 1, len_limit, len_min,Tol);
+	  PostAncProb2 = AncProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model ,eps, anc_mu, anc_si, mod_mu, mod_si, 1, len_limit, len_min,Tol,l_check);
 	}
 	
-	double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model,Tol);
+	double PostPMDProb = PMDProb(yourrefe, yourread, b->core.l_qseq, lambda, delta, delta_s, nv, yourqual, model,Tol,l_check);
 	//cout << "length 0" << " " << b->core.l_qseq << "\n";
 
-#if 0
-	// Read Name
-	std::cout << bam_get_qname(b) << "\t";
-	cout << bam_aux_get(b,"FL") << "\t";
-	for (int cycle=0;cycle<b->core.l_qseq;cycle++)
-	  std::cout<<nuc[(int)refToChar[myread[cycle]]];
-	std::cout<<"\t";
-	cout << "length 2" << b->core.l_qseq << "\n";
-	for (int cycle=0;cycle<b->core.l_qseq;cycle++)
-	  std::cout<<nuc[(int)refToChar[myrefe[cycle]]];
-	std::cout<<"\t";
-	
-	for (int cycle=0;cycle<b->core.l_qseq;cycle++)
-	  std::cout<<(char)(bam_get_qual(b)[cycle]+33);
-	if (isrecal==1)
-	  std::cout<<"\t"<<"AO:f:"<<PostAncProb1<<"\t"<<"AN:f:"<<PostAncProb2<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
-	else
-	  std::cout<<"\t"<<"AN:f:"<<PostAncProb1<<"\t"<<"PD:f:"<<PostPMDProb<<"\n";
-#endif
 	//Bam output is the bam file orientation
 	if (isrecal==1){
 	  bam_aux_update_float(b,"AO",PostAncProb1);
