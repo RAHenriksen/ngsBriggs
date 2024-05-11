@@ -1,4 +1,4 @@
-#include "Likelihood.h"
+#include "likelihood.h"
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
@@ -35,46 +35,48 @@ double MIN0 = 1e-8;
 extern tsk_struct *my_tsk_struct;
 
 // Naive likelihood without nick frequencies
-double loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA){
-    double lambda = x[0];
-    double delta = x[1];
-    double delta_s = x[2];
-    double ll = 0;
-    for(int i=0; i<MAXLENGTH; i++){
-        ll += scaleCT[i]*(freqCT[i]*log(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*log(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*log(pow(1-lambda,i+1)/2*delta_s)+(1-freqGA[i])*log(1-pow(1-lambda,i+1)/2*delta_s));
-    }
-    return -ll;
+double loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA,int &counter){
+  counter++;
+  double lambda = x[0];
+  double delta = x[1];
+  double delta_s = x[2];
+  double ll = 0;
+  
+  for(int i=0; i<MAXLENGTH; i++){
+    ll += scaleCT[i]*(freqCT[i]*log(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*log(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*log(pow(1-lambda,i+1)/2*delta_s)+(1-freqGA[i])*log(1-pow(1-lambda,i+1)/2*delta_s));
+  }
+  return -ll;
 }
 
 double b_loglike(const double *x, const void *ptr){
-    ncalls++;
-    const wrapOne *wo =(const wrapOne *) ptr;
-    return loglike(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA);
+  wrapOne *wo =(wrapOne *) ptr;
+  return loglike(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA,wo->counter[0]);
 }
 
-void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA){
-    double lambda = x[0];
-    double delta = x[1];
-    double delta_s = x[2];
-    y[0] = 0;
-    y[1] = 0;
-    y[2] = 0;
-    for(int i=0; i<MAXLENGTH; i++){
-        y[0] -= scaleCT[i]*(freqCT[i]*(-(i+1)*pow(1-lambda,i)/2*(delta_s-delta))/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*((i+1)*pow(1-lambda,i)/2*(delta_s-delta))/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*(-(i+1))/(1-lambda)+(1-freqGA[i])*((i+1)*pow(1-lambda,i)/2*delta_s)/(1-pow(1-lambda,i+1)/2*delta_s));
-        y[1] -= scaleCT[i]*(freqCT[i]*(1-pow(1-lambda,i+1)/2)/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*(-1+pow(1-lambda,i+1)/2)/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)));
-        y[2] -= scaleCT[i]*(freqCT[i]*(pow(1-lambda,i+1)/2)/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*(-pow(1-lambda,i+1)/2)/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*1/(delta_s)+(1-freqGA[i])*(-pow(1-lambda,i+1)/2)/(1-pow(1-lambda,i+1)/2*delta_s));
-    }
+void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA,int &counter){
+  counter++;
+  double lambda = x[0];
+  double delta = x[1];
+  double delta_s = x[2];
+  y[0] = 0;
+  y[1] = 0;
+  y[2] = 0;
+  for(int i=0; i<MAXLENGTH; i++){
+    y[0] -= scaleCT[i]*(freqCT[i]*(-(i+1)*pow(1-lambda,i)/2*(delta_s-delta))/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*((i+1)*pow(1-lambda,i)/2*(delta_s-delta))/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*(-(i+1))/(1-lambda)+(1-freqGA[i])*((i+1)*pow(1-lambda,i)/2*delta_s)/(1-pow(1-lambda,i+1)/2*delta_s));
+    y[1] -= scaleCT[i]*(freqCT[i]*(1-pow(1-lambda,i+1)/2)/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*(-1+pow(1-lambda,i+1)/2)/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)));
+    y[2] -= scaleCT[i]*(freqCT[i]*(pow(1-lambda,i+1)/2)/(delta+pow(1-lambda,i+1)/2*(delta_s-delta))+(1-freqCT[i])*(-pow(1-lambda,i+1)/2)/(1-delta-pow(1-lambda,i+1)/2*(delta_s-delta)))+scaleGA[i]*(freqGA[i]*1/(delta_s)+(1-freqGA[i])*(-pow(1-lambda,i+1)/2)/(1-pow(1-lambda,i+1)/2*delta_s));
+  }
 }
 
 void b_loglike_grad(const double *x,double *y,const void*ptr){
-    ncalls_grad++;
-    const wrapOne *wo =(const wrapOne *) ptr;
-    loglike_grad(x,y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA);
+  wrapOne *wo =(wrapOne *) ptr;
+  loglike_grad(x,y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA,wo->counter[1]);
 }
 
 
 //Consider contamination rate eps + sequencing error
-double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
+double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps,int &counter){
+  counter++;
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -160,7 +162,8 @@ double loglike_complex3_full_b(const double *x, double * freqCT, double * freqGA
 
 
 // Considering Seq Error + Non-biotin model: symmetric pattern
-double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
+double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps,int &counter){
+  counter++;
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -248,18 +251,18 @@ double loglike_complex3_full_nb(const double *x, double * freqCT, double * freqG
 }
 
 double b_loglike_complex3_full(const double *x, const void *ptr){
-    ncalls++;
-    const wrapOne *wo =(const wrapOne *) ptr;
-    return loglike_complex3_full_b(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
+  
+  wrapOne *wo =(wrapOne *) ptr;
+  return loglike_complex3_full_b(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps,wo->counter[0]);
 }
 
 double nb_loglike_complex3_full(const double *x, const void *ptr){
-    ncalls++;
-    const wrapOne *wo =(const wrapOne *) ptr;
-    return loglike_complex3_full_nb(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
+  wrapOne *wo =( wrapOne *) ptr;
+  return loglike_complex3_full_nb(x, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps,wo->counter[0]);
 }
 
-void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
+void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps,int &counter){
+  counter++;
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -444,7 +447,8 @@ void loglike_complex3_grad_full_b(const double *x,double *y, double * freqCT, do
     }
 }
 
-void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps){
+void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double* LEN, double* freqLEN, double eps,int &counter){
+  counter++;
     double lambda = x[0];
     double delta = x[1];
     double delta_s = x[2];
@@ -635,15 +639,13 @@ void loglike_complex3_grad_full_nb(const double *x,double *y, double * freqCT, d
 
 
 void b_loglike_complex3_grad_full(const double *x,double *y,const void *ptr){
-    ncalls_grad++;
-    const wrapOne *wo =(const wrapOne *) ptr;
-    loglike_complex3_grad_full_b(x, y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
+  wrapOne *wo =( wrapOne *) ptr;
+    loglike_complex3_grad_full_b(x, y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps,wo->counter[1]);
 }
 
 void nb_loglike_complex3_grad_full(const double *x,double *y,const void *ptr){
-    ncalls_grad++;
-    const wrapOne *wo =(const wrapOne *) ptr;
-    loglike_complex3_grad_full_nb(x, y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps);
+  wrapOne *wo =(wrapOne *) ptr;
+  loglike_complex3_grad_full_nb(x, y, wo->freqCT, wo->freqGA, wo->scaleCT, wo->scaleGA, wo->seqError, wo->BinNum, wo->Bin_Frag_len, wo->Bin_Frag_freq, wo->Contam_eps,wo->counter[1]);
 }
 
 void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA, double * seqError, int BinNum, double * LEN, double * freqLEN, double eps){

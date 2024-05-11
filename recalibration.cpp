@@ -8,14 +8,15 @@
 #include "htslib/bgzf.h"
 
 #include "misc.h"
-#include "Likelihood.h"
+#include "likelihood.h"
 #include "ngsBriggs.h"
 #include "read_all_reads.h"
 
 extern tsk_struct *my_tsk_struct;
 
 //The log-likelihood for recalibration the ancient probs
-double tsk_loglike_recalibration(const double *x, double **mat,int from,int to,int len_limit, int len_min, double eps){
+double tsk_loglike_recalibration(const double *x, double **mat,int from,int to,int len_limit, int len_min, double eps,int &counter){
+  counter++;
   //fprintf(stderr,"(%f,%f,%f,%f) seq_ref: %p from: %d to:%d\n\n",x[0],x[1],x[2],x[3],seq_ref,from,to);
     double anc_mu = x[0];
     double anc_si = x[1];
@@ -51,25 +52,24 @@ double tsk_loglike_recalibration(const double *x, double **mat,int from,int to,i
 
 double tsk_all_loglike_recalibration(const double *x, const void *dats){
     //  fprintf(stderr,"[%s]\n",__FUNCTION__);
-    ncalls++;
+   
     tsk_struct *ts = (tsk_struct *) dats;
-    double check = tsk_loglike_recalibration(x, ts->mat,ts->from,ts->to, ts->len_limit, ts->len_min, ts->eps);
+    double check = tsk_loglike_recalibration(x, ts->mat,ts->from,ts->to, ts->len_limit, ts->len_min, ts->eps,ts->counter[0]);
     //  fprintf(stderr,"[%s]: total like: %f\n",__FUNCTION__,check);
     return check;
 }
 
 void *tsk_all_loglike_recalibration_slave(void *dats){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
-    ncalls++;
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
-    ts->llh_result = tsk_loglike_recalibration(ts->x, ts->mat,ts->from,ts->to, ts->len_limit, ts->len_min, ts->eps);
+    ts->llh_result = tsk_loglike_recalibration(ts->x, ts->mat,ts->from,ts->to, ts->len_limit, ts->len_min, ts->eps,ts->counter[0]);
     
     pthread_exit(NULL);
 }
 
 
-void tsk_loglike_recalibration_grad(const double *x, double *y, double **mat,int from, int to,int len_limit, int len_min, double eps){
-  
+void tsk_loglike_recalibration_grad(const double *x, double *y, double **mat,int from, int to,int len_limit, int len_min, double eps,int &counter){
+  counter++;
     double anc_mu = x[0];
     double anc_si = x[1];
     double mod_mu = x[2];
@@ -106,20 +106,18 @@ void tsk_loglike_recalibration_grad(const double *x, double *y, double **mat,int
 }
 
 void tsk_all_loglike_recalibration_grad(const double *x, double *y,const void *dats){
-    ncalls_grad++;
-    //tsk_struct *ts = &my_tsk_struct[0];//assuming single thread
+  //tsk_struct *ts = &my_tsk_struct[0];//assuming single thread
     tsk_struct *ts = (tsk_struct *) dats;//assuming multiple threads
-    tsk_loglike_recalibration_grad(x,y,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps);
+    tsk_loglike_recalibration_grad(x,y,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps,ts->counter[1]);
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
 }
 
 // Check here
 void *tsk_all_loglike_recalibration_grad_slave(void *dats){
     //fprintf(stderr,"[%s]\n",__FUNCTION__);
-    ncalls_grad++;
-    tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
+  tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
     //ts->llh_grad_result;
-    tsk_loglike_recalibration_grad(ts->x,ts->llh_result_grad,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps);
+    tsk_loglike_recalibration_grad(ts->x,ts->llh_result_grad,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps,ts->counter[1]);
     //ts->llh_result = tsk_loglike_recalibration(ts->x, ts->reads,ts->from,ts->to,ts->hdr, ts->seq_ref, ts->len_limit, ts->model, ts->eps, ts->lambda, ts->delta, ts->delta_s, ts->nv,ts->threadid);
     pthread_exit(NULL);
 }
@@ -168,7 +166,6 @@ void tsk_loglike_recalibration_hess(const double *x, double **y, double **mat,in
       y[1][3] += - l_anc*(1-eps)*NormalINC_grad_si(y_max1, y_min1, x_max1, x_min1, anc_mu, anc_si)*l_err*eps*NormalINC_grad_si(y_max2, y_min2, x_max2, x_min2, mod_mu, mod_si)/pow(denom,2);
     
     //    fprintf(stderr,"\nmyread:\n%.*s\nmyReference:\n%.*s\n",b->core.l_qseq,myread,b->core.l_qseq,myrefe);
-    //    fprintf(stderr,"---read[%d]----\n",nproc1);
     }
     y[1][0] = y[0][1];
     y[3][2] = y[2][3];

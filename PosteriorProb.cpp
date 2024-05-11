@@ -21,7 +21,7 @@
 #include "misc.h"
 #include "recalibration.h"
 #include "ngsBriggs.h"
-#include "Likelihood.h"
+#include "likelihood.h"
 #include "PosteriorProb.h"
 
 typedef unsigned char uchar;
@@ -949,7 +949,7 @@ bam_hdr_t* calc_pp_pmd_prob(char *refName,char *ifname, char* ofname, int mapped
     int refId=-1;
     double num = 0.0;
     size_t max_site;
-    nproc1 = 0;
+    int nproc1 = 0;
     
     uchar * indref = NULL;
     while(((ret=sam_read1(in,hdr,b)))>0) {

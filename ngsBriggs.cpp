@@ -15,7 +15,7 @@
 #include "read_all_reads.h"
 #include "misc.h"
 #include "recalibration.h"
-#include "Likelihood.h"
+#include "likelihood.h"
 #include "PosteriorProb.h"
 #include "ngsBriggs_cli.h"
 #include "ngsBriggs.h"
@@ -24,10 +24,7 @@
 
 // definining all global variables used across multiple scripts
 
-int nproc1 = 0;//number of reads processed maybe not used
 double l_check = 15;
-int ncalls =0;
-int ncalls_grad =0;
 tsk_struct *my_tsk_struct = NULL;
 
 int tsk_nthreads = -1;
@@ -36,7 +33,7 @@ int tsk_nthreads = -1;
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
 
-  double** mm5p, **mm3p;// **dmm5p, **dmm3p;
+  double** mm5p, **mm3p;
   double Tol = 1.0E-8; // Tolerance
   double **deamRateCT;
   double **deamRateGA;
@@ -288,14 +285,13 @@ int main(int argc, char **argv){
     double ubd[3] = {1,1,1};
     int nbd[3] = {2,2,2};
     double invec1[3] = {0.2,0.1,0.1};
-    ncalls=0;
-    ncalls_grad = 0;
     wrapOne wo;
     wo.freqCT = freqCT;
     wo.freqGA = freqGA;
     wo.scaleCT = scaleCT;
     wo.scaleGA = scaleGA;
     wo.seqError = seqError;
+    wo.counter[0] = wo.counter[1] = 0;
     double withgrad = findmax_bfgs(3,invec1,(void *)&wo,b_loglike,b_loglike_grad,lbd,ubd,nbd,-1);
     
     double lbd1[4] = {1e-8,1e-8,1e-8,1e-8};
@@ -330,14 +326,12 @@ int main(int argc, char **argv){
     FragArrayBin(number, BinNum, Frag_len, Frag_freq, Bin_Frag_len, Bin_Frag_freq);
     //    invec2 = {lambda,deltad,deltas,nu};
     double invec2[4] = {invec1[0],invec1[1],invec1[2],0.01};
-    ncalls=0;
-    ncalls_grad = 0;
     double withgrad2 = 0;
     wo.BinNum = BinNum;
     wo.Bin_Frag_len = Bin_Frag_len;
     wo.Bin_Frag_freq = Bin_Frag_freq;
     wo.Contam_eps = Contam_eps;
-    
+    wo.counter[0] =wo.counter[1] = 0;
     if (model==0){
       fprintf(stderr,"%s\n","The chosen model is a biotin model.");
       withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,b_loglike_complex3_full,b_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
@@ -360,7 +354,7 @@ int main(int argc, char **argv){
       fprintf(stderr,"%s","The chosen model is non-biotin model, ");
     }
     fprintf(stderr,"the inferred parameters are given as follows:\n");
-    fprintf(stderr,"lambda: %f (%f,%f), delta: %f (%f,%f), delta_s: %f (%f,%f), nu: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", invec2[0], invec2[0]-1.96*stdvec2[0], invec2[0]+1.96*stdvec2[0] , invec2[1], invec2[1]-1.96*stdvec2[1], invec2[1]+1.96*stdvec2[1], invec2[2], invec2[2]-1.96*stdvec2[2], invec2[2]+1.96*stdvec2[2], invec2[3], invec2[3]-1.96*stdvec2[3], invec2[3]+1.96*stdvec2[3], ncalls,ncalls_grad, withgrad2);
+    fprintf(stderr,"lambda: %f (%f,%f), delta: %f (%f,%f), delta_s: %f (%f,%f), nu: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", invec2[0], invec2[0]-1.96*stdvec2[0], invec2[0]+1.96*stdvec2[0] , invec2[1], invec2[1]-1.96*stdvec2[1], invec2[1]+1.96*stdvec2[1], invec2[2], invec2[2]-1.96*stdvec2[2], invec2[2]+1.96*stdvec2[2], invec2[3], invec2[3]-1.96*stdvec2[3], invec2[3]+1.96*stdvec2[3], wo.counter[0],wo.counter[1], withgrad2);
     
     // Output count table
     char *otabname = mypars->otab;
@@ -430,7 +424,7 @@ int main(int argc, char **argv){
 	  ksprintf(kstr,"%s","The chosen model is non-biotin model, ");
 	}
         ksprintf(kstr,"the inferred parameters are given as follows:\n");
-        ksprintf(kstr,"lambda: %f (%f,%f), delta: %f (%f,%f), delta_s: %f (%f,%f), nu: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", invec2[0], invec2[0]-1.96*stdvec2[0], invec2[0]+1.96*stdvec2[0] , invec2[1], invec2[1]-1.96*stdvec2[1], invec2[1]+1.96*stdvec2[1], invec2[2], invec2[2]-1.96*stdvec2[2], invec2[2]+1.96*stdvec2[2], invec2[3], invec2[3]-1.96*stdvec2[3], invec2[3]+1.96*stdvec2[3], ncalls,ncalls_grad, withgrad2);
+        ksprintf(kstr,"lambda: %f (%f,%f), delta: %f (%f,%f), delta_s: %f (%f,%f), nu: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", invec2[0], invec2[0]-1.96*stdvec2[0], invec2[0]+1.96*stdvec2[0] , invec2[1], invec2[1]-1.96*stdvec2[1], invec2[1]+1.96*stdvec2[1], invec2[2], invec2[2]-1.96*stdvec2[2], invec2[2]+1.96*stdvec2[2], invec2[3], invec2[3]-1.96*stdvec2[3], invec2[3]+1.96*stdvec2[3], wo.counter[0],wo.counter[1], withgrad2);
 	//my_bgzf_write(fp,kstr->s,kstr->l);
         assert(bgzf_write(fp,kstr->s,kstr->l)==kstr->l);
         kstr->l = 0;
@@ -484,9 +478,7 @@ int main(int argc, char **argv){
       double **mat = read_all_reads(in,hdr,seq_ref,len_limit,invec2[0],invec2[1],invec2[2],invec2[3],Tol,ndim,model);
 	
         //tsk stop
-        ncalls = 0;
-        ncalls_grad = 0;
-        //double lbd2[4] = {30,1e-8,30,1e-8};
+      //double lbd2[4] = {30,1e-8,30,1e-8};
         double lbd2[4] = {30,15,30,1};
         double ubd2[4] = {(double)len_limit-1,100,(double)len_limit-1,100};
         int nbd2[4] = {2,2,2,2};
@@ -508,6 +500,7 @@ int main(int argc, char **argv){
             my_tsk_struct[ii].threadid = ii;
             my_tsk_struct[ii].from = ii==0?0:my_tsk_struct[ii-1].to;
             my_tsk_struct[ii].to =   my_tsk_struct[ii].from+mynsites;
+	    my_tsk_struct[ii].counter[0] =  my_tsk_struct[ii].counter[1] = 0;
         }
         my_tsk_struct[tsk_nthreads-1].to = ndim;
         double withgrad3;
@@ -526,7 +519,7 @@ int main(int argc, char **argv){
             stdpar[i] = sqrt(covpar[i][i]);
             //cout<<z4[i][i]<<" std "<<stdvec4[i]<<"\n";
         }
-        fprintf(stderr,"mu_anc: %f (%f,%f), sigma_anc: %f (%f,%f), mu_mod: %f (%f,%f), sigma_mod: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", distparam[0], distparam[0]-1.96*stdpar[0], distparam[0]+1.96*stdpar[0], distparam[1], distparam[1]-1.96*stdpar[1], distparam[1]+1.96*stdpar[1], distparam[2], distparam[2]-1.96*stdpar[2], distparam[2]+1.96*stdpar[2], distparam[3], distparam[3]-1.96*stdpar[3], distparam[3]+1.96*stdpar[3], ncalls,ncalls_grad, withgrad3);
+        fprintf(stderr,"mu_anc: %f (%f,%f), sigma_anc: %f (%f,%f), mu_mod: %f (%f,%f), sigma_mod: %f (%f,%f), nfunctioncalls: %d ngradientcalls: %d, llh: %f.\n", distparam[0], distparam[0]-1.96*stdpar[0], distparam[0]+1.96*stdpar[0], distparam[1], distparam[1]-1.96*stdpar[1], distparam[1]+1.96*stdpar[1], distparam[2], distparam[2]-1.96*stdpar[2], distparam[2]+1.96*stdpar[2], distparam[3], distparam[3]-1.96*stdpar[3], distparam[3]+1.96*stdpar[3], my_tsk_struct[0].counter[0], my_tsk_struct[0].counter[1], withgrad3);
         sam_hdr_destroy(hdr);
     }
 

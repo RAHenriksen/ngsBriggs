@@ -3,7 +3,7 @@
 #include <cassert>
 #include <htslib/bgzf.h>
 
-#include "Likelihood.h"
+#include "likelihood.h"
 #include "read_all_reads.h"
 #include "profile.h"
 #include "ngsBriggs.h"

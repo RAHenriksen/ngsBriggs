@@ -494,8 +494,6 @@ void parse_sequencingdata1(char *refName,char *fname, int mapped_only,int se_onl
         if(mapq!=-1 && b->core.qual<mapq)
             continue;
 
-	nproc1++;
-	        
         //then we simply write it to the output
         memset(reconstructedRef,0,512);
         memset(myread,'N',512);

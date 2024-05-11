@@ -11,7 +11,7 @@ extern double PhredErrorAThird[255];
 extern int tsk_nthreads;
 
 
-typedef struct{
+typedef struct{//this struct is used in recalibration
   int len_limit;
   int len_min;
   double eps;
@@ -23,6 +23,7 @@ typedef struct{
   double **llh_result_hess; //Add the hessian matrix feature
   int threadid;
   double **mat;
+  int counter[2];//<- ncall,ncall_gradient
 }tsk_struct;
 
 
@@ -36,11 +37,12 @@ typedef struct{
   double *Bin_Frag_len;
   double *Bin_Frag_freq;
   double Contam_eps;
+  int counter[2];//<- ncall,ncall_gradient
 }wrapOne;
 
 //below are naive versions with out the nick. 
-void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA);
-double loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA);
+void loglike_grad(const double *x,double *y, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA,int &counter);
+double loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA,int &counter);
 double b_loglike(const double *x, const void *);
 
 
