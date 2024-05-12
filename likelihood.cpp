@@ -15,7 +15,6 @@
 #include "likelihood.h"
 #include "misc.h"
 #include "recalibration.h"
-#include "ngsBriggs.h"
 
 double PhredError[255];
 double PhredErrorAThird[255];

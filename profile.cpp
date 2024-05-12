@@ -760,3 +760,72 @@ std::map<int, mydata2> load_lcastat(const char* fname){
 
   return retmap;
 }
+
+
+
+void wrapperwithref(const bam1_t   * b,const bam_hdr_t  *hdr, char myread[512], char myref[512],faidx_t *seq_ref){
+    const char *alphabetHTSLIB = "NACNGNNNTNNNNNNN";
+    char reconstructedTemp[512];
+    memset(reconstructedTemp,0,512);
+    
+    //skip unmapped
+    if( ((b)->core.flag&BAM_FUNMAP) != 0 ){
+        fprintf(stderr,"The function reconstructRefWithPosOnReadHTS() cannot be called for unmapped reads\n");
+        exit(1);
+    }
+    
+    int32_t   n_cigar_op = b->core.n_cigar;
+    uint32_t *cigar      = bam_get_cigar(b);
+    
+    //std::cout<<"Hello "<<n_cigar_op<<"\n";
+    int at =0;
+    for(int32_t i = 0; i < n_cigar_op; i++){
+        char opchr = bam_cigar_opchr(cigar[i]);
+        int32_t oplen = bam_cigar_oplen(cigar[i]);
+        //std::cout<<opchr<<" "<< oplen <<"\n";
+        memset(reconstructedTemp+at,opchr,oplen);
+        at += oplen;
+    }
+    //std::cout<<"\n";
+    int initialPositionControl=b->core.pos;
+    
+    for (unsigned int k=0;k<(int)b->core.l_qseq;k++){
+        myread[k] = toupper(alphabetHTSLIB[ bam_seqi(bam_get_seq(b),k) ]);
+    }
+    
+    //combine the CIGAR and REF to reconstruct both Read and REF
+    unsigned int i = 0;
+    unsigned int j = 0;
+    int start = initialPositionControl;
+    int end = start-1;
+    while (i<strlen(reconstructedTemp)){
+        while (reconstructedTemp[i] == 'M' ){
+            i++;
+            end++;
+        }
+        int chr_len = faidx_seq_len(seq_ref,hdr->target_name[b->core.tid]);
+        char* data = faidx_fetch_seq(seq_ref, hdr->target_name[b->core.tid], start, end, &chr_len);
+        for (unsigned int k=0;k<end-start+1;k++){
+            myref[j] = toupper(data[k]);
+            j++;
+        }
+        free(data);
+        //        i++;
+        start = end+1;
+        end = start-1;
+        while (reconstructedTemp[i] == 'D' ){
+            i++;
+            end++;
+        }
+        //        i++;
+        start = end+1;
+        end = start-1;
+        while(reconstructedTemp[i] == 'S' || reconstructedTemp[i] == 'I'){
+            i=i+1;
+            //            Ns have already been added.
+            //            myref[j] = 'N';
+            myread[j] = 'N';
+            j++;
+        }
+    }
+}

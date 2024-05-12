@@ -18,7 +18,6 @@
 #include "likelihood.h"
 #include "pp.h"
 #include "ngsBriggs_cli.h"
-#include "ngsBriggs.h"
 #include "bdamagereader.h"
 
 

@@ -3,6 +3,7 @@
 #include <map>
 
 #include <htslib/sam.h>
+#include <htslib/faidx.h>
 #include <htslib/kstring.h>
 
 
@@ -75,3 +76,6 @@ void wrapper(const bam1_t *b,const char * reconstructedReference,const std::vect
 std::map<int, mydataD> load_bdamage_full(const char* fname,int &printlength);
 std::map<int, mydata2> load_lcastat(const char* fname);
 void  reconstructRefWithPosHTS(const bam1_t   * b,std::pair< kstring_t *, std::vector<int> > &pp,char *reconstructedTemp);
+extern char refToChar[256];
+extern char com[5];
+void wrapperwithref(const bam1_t   * b,const bam_hdr_t  *hdr, char myread[512], char myref[512],faidx_t *seq_ref);

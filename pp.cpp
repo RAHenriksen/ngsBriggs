@@ -10,7 +10,6 @@
 #include <htslib/sam.h>
 #include <htslib/kstring.h>
 #include <htslib/faidx.h>
-#include "ngsBriggs.h"
 #include "likelihood.h"
 #include "pp.h"
 #include "misc.h"

@@ -11,8 +11,9 @@
 
 #include "misc.h"
 #include "likelihood.h"
-#include "ngsBriggs.h"
 #include "read_all_reads.h"
+
+#include "recalibration.h"
 
 extern tsk_struct *my_tsk_struct;
 
