@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <Eigen/Core>
+#include <Eigen/Eigenvalues> //sort and merge
 
 #include "profile.h"
 #include "bfgs.h"
@@ -179,4 +181,108 @@ void *tsk_all_loglike_recalibration_hess_slave(void *dats){
     tsk_struct *ts = (tsk_struct *) &(my_tsk_struct[(size_t) dats]);
     tsk_loglike_recalibration_hess(ts->x,ts->llh_result_hess,ts->mat,ts->from,ts->to,ts->len_limit, ts->len_min,ts->eps);
     pthread_exit(NULL);
+}
+
+
+
+double like_master(const double *xs,const void *){
+  fprintf(stderr,"[%s] like_master: (%f,%f,%f,%f) \n",__FUNCTION__,xs[0],xs[1],xs[2],xs[3]);
+  //  fprintf(stderr,"[%s] like_master\n",__FUNCTION__);
+    int nThreads = tsk_nthreads;
+    for(int i=0;i<nThreads;i++)
+        for(int ii=0;ii<4;ii++)
+            my_tsk_struct[i].x[ii] = xs[ii];
+    //fprintf(stderr,"mu_anc\tsig_anc\tmu_mod\tsig_mod\n");
+    //fprintf(stderr,"%f\t%f\t%f\t%f\n",xs[0],xs[1],xs[2],xs[3]);
+    pthread_t thd[nThreads];
+    for(size_t i=0;i<nThreads;i++){
+        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_slave,(void*) i);
+        if(rc)
+            fprintf(stderr,"Error creating thread\n");
+        
+    }
+    for(int i=0;i<nThreads;i++)
+        pthread_join(thd[i], NULL);
+    
+    double res=0;
+    for(int i=0;i<nThreads;i++){
+      fprintf(stderr,"[%s] lik[%d,%d]=%f\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to,my_tsk_struct[i].llh_result);
+        res += my_tsk_struct[i].llh_result;
+    }
+    fprintf(stderr,"[%s] total lik[%d,%d]: %f\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to,res);
+    // exit(0);
+    return res;
+}
+
+void like_grad_master(const double *xs,double *y,const void *){
+  //  fprintf(stderr,"[%s] like_master: (%f,%f,%f,%f) \n",__FUNCTION__,xs[0],xs[1],xs[2],xs[3]);
+    //  fprintf(stderr,"like_master\n");
+    int nThreads = tsk_nthreads;
+    for(int i=0;i<nThreads;i++)
+        for(int ii=0;ii<4;ii++)
+            my_tsk_struct[i].x[ii] = xs[ii];
+    pthread_t thd[nThreads];
+    for(size_t i=0;i<nThreads;i++){
+        //int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
+        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_grad_slave,(void*) i);
+        if(rc)
+            fprintf(stderr,"Error creating thread\n");
+        
+    }
+    for(int i=0;i<nThreads;i++)
+        pthread_join(thd[i], NULL);
+    
+    for(int j=0;j<4;j++){
+        y[j] = 0;
+    }
+    for(int i=0;i<nThreads;i++){
+      //    fprintf(stderr,"[%s] lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to);
+        for (int j=0;j<4;j++){
+            y[j] += my_tsk_struct[i].llh_result_grad[j];
+        }
+    }
+    //  fprintf(stderr,"[%s] total lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
+    //cout<<y[0]<<"\t"<<y[1]<<"\t"<<y[2]<<"\t"<<y[3]<<"\n";
+}
+
+void like_hess_master(const double *xs,double **y){
+    Eigen::Matrix4d A, B;
+    //  fprintf(stderr,"like_master\n");???
+    int nThreads = tsk_nthreads;
+    for(int i=0;i<nThreads;i++)
+        for(int ii=0;ii<4;ii++)
+            my_tsk_struct[i].x[ii] = xs[ii];
+    pthread_t thd[nThreads];
+    for(size_t i=0;i<nThreads;i++){
+        //int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
+        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_hess_slave,(void*) i);
+        if(rc)
+            fprintf(stderr,"Error creating thread\n");
+        
+    }
+    for(int i=0;i<nThreads;i++)
+        pthread_join(thd[i], NULL);
+    
+    for(int j=0;j<4;j++){
+        for (int k=0;k<4;k++){
+            A(j,k) = 0;
+        }
+    }
+    for(int i=0;i<nThreads;i++){
+      //   fprintf(stderr,"lik_hess[%d,%d]\n",my_tsk_struct[i].from,my_tsk_struct[i].to);
+        for (int j=0;j<4;j++){
+            for (int k=0;k<4;k++){
+                A(j,k) += my_tsk_struct[i].llh_result_hess[j][k];
+            }
+            //y[j] += my_tsk_struct[i].llh_result_grad[j];
+        }
+    }
+    //cout<<A<<"\n";
+    //   fprintf(stderr,"total lik_hess[%d,%d]\n",my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
+    B = -A.inverse();
+    for (int i=0;i<4;i++){
+        for (int j=0;j<4;j++){
+            y[i][j] = B(i,j);
+        }
+    }
 }

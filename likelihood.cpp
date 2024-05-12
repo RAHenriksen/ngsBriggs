@@ -3,20 +3,12 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
-#include <htslib/hts.h>
-#include <htslib/sam.h>
-#include <htslib/kstring.h>
-#include <htslib/faidx.h>
 #include <zlib.h>
 #include <cmath>
-#include <iomanip>
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues> //sort and merge
-
-
 #include <ctime>
-#include <getopt.h>
-#include <iostream>
+
 #include "profile.h"
 #include "bfgs.h"
 #include "htslib/bgzf.h"
@@ -24,7 +16,6 @@
 #include "misc.h"
 #include "recalibration.h"
 #include "ngsBriggs.h"
-//#include "PosteriorProb.h"
 
 double PhredError[255];
 double PhredErrorAThird[255];
@@ -990,21 +981,10 @@ void loglike_complex3_hessian_full_b(const double *x, double ** z, double * freq
                 A(3,3) += -count[j]/pow(freq[j],2)*pow(freq_nv[j],2)+count[j]/freq[j]*freq_nv2[j];
             }
         }
-        //        A(0,0) += scaleCT[n]*(-freqCT[n]/pow(freqCT3,2)*pow(freqCT3_lambda,2)+freqCT[n]/freqCT3*freqCT3_lambda2-(1-freqCT[n])/pow(freqCC3,2)*pow(freqCT3_lambda,2)-(1-freqCT[n])/freqCC3*freqCT3_lambda2)+scaleCT[2*ncycle-1-n]*(-freqCT[2*ncycle-1-n]/pow(freqCT4,2)*pow(freqCT4_lambda,2)+freqCT[2*ncycle-1-n]/freqCT4*freqCT4_lambda2-(1-freqCT[2*ncycle-1-n])/pow(freqCC4,2)*pow(freqCT4_lambda,2)-(1-freqCT[2*ncycle-1-n])/freqCC4*freqCT4_lambda2)+scaleGA[n]*(-freqGA[n]/pow(freqGA3,2)*pow(freqGA3_lambda,2)+freqGA[n]/freqGA3*freqGA3_lambda2-(1-freqGA[n])/pow(freqGG3,2)*pow(freqGA3_lambda,2)-(1-freqGA[n])/freqGG3*freqGA3_lambda2)+scaleGA[2*ncycle-1-n]*(-freqGA[2*ncycle-1-n]/pow(freqGA4,2)*pow(freqGA4_lambda,2)+freqGA[2*ncycle-1-n]/freqGA4*freqGA4_lambda2-(1-freqGA[2*ncycle-1-n])/pow(freqGG4,2)*pow(freqGA4_lambda,2)-(1-freqGA[2*ncycle-1-n])/freqGG4*freqGA4_lambda2);
-        //        A(0,1) += scaleCT[n]*(freqCT[n]/freqCT3*pf3_l1_lambda-freqCT[n]/pow(freqCT3,2)*freqCT3_lambda*pf3_l1-(1-freqCT[n])/freqCC3*pf3_l1_lambda-(1-freqCT[n])/pow(freqCC3,2)*freqCT3_lambda*pf3_l1)+scaleCT[2*ncycle-1-n]*(freqCT[2*ncycle-1-n]/freqCT4*pf3_r1_lambda-freqCT[2*ncycle-1-n]/pow(freqCT4,2)*freqCT4_lambda*pf3_r1-(1-freqCT[2*ncycle-1-n])/freqCC4*pf3_r1_lambda-(1-freqCT[2*ncycle-1-n])/pow(freqCC4,2)*freqCT4_lambda*pf3_r1)+scaleGA[n]*(freqGA[n]/freqGA3*pf1_r1_lambda-freqGA[n]/pow(freqGA3,2)*freqGA3_lambda*pf1_r1-(1-freqGA[n])/freqGG3*pf1_r1_lambda-(1-freqGA[n])/pow(freqGG3,2)*freqGA3_lambda*pf1_r1)+scaleGA[2*ncycle-1-n]*(freqGA[2*ncycle-1-n]/freqGA4*pf1_l1_lambda-freqGA[2*ncycle-1-n]/pow(freqGA4,2)*freqGA4_lambda*pf1_l1-(1-freqGA[2*ncycle-1-n])/freqGG4*pf1_l1_lambda-(1-freqGA[2*ncycle-1-n])/pow(freqGG4,2)*freqGA4_lambda*pf1_l1);
-        //        A(0,2) += scaleCT[n]*(freqCT[n]/freqCT3*pf4_l1_lambda-freqCT[n]/pow(freqCT3,2)*freqCT3_lambda*pf4_l1-(1-freqCT[n])/freqCC3*pf4_l1_lambda-(1-freqCT[n])/pow(freqCC3,2)*freqCT3_lambda*pf4_l1)+scaleGA[n]*(freqGA[n]/freqGA3*pf2_r1_lambda-freqGA[n]/pow(freqGA3,2)*freqGA3_lambda*pf2_r1-(1-freqGA[n])/freqGG3*pf2_r1_lambda-(1-freqGA[n])/pow(freqGG3,2)*freqGA3_lambda*pf2_r1);
-        //        A(0,3) +=scaleCT[n]*(freqCT[n]/freqCT3*freqCT3_lambda_nv-freqCT[n]/pow(freqCT3,2)*freqCT3_lambda*freqCT3_nv-(1-freqCT[n])/freqCC3*freqCT3_lambda_nv-(1-freqCT[n])/pow(freqCC3,2)*freqCT3_lambda*freqCT3_nv)+scaleCT[2*ncycle-1-n]*(freqCT[2*ncycle-1-n]/freqCT4*freqCT4_lambda_nv-freqCT[2*ncycle-1-n]/pow(freqCT4,2)*freqCT4_lambda*freqCT4_nv-(1-freqCT[2*ncycle-1-n])/freqCC4*freqCT4_lambda_nv-(1-freqCT[2*ncycle-1-n])/pow(freqCC4,2)*freqCT4_lambda*freqCT4_nv)+scaleGA[n]*(freqGA[n]/freqGA3*freqGA3_lambda_nv-freqGA[n]/pow(freqGA3,2)*freqGA3_lambda*freqGA3_nv-(1-freqGA[n])/freqGG3*freqGA3_lambda_nv-(1-freqGA[n])/pow(freqGG3,2)*freqGA3_lambda*freqGA3_nv)+scaleGA[2*ncycle-1-n]*(freqGA[2*ncycle-1-n]/freqGA4*freqGA4_lambda_nv-freqGA[2*ncycle-1-n]/pow(freqGA4,2)*freqGA4_lambda*freqGA4_nv-(1-freqGA[2*ncycle-1-n])/freqGG4*freqGA4_lambda_nv-(1-freqGA[2*ncycle-1-n])/pow(freqGG4,2)*freqGA4_lambda*freqGA4_nv);
-        //        A(1,1) += scaleCT[n]*(-freqCT[n]/pow(freqCT3,2)*pow(pf3_l1,2)-(1-freqCT[n])/pow(freqCC3,2)*pow(pf3_l1,2))+scaleCT[2*ncycle-1-n]*(-freqCT[2*ncycle-1-n]/pow(freqCT4,2)*pow(pf3_r1,2)-(1-freqCT[2*ncycle-1-n])/pow(freqCC4,2)*pow(pf3_r1,2))+scaleGA[n]*(-freqGA[n]/pow(freqGA3,2)*pow(pf1_r1,2)-(1-freqGA[n])/pow(freqGG3,2)*pow(pf1_r1,2))+scaleGA[2*ncycle-1-n]*(-freqGA[2*ncycle-1-n]/pow(freqGA4,2)*pow(pf1_l1,2)-(1-freqGA[2*ncycle-1-n])/pow(freqGG4,2)*pow(pf1_l1,2));
-        //        A(1,2) += scaleCT[n]*(-freqCT[n]/pow(freqCT3,2)*pf3_l1*pf4_l1-(1-freqCT[n])/pow(freqCC3,2)*pf3_l1*pf4_l1)+scaleGA[n]*(-freqGA[n]/pow(freqGA3,2)*pf1_r1*pf2_r1-(1-freqGA[n])/pow(freqGG3,2)*pf1_r1*pf2_r1);
-        //        A(1,3) += scaleCT[n]*(freqCT[n]/freqCT3*pf3_l1_nv-freqCT[n]/pow(freqCT3,2)*pf3_l1*freqCT3_nv-(1-freqCT[n])/freqCC3*pf3_l1_nv-(1-freqCT[n])/pow(freqCC3,2)*pf3_l1*freqCT3_nv)+scaleCT[2*ncycle-1-n]*(freqCT[2*ncycle-1-n]/freqCT4*pf3_r1_nv-freqCT[2*ncycle-1-n]/pow(freqCT4,2)*pf3_r1*freqCT4_nv-(1-freqCT[2*ncycle-1-n])/freqCC4*pf3_r1_nv-(1-freqCT[2*ncycle-1-n])/pow(freqCC4,2)*pf3_r1*freqCT4_nv)+scaleGA[n]*(freqGA[n]/freqGA3*pf1_r1_nv-freqGA[n]/pow(freqGA3,2)*pf1_r1*freqGA3_nv-(1-freqGA[n])/freqGG3*pf1_r1_nv-(1-freqGA[n])/pow(freqGG3,2)*pf1_r1*freqGA3_nv)+scaleGA[2*ncycle-1-n]*(freqGA[2*ncycle-1-n]/freqGA4*pf1_l1_nv-freqGA[2*ncycle-1-n]/pow(freqGA4,2)*pf1_l1*freqGA4_nv-(1-freqGA[2*ncycle-1-n])/freqGG4*pf1_l1_nv-(1-freqGA[2*ncycle-1-n])/pow(freqGG4,2)*pf1_l1*freqGA4_nv);
-        //        A(2,2) += scaleCT[n]*(-freqCT[n]/pow(freqCT3,2)*pow(pf4_l1,2)-(1-freqCT[n])/pow(freqCC3,2)*pow(pf4_l1,2))+scaleGA[n]*(-freqGA[n]/pow(freqGA3,2)*pow(pf2_r1,2)-(1-freqGA[n])/pow(freqGG3,2)*pow(pf2_r1,2));
-        //        A(2,3) += scaleCT[n]*(freqCT[n]/freqCT3*pf4_l1_nv-freqCT[n]/pow(freqCT3,2)*pf4_l1*freqCT3_nv-(1-freqCT[n])/freqCC3*pf4_l1_nv-(1-freqCT[n])/pow(freqCC3,2)*pf4_l1*freqCT3_nv)+scaleGA[n]*(freqGA[n]/freqGA3*pf2_r1_nv-freqGA[n]/pow(freqGA3,2)*pf2_r1*freqGA3_nv-(1-freqGA[n])/(freqGG3)*pf2_r1_nv-(1-freqGA[n])/pow(freqGG3,2)*pf2_r1*freqGA3_nv);
-        //        A(3,3) += scaleCT[n]*(freqCT[n]/freqCT3*freqCT3_nv2-freqCT[n]/pow(freqCT3,2)*pow(freqCT3_nv,2)-(1-freqCT[n])/freqCC3*freqCT3_nv2-(1-freqCT[n])/pow(freqCC3,2)*pow(freqCT3_nv,2))+scaleCT[2*ncycle-1-n]*(freqCT[2*ncycle-1-n]/freqCT4*freqCT4_nv2-freqCT[2*ncycle-1-n]/pow(freqCT4,2)*pow(freqCT4_nv,2)-(1-freqCT[2*ncycle-1-n])/freqCC4*freqCT4_nv2-(1-freqCT[2*ncycle-1-n])/pow(freqCC4,2)*pow(freqCT4_nv,2))+scaleGA[n]*(freqGA[n]/freqGA3*freqGA3_nv2-freqGA[n]/pow(freqGA3,2)*pow(freqGA3_nv,2)-(1-freqGA[n])/freqGG3*freqGA3_nv2-(1-freqGA[n])/pow(freqGG3,2)*pow(freqGA3_nv,2))+scaleGA[2*ncycle-1-n]*(freqGA[2*ncycle-1-n]/freqGA4*freqGA4_nv2-freqGA[2*ncycle-1-n]/pow(freqGA4,2)*pow(freqGA4_nv,2)-(1-freqGA[2*ncycle-1-n])/freqGG4*freqGA4_nv2-(1-freqGA[2*ncycle-1-n])/pow(freqGG4,2)*pow(freqGA4_nv,2));
+     
     }
     A(1,0) = A(0,1); A(2,0) = A(0,2); A(3,0) = A(0,3); A(2,1) = A(1,2); A(3,1) = A(1,3); A(3,2) = A(2,3);
-    //cout<<A<<"\n\n";
     B = -A.inverse();
-    //cout<<B<<"\n";
     for (int i=0;i<4;i++){
         for (int j=0;j<4;j++){
             z[i][j] = B(i,j);
@@ -1361,111 +1341,6 @@ void loglike_complex3_hessian_full_nb(const double *x, double ** z, double * fre
     for (int i=0;i<4;i++){
         for (int j=0;j<4;j++){
             z[i][j] = B(i,j);
-        }
-    }
-}
-
-
-double like_master(const double *xs,const void *){
-  fprintf(stderr,"[%s] like_master: (%f,%f,%f,%f) \n",__FUNCTION__,xs[0],xs[1],xs[2],xs[3]);
-  //  fprintf(stderr,"[%s] like_master\n",__FUNCTION__);
-    int nThreads = tsk_nthreads;
-    for(int i=0;i<nThreads;i++)
-        for(int ii=0;ii<4;ii++)
-            my_tsk_struct[i].x[ii] = xs[ii];
-    //fprintf(stderr,"mu_anc\tsig_anc\tmu_mod\tsig_mod\n");
-    //fprintf(stderr,"%f\t%f\t%f\t%f\n",xs[0],xs[1],xs[2],xs[3]);
-    pthread_t thd[nThreads];
-    for(size_t i=0;i<nThreads;i++){
-        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_slave,(void*) i);
-        if(rc)
-            fprintf(stderr,"Error creating thread\n");
-        
-    }
-    for(int i=0;i<nThreads;i++)
-        pthread_join(thd[i], NULL);
-    
-    double res=0;
-    for(int i=0;i<nThreads;i++){
-      fprintf(stderr,"[%s] lik[%d,%d]=%f\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to,my_tsk_struct[i].llh_result);
-        res += my_tsk_struct[i].llh_result;
-    }
-    fprintf(stderr,"[%s] total lik[%d,%d]: %f\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to,res);
-    // exit(0);
-    return res;
-}
-
-void like_grad_master(const double *xs,double *y,const void *){
-  //  fprintf(stderr,"[%s] like_master: (%f,%f,%f,%f) \n",__FUNCTION__,xs[0],xs[1],xs[2],xs[3]);
-    //  fprintf(stderr,"like_master\n");
-    int nThreads = tsk_nthreads;
-    for(int i=0;i<nThreads;i++)
-        for(int ii=0;ii<4;ii++)
-            my_tsk_struct[i].x[ii] = xs[ii];
-    pthread_t thd[nThreads];
-    for(size_t i=0;i<nThreads;i++){
-        //int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
-        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_grad_slave,(void*) i);
-        if(rc)
-            fprintf(stderr,"Error creating thread\n");
-        
-    }
-    for(int i=0;i<nThreads;i++)
-        pthread_join(thd[i], NULL);
-    
-    for(int j=0;j<4;j++){
-        y[j] = 0;
-    }
-    for(int i=0;i<nThreads;i++){
-      //    fprintf(stderr,"[%s] lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[i].from,my_tsk_struct[i].to);
-        for (int j=0;j<4;j++){
-            y[j] += my_tsk_struct[i].llh_result_grad[j];
-        }
-    }
-    //  fprintf(stderr,"[%s] total lik_grad[%d,%d]\n",__FUNCTION__,my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
-    //cout<<y[0]<<"\t"<<y[1]<<"\t"<<y[2]<<"\t"<<y[3]<<"\n";
-}
-// Check until here.
-
-// Check here???
-void like_hess_master(const double *xs,double **y){
-    Eigen::Matrix4d A, B;
-    //  fprintf(stderr,"like_master\n");???
-    int nThreads = tsk_nthreads;
-    for(int i=0;i<nThreads;i++)
-        for(int ii=0;ii<4;ii++)
-            my_tsk_struct[i].x[ii] = xs[ii];
-    pthread_t thd[nThreads];
-    for(size_t i=0;i<nThreads;i++){
-        //int rc = pthread_create(&thd[i],NULL,tsk_All_loglike_recalibration_slave,(void*) i);
-        int rc = pthread_create(&thd[i],NULL,tsk_all_loglike_recalibration_hess_slave,(void*) i);
-        if(rc)
-            fprintf(stderr,"Error creating thread\n");
-        
-    }
-    for(int i=0;i<nThreads;i++)
-        pthread_join(thd[i], NULL);
-    
-    for(int j=0;j<4;j++){
-        for (int k=0;k<4;k++){
-            A(j,k) = 0;
-        }
-    }
-    for(int i=0;i<nThreads;i++){
-      //   fprintf(stderr,"lik_hess[%d,%d]\n",my_tsk_struct[i].from,my_tsk_struct[i].to);
-        for (int j=0;j<4;j++){
-            for (int k=0;k<4;k++){
-                A(j,k) += my_tsk_struct[i].llh_result_hess[j][k];
-            }
-            //y[j] += my_tsk_struct[i].llh_result_grad[j];
-        }
-    }
-    //cout<<A<<"\n";
-    //   fprintf(stderr,"total lik_hess[%d,%d]\n",my_tsk_struct[0].from,my_tsk_struct[nThreads-1].to);
-    B = -A.inverse();
-    for (int i=0;i<4;i++){
-        for (int j=0;j<4;j++){
-            y[i][j] = B(i,j);
         }
     }
 }

@@ -4,12 +4,7 @@
 #include <cassert>
 #include <cmath>
 #include <ctime>
-#include <iostream>
 #include <zlib.h>
-#include <array>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
 
 #include <htslib/hts.h>
 #include <htslib/sam.h>
@@ -19,9 +14,8 @@
 #include <htslib/bgzf.h>
 
 #include "profile.h"
-#include "bfgs.h"
-#include "misc.h"
 #include "ngsBriggs.h"
+#include "misc.h"
 
 #define PI M_PI
 
@@ -198,8 +192,8 @@ void parse_tabledata(const char* filename,double** Table,int STRLENS){
     gzclose(gz);
 }
 
-int tabreader(char *tabname,int STRLENS,double** mm5p, double **mm3p){
-    int numpos = MAXLENGTH*2+1;
+int tabreader(char *tabname,int STRLENS,double** mm5p, double **mm3p,int ncycle){
+    int numpos = ncycle*2+1;
     int numcolumn = 16 + 4;
     double ** Table = (double **) malloc(numpos*(sizeof(double *))); /*I allocate memory here.  If this function is called many times it may be better to move the memmory allocation out of this function*/
     for (int i=0; i<numpos; i++){
@@ -212,16 +206,16 @@ int tabreader(char *tabname,int STRLENS,double** mm5p, double **mm3p){
     if(tabname){
         //parse_tabledata(tabname, Table);
       parse_tabledata(tabname,Table,STRLENS);
-        fprintf(stderr,"The tab file %s has been inputted successfully \t %d\n",tabname,MAXLENGTH);
+        fprintf(stderr,"The tab file %s has been inputted successfully \t %d\n",tabname,ncycle);
     }
     
-    for (int i=0; i<MAXLENGTH; i++){
+    for (int i=0; i<ncycle; i++){
         for (int j=0; j<16;j++){
             mm5p[i][j] = Table[i+1][j+2];
-            mm3p[i][j] = Table[i+MAXLENGTH+1][j+2];
+            mm3p[i][j] = Table[i+ncycle+1][j+2];
         }
     }
-    for (int i = 0; i < 2*MAXLENGTH+1; i++){
+    for (int i = 0; i < 2*ncycle+1; i++){
         free(Table[i]);
     }
     free(Table);
@@ -229,7 +223,7 @@ int tabreader(char *tabname,int STRLENS,double** mm5p, double **mm3p){
 }
 
 
-int bamreader(char *fname,faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number,double **mm5p,double **mm3p){
+int bamreader(char *fname,faidx_t * seq_ref, int len_limit, int &len_min,int *Frag_len, double *Frag_freq,int &number,double **mm5p,double **mm3p,int ncycle){
     char *refName = NULL;
     clock_t t=clock();
     time_t t2=time(NULL);
@@ -245,7 +239,7 @@ int bamreader(char *fname,faidx_t * seq_ref, int len_limit, int &len_min,int *Fr
         }else{
             fprintf(stderr, "Reference is not provided, and it will be reconstructed according to the MD tags!\n");
         }
-        parse_sequencingdata1(refName,fname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
+        parse_sequencingdata1(refName,fname,mapped_only,se_only,mapq,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p, ncycle);
     }
     
     fprintf(stderr,
@@ -324,21 +318,21 @@ void wrapperwithref(const bam1_t   * b,const bam_hdr_t  *hdr, char myread[512], 
 }
 
 
-void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int len_limit,double **deamRateCT,double **deamRateGA){
-    for(int n=0; n<MAXLENGTH; n++){
+void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int len_limit,double **deamRateCT,double **deamRateGA,int ncycle){
+    for(int n=0; n<ncycle; n++){
         //    int n = 0;
         for(int L=30; L<len_limit; L++){
             //double f = freqLEN[i];
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(ncycle,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
-                    if (l+r<=MAXLENGTH){
+                for (int r=1;r<=std::min((double)ncycle,(double)(L-n-1));r++){
+                    if (l+r<=ncycle){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)ncycle,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -347,15 +341,15 @@ void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int l
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(ncycle,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
-                    if (l+r<=MAXLENGTH){
+                for (int l=1;l<=std::min((double)ncycle,(double)(L-n-1));l++){
+                    if (l+r<=ncycle){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)ncycle,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -370,23 +364,23 @@ void CaldeamRate_b(double lambda, double delta, double delta_s, double nu, int l
     }
 }
 
-void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int len_limit,double **deamRateCT,double **deamRateGA){
-    for(int n=0; n<MAXLENGTH; n++){
+void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int len_limit,double **deamRateCT,double **deamRateGA,int ncycle){
+    for(int n=0; n<ncycle; n++){
         //double freqCT1 = 0;
         //double freqGA1 = 0;
         //double freqCT2 = 0;
         //double freqGA2 = 0;
         for(int L=30; L<len_limit; L++){
             double p1_l = pow(1+lambda,2)*n*nu/(1+(L-2)*nu);
-            for(int l=1;l<=std::min(MAXLENGTH,n);l++){
+            for(int l=1;l<=std::min(ncycle,n);l++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,l)*(n-l)*nu/(1+(L-2-l)*nu);
-                for (int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
-                    if (l+r<=MAXLENGTH){
+                for (int r=1;r<=std::min((double)ncycle,(double)(L-n-1));r++){
+                    if (l+r<=ncycle){
                         p1_l += pow(lambda,2)*pow(1-lambda,l+r)*(n-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int r=1;r<=std::min((double)MAXLENGTH,(double)(L-n-1));r++){
+            for(int r=1;r<=std::min((double)ncycle,(double)(L-n-1));r++){
                 p1_l += lambda*(1+lambda)*pow(1-lambda,r)*n*nu/(1+(L-2-r)*nu);
             }
             p1_l = p1_l/4;
@@ -395,15 +389,15 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
             double p4_l = pow(1-lambda,n+1)/2;
             
             double p1_r = pow(1+lambda,2)*(L-n-1)*nu/(1+(L-2)*nu);
-            for(int r=1;r<=std::min(MAXLENGTH,n);r++){
+            for(int r=1;r<=std::min(ncycle,n);r++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,r)*(L-n-1)*nu/(1+(L-2-r)*nu);
-                for (int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
-                    if (l+r<=MAXLENGTH){
+                for (int l=1;l<=std::min((double)ncycle,(double)(L-n-1));l++){
+                    if (l+r<=ncycle){
                         p1_r += pow(lambda,2)*pow(1-lambda,l+r)*(L-n-1-l)*nu/(1+(L-2-l-r)*nu);
                     }
                 }
             }
-            for(int l=1;l<=std::min((double)MAXLENGTH,(double)(L-n-1));l++){
+            for(int l=1;l<=std::min((double)ncycle,(double)(L-n-1));l++){
                 p1_r += lambda*(1+lambda)*pow(1-lambda,l)*(L-n-1-l)*nu/(1+(L-2-l)*nu);
             }
             p1_r = p1_r/4;
@@ -422,7 +416,7 @@ void CaldeamRate_nb(double lambda, double delta, double delta_s, double nu, int 
 
 
 //QUALITY CONTROL and LENGTH DISTRIBUTION
-void parse_sequencingdata1(char *refName,char *fname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number,double** mm5p, double **mm3p){
+void parse_sequencingdata1(char *refName,char *fname, int mapped_only,int se_only,int mapq, faidx_t *seq_ref,int len_limit, int & len_min,int *Frag_len, double *Frag_freq,int &number,double** mm5p, double **mm3p,int ncycle){
   //    fprintf(stderr,"mapped_only: %d\n",mapped_only);
     htsFormat *dingding3 =(htsFormat*) calloc(1,sizeof(htsFormat));
 
@@ -543,9 +537,9 @@ void parse_sequencingdata1(char *refName,char *fname, int mapped_only,int se_onl
                         dist5p=int(b->core.l_qseq)-1-cycle;
                         dist3p=cycle;
                     }
-                    if(dist5p<MAXLENGTH)
+                    if(dist5p<ncycle)
                         mm5p[dist5p][toIndex[refeBase][readBase]] += 1.00;
-                    if(dist3p<MAXLENGTH)
+                    if(dist3p<ncycle)
                         mm3p[dist3p][toIndex[refeBase][readBase]] += 1.00;
                     temp = temp + 1;
                 }

@@ -32,6 +32,7 @@ int tsk_nthreads = -1;
 
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
+  int MAXLENGTH = 15;
   double l_check = 15;
   double** mm5p, **mm3p;
   double Tol = 1.0E-8; // Tolerance
@@ -128,11 +129,11 @@ int main(int argc, char **argv){
 
         if (mypars->hts != NULL){
             fprintf(stderr,"Loading the bamfile\n");
-            bamreader(mypars->hts,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p);
+            bamreader(mypars->hts,seq_ref,len_limit,len_min,Frag_len,Frag_freq,number,mm5p,mm3p,MAXLENGTH);
             //cout<<"Minimum length is "<<len_min<<"\n";
         }else if(tabname != NULL && lenname != NULL){
-	  tabreader(tabname,STRLENS,mm5p,mm3p);
-            fprintf(stderr,"Loading the table file with MAXLENGTH %d\n",MAXLENGTH);
+	  tabreader(tabname,STRLENS,mm5p,mm3p,MAXLENGTH);
+	  fprintf(stderr,"Loading the table file with MAXLENGTH %d\n",MAXLENGTH);
         }
         freqCT = (double*) malloc(2*MAXLENGTH * sizeof(double));
         freqGA = (double*) malloc(2*MAXLENGTH * sizeof(double));
@@ -447,9 +448,9 @@ int main(int argc, char **argv){
     }
     if (mypars->dorecal>=0){
         if (model==0){
-	  CaldeamRate_b(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA);
+	  CaldeamRate_b(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA, MAXLENGTH);
         }else if (model==1){
-	  CaldeamRate_nb(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA);
+	  CaldeamRate_nb(invec2[0],invec2[1],invec2[2],invec2[3],len_limit,deamRateCT,deamRateGA,MAXLENGTH);
         }
 
     }
