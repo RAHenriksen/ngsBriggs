@@ -5,17 +5,8 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues> //sort and merge
 
-#include "profile.h"
-#include "bfgs.h"
-#include "htslib/bgzf.h"
-
 #include "misc.h"
-#include "likelihood.h"
-#include "read_all_reads.h"
-
 #include "recalibration.h"
-
-//extern tsk_struct *my_tsk_struct;
 
 //The log-likelihood for recalibration the ancient probs
 double tsk_loglike_recalibration(const double *x, double **mat,int from,int to,int len_limit, int len_min, double eps,int &counter){

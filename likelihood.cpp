@@ -19,12 +19,10 @@
 double PhredError[255];
 double PhredErrorAThird[255];
 
-double MAX0 = 1-1e-8;
-double MIN0 = 1e-8;
+const double MAX0 = 1-1e-8;
+const double MIN0 = 1e-8;
 
-extern tsk_struct *my_tsk_struct;
-
-// Naive likelihood without nick frequencies
+ // Naive likelihood without nick frequencies
 double naive_loglike(const double *x, double * freqCT, double * freqGA, double * scaleCT, double * scaleGA,int &counter,int ncycle){
   counter++;
   double lambda = x[0];
