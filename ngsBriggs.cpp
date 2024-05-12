@@ -292,7 +292,8 @@ int main(int argc, char **argv){
     wo.scaleGA = scaleGA;
     wo.seqError = seqError;
     wo.counter[0] = wo.counter[1] = 0;
-    double withgrad = findmax_bfgs(3,invec1,(void *)&wo,b_loglike,b_loglike_grad,lbd,ubd,nbd,-1);
+    wo.ncycle = MAXLENGTH;//<- remember to fix
+    double withgrad = findmax_bfgs(3,invec1,(void *)&wo,naive_b_loglike,naive_b_loglike_grad,lbd,ubd,nbd,-1);
     
     double lbd1[4] = {1e-8,1e-8,1e-8,1e-8};
     double ubd1[4] = {1-1e-8,1-1e-8,1-1e-8,1-1e-8};
@@ -335,11 +336,11 @@ int main(int argc, char **argv){
     if (model==0){
       fprintf(stderr,"%s\n","The chosen model is a biotin model.");
       withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,b_loglike_complex3_full,b_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
-      loglike_complex3_hessian_full_b(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
+      loglike_complex3_hessian_full_b(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps, MAXLENGTH);
     }else if(model==1){
       fprintf(stderr,"%s\n","The chosen model is non-biotin model.");
       withgrad2 = findmax_bfgs(4,invec2,(void *) &wo,nb_loglike_complex3_full,nb_loglike_complex3_grad_full,lbd1,ubd1,nbd1,-1);
-      loglike_complex3_hessian_full_nb(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps);
+      loglike_complex3_hessian_full_nb(invec2, z2, freqCT, freqGA, scaleCT, scaleGA, seqError, BinNum, Bin_Frag_len, Bin_Frag_freq, Contam_eps,MAXLENGTH);
     }
     
     double stdvec2[4];
