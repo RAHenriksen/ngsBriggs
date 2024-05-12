@@ -1,6 +1,6 @@
 #ifndef RECALIBRATION_H
 #define RECALIBRATION_H
-extern int tsk_nthreads;
+
 typedef struct{//this struct is used in recalibration
   int len_limit;
   int len_min;
@@ -26,5 +26,5 @@ void tsk_all_loglike_recalibration_grad(const double *x, double *y,const void *d
 
 double like_master(const double *xs,const void *);
 void like_grad_master(const double *xs,double *y,const void *);
-void like_hess_master(const double *xs,double **y);
+void like_hess_master(const double *xs,double **y,tsk_struct my_tsk_struct[]);
 #endif

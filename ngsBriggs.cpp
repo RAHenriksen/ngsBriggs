@@ -20,17 +20,9 @@
 #include "ngsBriggs_cli.h"
 #include "bdamagereader.h"
 
-
-// definining all global variables used across multiple scripts
-
-
-tsk_struct *my_tsk_struct = NULL;
-
-int tsk_nthreads = -1;
-
-
 // defining our main ngsBriggs function
 int main(int argc, char **argv){
+  tsk_struct *my_tsk_struct = NULL;
   int MAXLENGTH = 15;
   double l_check = 15;
   double** mm5p, **mm3p;
@@ -65,9 +57,8 @@ int main(int argc, char **argv){
    for(int i=0;i<argc;i++)
      ksprintf(&str_cli," %s",argv[0]);
    mypars = pars_briggs(argc,argv);
-
-    tsk_nthreads = mypars->nthread;
-    my_tsk_struct = new tsk_struct[tsk_nthreads];
+   
+   my_tsk_struct = new tsk_struct[mypars->nthread];
     assert(mypars);
     char* fname = mypars->hts;
     char* tabname = mypars->tab;
@@ -483,9 +474,9 @@ int main(int argc, char **argv){
         double lbd2[4] = {30,15,30,1};
         double ubd2[4] = {(double)len_limit-1,100,(double)len_limit-1,100};
         int nbd2[4] = {2,2,2,2};
-        int mynsites = ndim/tsk_nthreads;
+        int mynsites = ndim/mypars->nthread;
         fprintf(stderr,"mynSites: %d\n",mynsites);
-        for(int ii=0;ii<tsk_nthreads;ii++){
+        for(int ii=0;ii<mypars->nthread;ii++){
             my_tsk_struct[ii].from = my_tsk_struct[ii].to = -1;
 	    my_tsk_struct[ii].mat = mat;
 	    my_tsk_struct[ii].len_limit = len_limit;
@@ -498,23 +489,24 @@ int main(int argc, char **argv){
                 my_tsk_struct[ii].x[i] = distparam[i];
                 my_tsk_struct[ii].llh_result_hess[i] = new double [4];
             }
+	    my_tsk_struct[ii].nthreads = mypars->nthread;
             my_tsk_struct[ii].threadid = ii;
             my_tsk_struct[ii].from = ii==0?0:my_tsk_struct[ii-1].to;
             my_tsk_struct[ii].to =   my_tsk_struct[ii].from+mynsites;
 	    my_tsk_struct[ii].counter[0] =  my_tsk_struct[ii].counter[1] = 0;
         }
-        my_tsk_struct[tsk_nthreads-1].to = ndim;
+        my_tsk_struct[mypars->nthread-1].to = ndim;
         double withgrad3;
-        if(tsk_nthreads==1)
+        if(mypars->nthread==1)
             withgrad3 = findmax_bfgs(4,distparam,&my_tsk_struct[0],tsk_all_loglike_recalibration,tsk_all_loglike_recalibration_grad,lbd2,ubd2,nbd2,-1);
         else
-	  withgrad3 = findmax_bfgs(4,distparam,NULL,like_master,like_grad_master,lbd2,ubd2,nbd2,-1);
+	  withgrad3 = findmax_bfgs(4,distparam,my_tsk_struct,like_master,like_grad_master,lbd2,ubd2,nbd2,-1);
 
         double **covpar = new double* [4];
         for (int i=0;i<4;i++)
 	  covpar[i] = new double[4];
         
-        like_hess_master(distparam,covpar);
+        like_hess_master(distparam,covpar,my_tsk_struct);
         double stdpar[4];
         for (int i=0;i<4;i++){
             stdpar[i] = sqrt(covpar[i][i]);
