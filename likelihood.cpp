@@ -1386,7 +1386,47 @@ double ErrorLik(char reffrag[], char frag[], int L, uint8_t seqError[],int l_che
         //cout<<"Position "<<"L-i-1 "<<nuc[(int)reffrag[L-i-1]]<<nuc[(int)frag[L-i-1]]<<" "<<seqError[L-i-1]<<" "<<l1;
     }
     //    fprintf(stderr,"LEN: %d l1: %f\n",L,l1); exit(0);
-    return exp(l1);
+    return exp(l1);//comment out for using the internal part
+    int MAXLENGTH = l_check;
+       double AveError = 0;
+    double AveErrorAThird = 0;
+    int nCC = 0;
+    int nCT = 0;
+    int nGA = 0;
+    int nGG = 0;
+    int nXX = 0;
+    int nXY = 0;
+    int nN = 0;
+    for (int i = MAXLENGTH; i <= L-1-MAXLENGTH; i++){
+        AveError += PhredError[seqError[i]];
+        AveErrorAThird += PhredErrorAThird[seqError[i]];
+        if (reffrag[i] < 4 && frag[i] < 4){
+            if(reffrag[i]==1 && frag[i]==1){
+                nCC += 1;
+            }else if(reffrag[i]==1 && frag[i]==3){
+                nCT += 1;
+            }else if(reffrag[i]==2 && frag[i]==2){
+                nGG += 1;
+            }else if(reffrag[i]==2 && frag[i]==0){
+                nGA += 1;
+            }else if(reffrag[i]==frag[i]){
+                nXX += 1;
+            }else if(reffrag[i]!=frag[i]){
+                nXY += 1;
+            }
+        }else{
+            nN += 1; //Count the N sites within the internal region.
+        }
+    }
+    int intL = L-2*MAXLENGTH-nN;
+    double ll = 0;
+    if (intL > 0){
+        AveError = AveError/(double)intL;
+        AveErrorAThird = AveErrorAThird/(double)intL;
+        ll = (nCC+nGG+nXX) * log(1-AveError) + (nCT+nGA+nXY) * log(AveErrorAThird);
+        //cout << "Mod " << exp(ll) << " nCT " << nCT << " nGA " << nGA << "\n";
+    }
+    return exp(l1+ll);
 }
 
 // Calculate the observation likelihood based on the Ancient model/ biotin model
@@ -2500,4 +2540,74 @@ double PMDLik_nb(char reffrag[], char frag[], int L, double lambda, double delta
     }
     //cout<<l_pmd<<"nuc_lliktest\n";
     return l_pmd;
+}
+
+
+double intPMDLik(char reffrag[], char frag[], int L, int seqError[],int MAXLENGTH){
+    double AveError = 0;
+    double AveErrorAThird = 0;
+    int nCC = 0;
+    int nCT = 0;
+    int nGA = 0;
+    int nGG = 0;
+    int nXX = 0;
+    int nXY = 0;
+    int nN = 0;
+    for (int i = MAXLENGTH; i <= L-1-MAXLENGTH; i++){
+        AveError += PhredError[seqError[i]];
+        AveErrorAThird += PhredErrorAThird[seqError[i]];
+        if (reffrag[i] < 4 && frag[i] < 4){
+            if(reffrag[i]==1 && frag[i]==1){
+                nCC += 1;
+            }else if(reffrag[i]==1 && frag[i]==3){
+                nCT += 1;
+            }else if(reffrag[i]==2 && frag[i]==2){
+                nGG += 1;
+            }else if(reffrag[i]==2 && frag[i]==0){
+                nGA += 1;
+            }else if(reffrag[i]==frag[i]){
+                nXX += 1;
+            }else if(reffrag[i]!=frag[i]){
+                nXY += 1;
+            }
+        }else{
+            nN += 1;
+        }
+    }
+    int intL = L-2*MAXLENGTH-nN;
+    double ll = 0;
+    if (intL > 0){
+        AveError = AveError/(double)intL;
+        AveErrorAThird = AveErrorAThird/(double)intL;
+        ll = nCC * log(1-deamRateCT[L-30][30]-AveError+deamRateCT[L-30][30]*AveError) + nCT * log(deamRateCT[L-30][30]+AveErrorAThird-4*deamRateCT[L-30][30]*AveErrorAThird) + nGG * log(1-deamRateGA[L-30][30]-AveError+deamRateGA[L-30][30]*AveError) + nGA * log(deamRateGA[L-30][30]+AveErrorAThird-4*deamRateGA[L-30][30]*AveErrorAThird) + nXX * log(1-AveError) + nXY * log(AveErrorAThird);
+//        ll1 = (nCC+nGG+nXX) * log(1-AveError) + (nCT+nGA+nXY) * log(AveErrorAThird);
+//        cout << "Anc " << exp(ll) << " Mod " << exp(ll1) << " nCT " << nCT << " nGA " << nGA << "\n";
+    }
+    return exp(ll);
+}
+
+
+double intNoPMDGivenAnc(char reffrag[], char frag[], int L,int MAXLENGTH){
+    int nC = 0;
+    int nG = 0;
+    int nN = 0;
+    for (int i = MAXLENGTH; i <= L-1-MAXLENGTH; i++){
+        if (reffrag[i] < 4 && frag[i] < 4){
+            if(reffrag[i]==1){
+                nC += 1;
+            }else if(reffrag[i]==2){
+                nG += 1;
+            }
+        }else{
+            nN += 1;
+        }
+    }
+    int intL = L-2*MAXLENGTH-nN;
+    double ll = 0;
+    if (intL > 0){
+        ll = nC * log(1-deamRateCT[L-30][30]) +  nG * log(1-deamRateGA[L-30][30]);
+//        ll1 = (nCC+nGG+nXX) * log(1-AveError) + (nCT+nGA+nXY) * log(AveErrorAThird);
+//        cout << "Anc " << exp(ll) << " Mod " << exp(ll1) << " nCT " << nCT << " nGA " << nGA << "\n";
+    }
+    return exp(ll);
 }
